@@ -38,7 +38,7 @@ function navLinks(element: HTMLElement): { href: string | null; label: string }[
 }
 
 function menuToggle(element: HTMLElement): HTMLButtonElement {
-  return element.querySelector<HTMLButtonElement>('button[aria-controls="menu-lateral"]')!;
+  return element.querySelector<HTMLButtonElement>('button[aria-controls="menu-lateral-blog"]')!;
 }
 
 describe('SiteSidebar', () => {
@@ -117,7 +117,9 @@ describe('SiteSidebar', () => {
 
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(toggle.getAttribute('aria-label')).toBe('Fechar menu');
-    expect(element.querySelector('#menu-lateral')?.classList).toContain('sidebar__panel--open');
+    expect(element.querySelector('#menu-lateral-blog')?.classList).toContain(
+      'sidebar__panel--open',
+    );
 
     element.querySelector<HTMLElement>('.sidebar__backdrop')!.click();
     await fixture.whenStable();

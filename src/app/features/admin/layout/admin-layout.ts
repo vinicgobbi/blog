@@ -1,10 +1,9 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Sidebar, SidebarState, provideSidebar } from '@vinicgobbi/ui/sidebar';
+import { ThemeService } from '@vinicgobbi/ui/theme';
+import { Tooltip } from '@vinicgobbi/ui/tooltip';
 import { AuthService } from '../../../core/auth/auth.service';
-import { ThemeService } from '../../../core/theme/theme.service';
-import { Sidebar } from '../../../shared/components/sidebar/sidebar';
-import { SidebarState, provideSidebar } from '../../../shared/components/sidebar/sidebar-state';
-import { Tooltip } from '../../../shared/components/tooltip/tooltip';
 import { CommentCounts } from '../comments/comment-counts';
 
 /** Item do menu da área admin; cada seção entra junto com a sua funcionalidade. */

@@ -1,11 +1,10 @@
 import { Component, computed, inject } from '@angular/core';
 import { IsActiveMatchOptions, RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '../../../environments/environment';
-import { ThemeService } from '../../core/theme/theme.service';
+import { Sidebar, SidebarState, provideSidebar } from '@vinicgobbi/ui/sidebar';
+import { ThemeService } from '@vinicgobbi/ui/theme';
+import { Tooltip } from '@vinicgobbi/ui/tooltip';
 import { BlogApi } from '../../features/blog/blog-api';
-import { Sidebar } from '../../shared/components/sidebar/sidebar';
-import { SidebarState, provideSidebar } from '../../shared/components/sidebar/sidebar-state';
-import { Tooltip } from '../../shared/components/tooltip/tooltip';
 
 /**
  * Menu lateral do blog: links fixos, páginas publicadas (na ordem definida no

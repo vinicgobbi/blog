@@ -1,10 +1,9 @@
 /*
- * Tokens, fontes, ícones, base e componentes vêm de @vinicgobbi/ui, a mesma
+ * Tokens, fontes, ícones, base, componentes e o menu lateral vêm de @vinicgobbi/ui, a mesma
  * identidade visual do portfólio (vinicgobbi.dev.br) e da página de links. O tema é definido
  * em <html data-theme> (ver index.html e ThemeService). Aqui fica só o que é do blog.
  */
 @use './styles/prose';
-@use './styles/sidebar';
 @use './styles/view-transitions';
 
 /*
@@ -13,6 +12,7 @@
  * deixariam de resolver.
  */
 @import '@vinicgobbi/ui/styles/index.css';
+@import '@vinicgobbi/ui/styles/sidebar.css';
 
 /* Brilho do acento no topo da página. */
 :root {
