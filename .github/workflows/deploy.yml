@@ -25,6 +25,7 @@ jobs:
     if: "!startsWith(github.event.head_commit.message, 'bump:')"
     permissions:
       contents: read
+      packages: read # instalar @vinicgobbi/ui do GitHub Packages
 
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -32,11 +33,17 @@ jobs:
       # A versão do pnpm vem do "packageManager" do package.json.
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
 
+      # registry-url gera o .npmrc de usuário com o token do GitHub Packages
+      # (@vinicgobbi/ui); o pnpm 12 não lê credenciais do .npmrc do repositório.
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "24"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@vinicgobbi"
 
       - name: Install Node dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Check code style (Prettier)
@@ -84,6 +91,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read # instalar @vinicgobbi/ui do GitHub Packages
     outputs:
       artifact-id: ${{ steps.upload.outputs.artifact-id }}
 
@@ -96,11 +104,17 @@ jobs:
       # A versão do pnpm vem do "packageManager" do package.json.
       - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
 
+      # registry-url gera o .npmrc de usuário com o token do GitHub Packages
+      # (@vinicgobbi/ui); o pnpm 12 não lê credenciais do .npmrc do repositório.
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "24"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@vinicgobbi"
 
       - name: Install Node dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm install --frozen-lockfile --prefer-offline
 
       - name: Build
