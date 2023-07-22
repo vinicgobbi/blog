@@ -2,7 +2,8 @@
 title: "Linux ou Windows? Na minha opinião"
 date: 2023-07-20 20:28 -0300
 author: vinicius
-tags: [tech, linux, windows]
+tags: [linux, windows]
+categories: [tecnologia]
 ---
 
 Durante os últimos anos, uma coisa que eu vi várias vezes foi alguém dizer que um sistema operacional era melhor do que o outro por causa de algum motivo, mesmo que aquilo sequer fizesse sentido para  a maior parte das pessoas, ou até mesmo fosse algo relevante para alguém dele, então hoje vim dar minha opinião sobre o assunto, e quem sabe pode clarear as ideias de você leitor
