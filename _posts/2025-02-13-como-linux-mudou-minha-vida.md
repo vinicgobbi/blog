@@ -14,9 +14,9 @@ Este post será dividido nos seguintes tópicos:
 
 - [Introdução](#introdução)
 - [Um Breve contexto](#um-breve-contexto)
-    -[O Ano era 2020](#o-ano-era-2020)
-    -[Um curso de programação](#um-curso-de-programação)
-    -[Um mal entendido?](#um-mal-entendido)
+    - [O Ano era 2020](#o-ano-era-2020)
+    - [Um curso de programação](#um-curso-de-programação)
+    - [Um mal entendido?](#um-mal-entendido)
 - [Novas decisões](#novas-decisões)
     - [Buscar alternativas](#buscar-alternativas)
     - [A Graduação](#a-graduação)
