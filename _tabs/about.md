@@ -70,7 +70,7 @@ vinicius at blog
 
 <div>
     <a href="https://github.com/vinicgobbi">
-        <img src="https://spotify-recently-played-readme.vercel.app/api?user=21eccoudizoaregspurapvjfq" style="widht: 400px; height: 400px;">
+        <img src="https://spotify-recently-played-readme.vercel.app/api?user=21eccoudizoaregspurapvjfq" style="widht: 400px; height: 400px;" alt="Tocadas recentemente no Spotify">
     </a>
     <a href="https://github.com/vinicgobbi">
         <img src="https://raw.githubusercontent.com/vinicgobbi/vinicgobbi/output/github-snake-dark.svg" alt="Snake Animation">
