@@ -25,13 +25,13 @@ vinicius at blog
 
 <div>
     <a href="mailto:vinicius.cgobbi2004@gmail.com">
-        <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white">
+        <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail">
     </a>
     <a href="https://www.linkedin.com/in/vinicgobbi">
-        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white">
+        <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn">
     </a>
     <a href="mailto:vinicius.cgobbi@hotmail.com">
-        <img src="https://img.shields.io/badge/Microsoft_Outlook-0078D4?style=for-the-badge&logo=microsoft-outlook&logoColor=white">
+        <img src="https://img.shields.io/badge/Microsoft_Outlook-0078D4?style=for-the-badge&logo=microsoft-outlook&logoColor=white" alt="Hotmail">
     </a>
 </div>
 
@@ -50,7 +50,7 @@ vinicius at blog
 
 <div>
     <a href="https://github.com/vinicgobbi">
-        <img src="https://skillicons.dev/icons?i=git,github,php,laravel,html,css,js,nodejs,linux,vscode&theme=light">
+        <img src="https://skillicons.dev/icons?i=git,github,php,laravel,html,css,js,nodejs,linux,vscode&theme=light" alt="Stacks">
     </a>
 </div>
 
