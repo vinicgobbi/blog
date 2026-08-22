@@ -19,7 +19,7 @@ Antes de mais nada, gostaria de ressaltar que os apps a seguir funcionam no **Wi
 
 Embora muitos considerem o app Vincular ao Windows ruim, junto com atual telefone (Galaxy M54 5G) o mesmo se provou uma ótima opção, oferecendo uma quantidade de opções que me interessam muito quando se trata de integrar o celular ao PC
 
-![Print do app Vincular ao Windows](/assets/img/posts/2024-10-27-apps-que-integram-celular-pc/Vincular%20ao%20Windows.png)
+![Print do app Vincular ao Windows](/assets/img/posts/2024-10-28-apps-que-integram-celular-pc/Vincular%20ao%20Windows.png)
 
 Estão disponiveis as seguintes funções no app Vincular ao Windows:
 
@@ -41,7 +41,7 @@ Dá para ver como que esse app é um verdadeiro canivete suiço
 
 Transferir arquivos não poderia ser mais simples com o Quick Share, o Android por si só já vem com o Quick Share instalado nativamente permitindo compartilhamento sem fio de várias informações de Android para Android, mas de forma audáciosa, esse aplicativo do Google promete fazer o mesmo, mas com seu Windows, facilitando muito a transferencia de arquivos do celular para o PC
 
-![Print do app Quick Share](/assets/img/posts/2024-10-27-apps-que-integram-celular-pc/Quick%20Share.png)
+![Print do app Quick Share](/assets/img/posts/2024-10-28-apps-que-integram-celular-pc/Quick%20Share.png)
 
 ### Outlook (new)
 
@@ -51,7 +51,7 @@ Integrar não é só conectar aparelhos, mas sim ter acesso a informações de 2
 
 Nessa hora o novo Outlook se provou a melhor alternativa para acesso aos meus E-mails e calendários, com uma interface simples e intuitiva,  ah claro, sua nova versão já vem instalada com o Windows e até o momento é gratuita (diferente de seu antecessor que vinha junto com o Office)
 
-![Print do app outlook](/assets/img/posts/2024-10-27-apps-que-integram-celular-pc/Outlook.png)
+![Print do app outlook](/assets/img/posts/2024-10-28-apps-que-integram-celular-pc/Outlook.png)
 
 ### Firefox
 
@@ -61,7 +61,7 @@ A resposta é simples, graças ao [Pocket](https://getpocket.com) eu consegui ex
 
 Além de todos os benefícios de sincronização de conta que eu tenho utilizando minha conta da Mozilla
 
-![Print do site do Pocket](/assets/img/posts/2024-10-27-apps-que-integram-celular-pc/Pocket.png)
+![Print do site do Pocket](/assets/img/posts/2024-10-28-apps-que-integram-celular-pc/Pocket.png)
 
 ## Menções Honrosas
 
