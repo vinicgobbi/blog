@@ -8,18 +8,6 @@ categories: [tecnologia]
 
 Durante os últimos anos, uma coisa que eu vi várias vezes foi alguém dizer que um sistema operacional era melhor do que o outro por causa de algum motivo, mesmo que aquilo sequer fizesse sentido para  a maior parte das pessoas, ou até mesmo fosse algo relevante para alguém dele, então hoje vim dar minha opinião sobre o assunto, e quem sabe pode clarear as ideias de você leitor
 
-Antes de começarmos, esse post será dividido nos seguintes tópicos:
-
-- [Um pouco sobre cada um:](#um-pouco-sobre-cada-um)
-  - [Windows](#windows)
-  - [Linux](#linux)
-- [Critérios](#critérios)
-- [Avaliação](#avaliação)
-  - [Disponibilidade de Software](#disponibilidade-de-software)
-  - [Facilidade de uso](#facilidade-de-uso)
-  - [Produtividade](#produtividade)
-- [Conclusão](#conclusão)
-
 ## Um pouco sobre cada um:
 
 ### Windows:

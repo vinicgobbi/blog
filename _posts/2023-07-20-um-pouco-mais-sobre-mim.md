@@ -8,14 +8,6 @@ categories: [pessoal]
 
 Olá pessoal, eu me chamo Vinícius, e nesse post eu vim falar de mim para vocês!
 
-Antes de mais nada, esse post será dividido em tópicos:
-
-- [Quem sou eu?](#quem-sou-eu)
-- [O que eu gosto de fazer?](#o-que-eu-gosto-de-fazer)
-- [O que eu gosto de ouvir?](#o-que-eu-gosto-de-ouvir)
-- [Onde eu trabalho:](#onde-eu-trabalho)
-- [Finalização](#finalização)
-
 ## Quem sou eu?
 
 Tá ai uma boa pergunta né? "Quem sou eu?", bem eu me defino como um estudante, um entusiasta por tecnologia (mais pra frente eu me aprofundo nisso), além de ser um Jovem Aprendiz, na empresa [Oi Frango](https://www.oifrango.com.br)

@@ -10,18 +10,6 @@ categories: [pessoal]
 
 Sejam bem-vindos a mais um post, dessa vez venho contar como que migrar de sistema operacional do Windows para distribuções baseadas em Linux, mudaram minha forma de pensar, enxergar a tecnologia, e como isso afetou posteriormente a minha vida
 
-Este post será dividido nos seguintes tópicos:
-
-- [Introdução](#introdução)
-- [Um Breve contexto](#um-breve-contexto)
-    - [O Ano era 2020](#o-ano-era-2020)
-    - [Um curso de programação](#um-curso-de-programação)
-    - [Um mal entendido?](#um-mal-entendido)
-- [Novas decisões](#novas-decisões)
-    - [Buscar alternativas](#buscar-alternativas)
-    - [A Graduação](#a-graduação)
-- [Considerações Finais](#considerações-finais)
-
 # Um Breve contexto
 
 Como tudo nessa, se algo é jogado fora de contexto, pode signficar qualquer coisa, então, vamos partir do começo...

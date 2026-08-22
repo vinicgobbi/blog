@@ -12,18 +12,6 @@ Depois de muito tempo fora do ar, finalmente consegui trazer o blog de volta ao 
 
 Antes de mais nada, gostaria de ressaltar que os apps a seguir funcionam no **Windows** e no **Android**, não havendo uma real garantia de que eles possam ser multiplataforma
 
-Este post será dividido nos seguintes tópicos:
-
-- [Introdução](#introdução)
-- [Aplicativos](#aplicativos)
-    - [Vincular ao Windows](#vincular-ao-windows)
-    - [Quick Share do Google](#quick-share-do-google)
-    - [Outlook (new)](#outlook-new)
-    - [Firefox](#firefox)
-- [Menções Honrosas](#menções-honrosas)
-    - [KDE Connect](#kde-connect)
-    - [LocalSend](#localsend)
-
 ## Aplicativos
 
 ### Vincular ao Windows
