@@ -3,8 +3,8 @@ title: "Apps que eu uso no meu dia a dia"
 date: 2023-07-22 09:06
 last_modified_at: 2026-08-22 12:12
 author: vinicius
-tags: [apps, linux, windows, aplicativos]
-categories: [tecnologia]
+tags: [produtividade]
+categories: [tecnologia, aplicativos]
 ---
 
 Recentemente eu fiz um post comentando sobre [Linux e Windows](/posts/linux-ou-windows-na-minha-opiniao) e nele eu comentei que a maior parte dos apps que eu usava são multiplataforma, então resolvi trazer esse post mostrando os apps que eu uso no dia a dia, assim quem sabe você não saia daqui conhecendo uma nova ferramenta incrível que pode ser util para você também!
