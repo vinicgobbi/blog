@@ -1,6 +1,7 @@
 ---
 title: "Apps que eu uso no meu dia a dia"
-date: 2023-07-22 09:06 -0300
+date: 2023-07-22 09:06
+last_modified_at: 2026-08-22 12:12
 author: vinicius
 tags: [apps, linux, windows, aplicativos]
 categories: [tecnologia]

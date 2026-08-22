@@ -1,6 +1,7 @@
 ---
 title: "Como migrar para o Linux mudou minha vida e minha forma de pensar"
-date: 2025-02-13 22:00 -0300
+date: 2025-02-13 22:00
+last_modified_at: 2026-08-22 12:12
 author: vinicius
 tags: [linux, windows]
 categories: [pessoal]

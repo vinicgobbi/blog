@@ -1,6 +1,7 @@
 ---
 title: "Um pouco mais sobre mim"
-date: 2023-07-20 07:20 -0300
+date: 2023-07-20 07:20
+last_modified_at: 2026-08-22 12:12
 author: vinicius
 tags: [apresentação]
 categories: [pessoal]

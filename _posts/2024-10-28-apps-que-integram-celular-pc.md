@@ -1,6 +1,7 @@
 ---
 title: "Apps que eu uso para integrar o celular no PC"
-date: 2024-10-28 18:00 -0300
+date: 2024-10-28 18:00
+last_modified_at: 2026-08-22 12:12
 author: vinicius
 tags: [apps, linux, windows, aplicativos]
 categories: [tecnologia]
