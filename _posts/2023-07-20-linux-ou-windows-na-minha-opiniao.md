@@ -1,7 +1,7 @@
 ---
 title: "Linux ou Windows? Na minha opinião"
 date: 2023-07-20 20:28
-last_modified_at: 2026-08-22 12:12
+last_modified_at: 2026-08-22 13:15
 author: vinicius
 tags: [linux, windows]
 categories: [tecnologia, sistemas operacionais]
