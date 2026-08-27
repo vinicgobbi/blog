@@ -9,6 +9,11 @@
 # (see _plugins/posts-lastmod-hook.rb); this script keeps the raw .md
 # file's front matter in sync too, so it's accurate before you commit.
 #
+# Without file args, only posts with pending git changes are touched —
+# mtime alone isn't a reliable signal (it also changes on git clone,
+# checkout, etc.), so scoping to git-dirty files avoids re-stamping every
+# post on every run. Pass -a/--all to force every post regardless.
+#
 # Usage: See help information
 
 set -eu
@@ -23,13 +28,17 @@ help() {
   echo
   echo "   bash tools/update-lastmod.sh [file ...]"
   echo
-  echo "Sem argumentos, atualiza todos os posts em $POSTS_DIR."
+  echo "Sem argumentos, atualiza apenas os posts com alterações pendentes no git"
+  echo "(staged, unstaged ou untracked) dentro de $POSTS_DIR."
   echo
   echo "Options:"
+  echo "     -a, --all     Atualiza todos os posts em $POSTS_DIR, mesmo sem"
+  echo "                   alterações pendentes."
   echo "     -h, --help    Print this help information."
 }
 
 files=()
+all=0
 
 while (($#)); do
   opt="$1"
@@ -37,6 +46,10 @@ while (($#)); do
   -h | --help)
     help
     exit 0
+    ;;
+  -a | --all)
+    all=1
+    shift
     ;;
   *)
     files+=("$opt")
@@ -46,9 +59,24 @@ while (($#)); do
 done
 
 if [[ ${#files[@]} -eq 0 ]]; then
-  while IFS= read -r -d '' f; do
-    files+=("$f")
-  done < <(find "$POSTS_DIR" -maxdepth 1 -name '*.md' -print0 | sort -z)
+  if [[ $all -eq 1 ]]; then
+    while IFS= read -r -d '' f; do
+      files+=("$f")
+    done < <(find "$POSTS_DIR" -maxdepth 1 -name '*.md' -print0 | sort -z)
+  else
+    # Só posts com alterações pendentes (staged, unstaged ou untracked),
+    # já que o mtime do arquivo sozinho não indica edição real de conteúdo.
+    while IFS= read -r -d '' f; do
+      files+=("$f")
+    done < <(git status --porcelain -z -- "$POSTS_DIR" \
+      | sed -z -E 's/^.{3}//' \
+      | grep -zE '\.md$')
+
+    if [[ ${#files[@]} -eq 0 ]]; then
+      echo "Nenhum post com alterações pendentes em $POSTS_DIR. Use -a/--all para forçar todos."
+      exit 0
+    fi
+  fi
 fi
 
 for f in "${files[@]}"; do
