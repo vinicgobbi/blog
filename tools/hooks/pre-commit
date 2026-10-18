@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# Pre-commit do blog: valida os posts e, se estiver tudo certo, carimba
+# `last_modified_at` nos posts editados que vão no commit.
+# Instale com `tools/post hooks install`. Para pular uma vez: git commit --no-verify
+
+set -eu
+
+root="$(git rev-parse --show-toplevel)"
+
+ruby "$root/tools/post" check --quiet
+ruby "$root/tools/post" lastmod --staged

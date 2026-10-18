@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+#
+# Ferramentas para os posts do blog. Veja: tools/post help
+
+require_relative "lib/blog_tools"
+
+root = File.expand_path("..", __dir__)
+
+# Datas sem fuso no front matter valem no fuso do site, como no Jekyll.
+begin
+  timezone = BlogTools::Site.new(root).timezone
+  ENV["TZ"] = timezone if timezone && !timezone.to_s.empty?
+rescue BlogTools::Error
+  nil
+end
+
+exit BlogTools::CLI.new(root: root).run(ARGV)
