@@ -4,70 +4,44 @@ icon: fas fa-info-circle
 order: 4
 ---
 
-<div class="text-center mb-4">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1200&color=8BE9FD&center=true&vCenter=true&width=560&lines=Ola%2C+eu+sou+o+Vinicius;Estudante+de+Ciencia+da+Computacao;Estagiario+de+TI+na+FAESA;Entusiasta+de+Linux+e+jogos+retro" alt="Typing SVG" />
-</div>
+Olá! Eu sou o **Vinícius Gobbi**, desenvolvedor full-stack do Espírito Santo, movido a café e curiosidade. Este blog é o meu canto da internet para escrever sobre tecnologia e sobre o que vou aprendendo pelo caminho.
 
-```sh
-vinicius@blog:~$ whoami
-> Dev em formação, movido a café e curiosidade ☕
-```
+## Quem escreve
 
-## Sobre mim
+Hoje sou estagiário de desenvolvimento na [FAESA](https://faesa.br), onde trabalho com sistemas acadêmicos e administrativos em Laravel e React, do banco de dados à interface. Também estou terminando o bacharelado em Ciência da Computação na mesma instituição.
 
-- 🎓 Cursando Ciência da Computação na [FAESA](https://faesa.br)
-- 💼 Estagiário de TI na [FAESA](https://faesa.br) — do suporte ao código
-- 🐧 Linux não é só sistema operacional, é estilo de vida
-- 🕹️ Curador pessoal de nostalgia: sempre com um jogo retrô no radar
-- 🌱 Aprendendo algo novo (quase) toda semana
+Antes de programar profissionalmente, passei quase três anos na área de manutenção industrial, onde comecei como Jovem Aprendiz. Foi uma escola de organização e de resolução de problemas que levo até hoje para o código.
 
-## 🚀 Projetos em destaque
+Fora do trabalho, sou apaixonado por Linux e pela cultura open source. Gosto de personalizar o meu ambiente, escrever um script para automatizar tudo que dá e, de vez em quando, voltar a algum jogo retrô.
 
-| Projeto | Descrição | Stack |
-| --- | --- | --- |
-| [🔗 links](https://github.com/vinicgobbi/links) | Reescrita do projeto *links*, migrado para Angular com foco em componentização | TypeScript · Angular |
-| [🐧 post_install](https://github.com/vinicgobbi/post_install) | Script de pós-instalação para distros Linux — porque configurar tudo na mão uma vez já foi suficiente | Shell |
-| [🌐 portfólio](https://github.com/vinicgobbi/vinicgobbi.github.io) | Site pessoal onde HTML e CSS viram cartão de visitas | HTML · CSS |
+## Sobre o que eu escrevo
 
-## 🛠️ Linguagens e ferramentas
+- **Linux e open source**: migração, personalização do desktop, dotfiles e as ferramentas que uso no dia a dia.
+- **Redes e internet**: conceitos que todo mundo usa sem perceber, como DNS, explicados do jeito que eu gostaria que tivessem me explicado.
+- **Desenvolvimento**: o que aprendo construindo sistemas web com Laravel, React e Angular, além de automação e deploy.
+- **Aplicativos e produtividade**: ferramentas que realmente uso e que facilitam a minha rotina.
+- **Coisas pessoais**: de vez em quando, reflexões sobre carreira e estudos.
 
-<table>
-<tr>
-<td align="center" width="160"><b>🎨 Frontend</b></td>
-<td><a href="https://github.com/vinicgobbi"><img src="https://skillicons.dev/icons?i=angular,react,typescript,javascript,bootstrap" alt="Frontend skills" /></a></td>
-</tr>
-<tr>
-<td align="center"><b>⚙️ Backend</b></td>
-<td><a href="https://github.com/vinicgobbi"><img src="https://skillicons.dev/icons?i=laravel,php,python" alt="Backend skills" /></a></td>
-</tr>
-<tr>
-<td align="center"><b>🧰 Infra &amp; ferramentas</b></td>
-<td><a href="https://github.com/vinicgobbi"><img src="https://skillicons.dev/icons?i=git,github,docker,cloudflare,vscode,linux,windows" alt="Infra & tools skills" /></a></td>
-</tr>
-</table>
+Os textos partem da minha experiência, então nem sempre vão mostrar a única forma (ou a melhor) de fazer algo. Se encontrar um erro ou tiver uma visão diferente, deixe um comentário. Vou gostar de ler.
 
-## 💻 Sistemas operacionais no dia a dia
+## Por onde começar
 
-<div class="d-flex flex-wrap gap-2 mb-4">
-    <a href="https://kernel.org"><img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux"></a>
-    <a href="https://www.microsoft.com/pt-br/windows/"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows"></a>
-</div>
+Se é a sua primeira vez por aqui, estes posts dão uma boa ideia do que esperar:
 
-## 📊 Estatísticas do GitHub
+- [O que é, e como funciona o DNS]({% post_url 2026-11-11-o-que-e-e-como-funciona-o-dns %})
+- [Como migrar para o Linux mudou minha vida e minha forma de pensar]({% post_url 2025-02-13-como-linux-mudou-minha-vida %})
+- [Apps que eu uso para integrar o celular no PC]({% post_url 2024-10-28-apps-que-integram-celular-pc %})
 
-<div class="d-flex flex-wrap gap-2 mb-4">
-    <a href="https://github.com/vinicgobbi"><img src="https://readme.vinicgobbi.dev.br/api?hide_title=false&hide_rank=false&show_icons=true&include_all_commits=true&count_private=true&card_width=470px&disable_animations=false&theme=dracula&locale=pt-br&hide_border=false&username=vinicgobbi&exclude_repo=github-readme-stats" alt="GitHub Stats"></a>
-    <a href="https://github.com/vinicgobbi"><img src="https://readme.vinicgobbi.dev.br/api/top-langs/?username=vinicgobbi&langs_count=5&layout=pie&card_width=470px&theme=dracula&exclude_repo=github-readme-stats" alt="Top Langs"></a>
-</div>
+Você também pode navegar por [categorias](/categories/), [tags](/tags/) ou ver [todos os posts](/archives/).
 
-## 📫 Contato
+## Acompanhe
 
-<div class="d-flex flex-wrap gap-2 mb-4">
-    <a href="mailto:vinicius.cgobbi2004@gmail.com"><img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"></a>
-    <a href="https://www.linkedin.com/in/vinicgobbi"><img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"></a>
-    <a href="mailto:vinicius.cgobbi@hotmail.com"><img src="https://img.shields.io/badge/Microsoft_Outlook-0078D4?style=for-the-badge&logo=microsoft-outlook&logoColor=white" alt="Hotmail"></a>
-</div>
+Não tenho uma frequência fixa de publicação: escrevo quando tenho algo que vale a pena compartilhar. Para não perder nenhum post, assine o [feed RSS](/feed.xml) no seu leitor favorito.
 
-<div class="text-center">
-    <a href="https://github.com/vinicgobbi"><img src="https://raw.githubusercontent.com/vinicgobbi/vinicgobbi/output/github-snake-dark.svg" alt="Snake Animation"></a>
-</div>
+## Fora do blog
+
+No meu [site pessoal](https://vinicgobbi.dev.br) estão o currículo, os projetos e as certificações. O código dos projetos pessoais fica no [GitHub](https://github.com/vinicgobbi), de um acompanhamento das eleições em tempo real a plugins para o desktop Omarchy.
+
+## Contato
+
+Quer sugerir um assunto, corrigir algo ou só trocar uma ideia? Fale comigo por [e-mail](mailto:vinicgobbi@gmail.com) ou pelo [LinkedIn](https://www.linkedin.com/in/vinicgobbi).
