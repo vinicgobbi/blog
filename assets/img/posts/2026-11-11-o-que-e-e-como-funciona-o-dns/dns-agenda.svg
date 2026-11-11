@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 240" width="860" height="240" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+  </defs>
+  <rect width="860" height="240" rx="16" fill="#ffffff"/>
+
+  <!-- Nome -->
+  <rect x="30" y="50" width="260" height="100" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="160" y="85" text-anchor="middle" font-size="15" fill="#475569">Você digita o nome</text>
+  <text x="160" y="118" text-anchor="middle" font-size="18" font-weight="bold" fill="#1e3a8a" font-family="Consolas, Menlo, monospace">blog.vinicgobbi.dev.br</text>
+
+  <!-- DNS -->
+  <line x1="290" y1="100" x2="356" y2="100" stroke="#475569" stroke-width="2.5" marker-end="url(#seta)"/>
+  <rect x="360" y="40" width="140" height="120" rx="12" fill="#fff7ed" stroke="#ea580c" stroke-width="2"/>
+  <text x="430" y="95" text-anchor="middle" font-size="30" font-weight="bold" fill="#c2410c">DNS</text>
+  <text x="430" y="122" text-anchor="middle" font-size="13" fill="#9a3412">a "agenda" da</text>
+  <text x="430" y="139" text-anchor="middle" font-size="13" fill="#9a3412">internet</text>
+  <line x1="500" y1="100" x2="566" y2="100" stroke="#475569" stroke-width="2.5" marker-end="url(#seta)"/>
+
+  <!-- IP -->
+  <rect x="570" y="50" width="260" height="100" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="700" y="85" text-anchor="middle" font-size="15" fill="#475569">O computador recebe o IP</text>
+  <text x="700" y="118" text-anchor="middle" font-size="20" font-weight="bold" fill="#14532d" font-family="Consolas, Menlo, monospace">203.0.113.10</text>
+
+  <text x="430" y="205" text-anchor="middle" font-size="15" fill="#334155">Assim como a agenda do celular: você procura pelo <tspan font-weight="bold">nome</tspan> e ela devolve o <tspan font-weight="bold">número</tspan>.</text>
+</svg>
