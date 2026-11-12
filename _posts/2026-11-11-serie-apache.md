@@ -3,7 +3,7 @@ title: "Série Apache: do zero ao servidor em produção"
 date: 2026-11-11 23:24
 author: vinicius
 tags: [apache, linux, servidor web]
-categories: [tecnologia, servidores web]
+categories: [tecnologia, serie-apache]
 ---
 
 ## Introdução
