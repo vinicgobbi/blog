@@ -1,59 +1,57 @@
-# BlogNovo
+# Blog (front-end)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.3.0.
+Front-end do blog em Angular, com renderização no servidor (SSR). Consome a [blog-api](https://github.com/vinicgobbi/blog-api).
 
-## Development server
+## Tecnologias
 
-To start a local development server, run:
+- **Angular** 22, com SSR via `@angular/ssr` e servidor Express
+- **pnpm** como gerenciador de pacotes
+- **Vitest** para testes unitários
 
-```bash
-ng serve
+## Renderização
+
+| Rotas | Modo | Motivo |
+|---|---|---|
+| Públicas (home, posts, tags…) | `Server`: renderizadas no servidor a cada requisição | SEO e preview de links em redes sociais |
+| `/admin/**` | `Client`: renderizadas só no navegador | Dependem do token salvo no navegador e não precisam de SEO |
+
+A configuração fica em `src/app/app.routes.server.ts`.
+
+## Ambientes
+
+As URLs da API ficam em `src/environments/`:
+
+- `environment.development.ts`: usado no `pnpm start`, aponta para a API local (`http://localhost:8000`);
+- `environment.ts`: usado no build de produção. Ajuste para o domínio real da API.
+
+## Desenvolvimento
+
+```sh
+pnpm install
+pnpm start
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+A aplicação fica disponível em `http://localhost:4200`, já com SSR. Para ver os dados, a API precisa estar rodando (`composer dev` no projeto blog-api).
 
-## Code scaffolding
+## Build e execução em produção
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```sh
+pnpm build
+NG_ALLOWED_HOSTS=seudominio.com.br PORT=4000 pnpm serve:ssr:blog_novo
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+> **`NG_ALLOWED_HOSTS` é obrigatório.** Por segurança (proteção contra SSRF), o servidor SSR recusa com 400 qualquer requisição cujo header `Host` não esteja na lista, inclusive `localhost`. Use vírgulas para informar mais de um host. Para testar o build localmente, use `NG_ALLOWED_HOSTS=localhost`.
 
-```bash
-ng generate --help
+## Testes
+
+```sh
+pnpm test
 ```
 
-## Building
+## Roadmap
 
-To build the project run:
+O desenvolvimento é organizado por [issues e marcos](https://github.com/vinicgobbi/blog-front/milestones):
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **M1 – Fundação:** SSR, ambientes, autenticação e SEO
+- **M2 – Blog público:** home, página do post, comentários, tags, categorias e RSS
+- **M3 – Administração:** editor de Markdown, mídia, CRUDs e moderação
