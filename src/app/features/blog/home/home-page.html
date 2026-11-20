@@ -1,0 +1,30 @@
+<h1 class="visually-hidden">{{ siteName }}: posts recentes</h1>
+
+<div aria-live="polite" [attr.aria-busy]="posts.isLoading()">
+  @if (posts.error()) {
+    <div class="state" role="alert">
+      <p>Não foi possível carregar os posts.</p>
+      <button type="button" (click)="posts.reload()">Tentar novamente</button>
+    </div>
+  } @else if (posts.value(); as response) {
+    @for (post of response.data; track post.id; let first = $first) {
+      <app-post-card [post]="post" [priority]="first" />
+    } @empty {
+      <div class="state">
+        @if (page() > 1) {
+          <p>Esta página não existe.</p>
+          <a href="/">Voltar ao início</a>
+        } @else {
+          <p>Nenhum post publicado ainda.</p>
+        }
+      </div>
+    }
+
+    <app-pagination
+      [currentPage]="response.meta.current_page"
+      [lastPage]="response.meta.last_page"
+    />
+  } @else {
+    <p class="state">Carregando posts…</p>
+  }
+</div>
