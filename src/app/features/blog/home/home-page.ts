@@ -25,7 +25,7 @@ export class HomePage {
   /** Preenchido pelo query param `?page=` (withComponentInputBinding). */
   readonly page = input(1, { transform: toPageNumber });
 
-  protected readonly siteName = environment.siteName;
+  protected readonly siteDescription = environment.siteDescription;
   protected readonly posts = inject(BlogApi).posts(() => ({ page: this.page() }));
 
   constructor() {

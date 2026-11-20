@@ -1,39 +1,47 @@
-<article class="post-card">
-  @if (post().cover_image_url; as cover) {
-    <a class="cover" [routerLink]="['/posts', post().slug]" tabindex="-1" aria-hidden="true">
+<article class="card post">
+  <a class="post__media" [routerLink]="['/posts', post().slug]" tabindex="-1" aria-hidden="true">
+    @if (post().cover_image_url; as cover) {
       <img [ngSrc]="cover" fill [priority]="priority()" alt="" />
-    </a>
-  }
+    } @else {
+      <i class="bi bi-journal-text" aria-hidden="true"></i>
+    }
+  </a>
 
-  <div class="content">
+  <div class="post__body">
     @if (post().category; as category) {
-      <a class="category" [routerLink]="['/categorias', category.slug]">{{ category.name }}</a>
+      <a class="eyebrow category" [routerLink]="['/categorias', category.slug]">{{
+        category.name
+      }}</a>
     }
 
-    <h2>
+    <h2 class="post__title">
       <a [routerLink]="['/posts', post().slug]">{{ post().title }}</a>
     </h2>
-
-    <p class="meta">
-      <time [attr.datetime]="post().published_at">{{
-        post().published_at | date: 'longDate'
-      }}</time>
-      <span aria-hidden="true"> · </span>
-      <span>{{ post().reading_time }} min de leitura</span>
-    </p>
 
     @if (post().excerpt) {
       <p class="excerpt">{{ post().excerpt }}</p>
     }
 
     @if (post().tags.length) {
-      <ul class="tags" aria-label="Tags">
+      <ul class="chips tags" aria-label="Tags">
         @for (tag of post().tags; track tag.id) {
           <li>
-            <a [routerLink]="['/tags', tag.slug]">#{{ tag.name }}</a>
+            <a class="chip" [routerLink]="['/tags', tag.slug]">#{{ tag.name }}</a>
           </li>
         }
       </ul>
     }
+
+    <p class="meta">
+      <span>
+        <i class="bi bi-calendar3" aria-hidden="true"></i>
+        <time [attr.datetime]="post().published_at">{{
+          post().published_at | date: 'longDate'
+        }}</time>
+      </span>
+      <span>
+        <i class="bi bi-clock" aria-hidden="true"></i> {{ post().reading_time }} min de leitura
+      </span>
+    </p>
   </div>
 </article>

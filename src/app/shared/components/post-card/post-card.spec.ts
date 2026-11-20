@@ -61,10 +61,11 @@ describe('PostCard', () => {
     expect(element.querySelector('.tags a')?.getAttribute('href')).toBe('/tags/php');
   });
 
-  it('omits cover, category, excerpt and tags when the post has none', () => {
+  it('shows an icon placeholder and omits category, excerpt and tags when the post has none', () => {
     const element = render({ ...POST, category: null, excerpt: null, tags: [] });
 
     expect(element.querySelector('img')).toBeNull();
+    expect(element.querySelector('.post__media i.bi')).not.toBeNull();
     expect(element.querySelector('a.category')).toBeNull();
     expect(element.querySelector('.excerpt')).toBeNull();
     expect(element.querySelector('.tags')).toBeNull();
@@ -73,7 +74,7 @@ describe('PostCard', () => {
   it('renders the cover as a decorative image linked to the post', () => {
     const element = render({ ...POST, cover_image_url: 'https://cdn.example/capa.jpg' });
 
-    const cover = element.querySelector('a.cover');
+    const cover = element.querySelector('a.post__media');
     expect(cover?.getAttribute('aria-hidden')).toBe('true');
     expect(cover?.querySelector('img')?.getAttribute('alt')).toBe('');
   });

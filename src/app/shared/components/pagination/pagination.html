@@ -8,10 +8,12 @@
             [queryParams]="queryParams(currentPage() - 1)"
             queryParamsHandling="merge"
             rel="prev"
-            >← Anterior</a
+            ><i class="bi bi-chevron-left" aria-hidden="true"></i> Anterior</a
           >
         } @else {
-          <span aria-disabled="true">← Anterior</span>
+          <span aria-disabled="true"
+            ><i class="bi bi-chevron-left" aria-hidden="true"></i> Anterior</span
+          >
         }
       </li>
 
@@ -47,10 +49,12 @@
             [queryParams]="queryParams(currentPage() + 1)"
             queryParamsHandling="merge"
             rel="next"
-            >Próxima →</a
-          >
+            >Próxima <i class="bi bi-chevron-right" aria-hidden="true"></i
+          ></a>
         } @else {
-          <span aria-disabled="true">Próxima →</span>
+          <span aria-disabled="true"
+            >Próxima <i class="bi bi-chevron-right" aria-hidden="true"></i
+          ></span>
         }
       </li>
     </ul>

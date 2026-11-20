@@ -18,6 +18,21 @@ describe('App', () => {
     expect(element.querySelector('main#conteudo')).not.toBeNull();
   });
 
+  it('toggles the theme from the header button with an accessible label', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    document.documentElement.setAttribute('data-theme', 'dark');
+    const button = element.querySelector<HTMLButtonElement>('header button');
+
+    expect(button?.getAttribute('aria-label')).toBe('Ativar tema claro');
+    button?.click();
+    await fixture.whenStable();
+
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
+    expect(button?.getAttribute('aria-label')).toBe('Ativar tema escuro');
+  });
+
   it('renders site name, main navigation and RSS links', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
