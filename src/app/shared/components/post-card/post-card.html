@@ -1,0 +1,47 @@
+<article class="card post">
+  <a class="post__media" [routerLink]="['/posts', post().slug]" tabindex="-1" aria-hidden="true">
+    @if (post().cover_image_url; as cover) {
+      <img [ngSrc]="cover" fill [priority]="priority()" alt="" />
+    } @else {
+      <i class="bi bi-journal-text" aria-hidden="true"></i>
+    }
+  </a>
+
+  <div class="post__body">
+    @if (post().category; as category) {
+      <a class="eyebrow category" [routerLink]="['/categorias', category.slug]">{{
+        category.name
+      }}</a>
+    }
+
+    <h2 class="post__title">
+      <a [routerLink]="['/posts', post().slug]">{{ post().title }}</a>
+    </h2>
+
+    @if (post().excerpt) {
+      <p class="excerpt">{{ post().excerpt }}</p>
+    }
+
+    @if (post().tags.length) {
+      <ul class="chips tags" aria-label="Tags">
+        @for (tag of post().tags; track tag.id) {
+          <li>
+            <a class="chip" [routerLink]="['/tags', tag.slug]">#{{ tag.name }}</a>
+          </li>
+        }
+      </ul>
+    }
+
+    <p class="meta">
+      <span>
+        <i class="bi bi-calendar3" aria-hidden="true"></i>
+        <time [attr.datetime]="post().published_at">{{
+          post().published_at | date: 'longDate'
+        }}</time>
+      </span>
+      <span>
+        <i class="bi bi-clock" aria-hidden="true"></i> {{ post().reading_time }} min de leitura
+      </span>
+    </p>
+  </div>
+</article>

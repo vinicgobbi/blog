@@ -1,0 +1,44 @@
+<div class="container">
+  <header class="section-header">
+    <span class="eyebrow">Blog</span>
+    <h1 class="section-title">Posts recentes</h1>
+    <p class="section-subtitle">{{ siteDescription }}</p>
+  </header>
+
+  <div aria-live="polite" [attr.aria-busy]="posts.isLoading()">
+    @if (posts.error()) {
+      <div class="state" role="alert">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+        <p>Não foi possível carregar os posts.</p>
+        <button type="button" class="btn btn-outline" (click)="posts.reload()">
+          <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Tentar novamente
+        </button>
+      </div>
+    } @else if (posts.value(); as response) {
+      @if (response.data.length) {
+        <ul class="grid">
+          @for (post of response.data; track post.id; let first = $first) {
+            <li><app-post-card [post]="post" [priority]="first" /></li>
+          }
+        </ul>
+      } @else {
+        <div class="state">
+          <i class="bi bi-journal" aria-hidden="true"></i>
+          @if (page() > 1) {
+            <p>Esta página não existe.</p>
+            <a class="btn btn-outline" href="/">Voltar ao início</a>
+          } @else {
+            <p>Nenhum post publicado ainda.</p>
+          }
+        </div>
+      }
+
+      <app-pagination
+        [currentPage]="response.meta.current_page"
+        [lastPage]="response.meta.last_page"
+      />
+    } @else {
+      <p class="state">Carregando posts…</p>
+    }
+  </div>
+</div>

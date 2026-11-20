@@ -1,0 +1,62 @@
+@if (lastPage() > 1) {
+  <nav class="pagination" aria-label="Paginação">
+    <ul>
+      <li>
+        @if (hasPrevious()) {
+          <a
+            routerLink="."
+            [queryParams]="queryParams(currentPage() - 1)"
+            queryParamsHandling="merge"
+            rel="prev"
+            ><i class="bi bi-chevron-left" aria-hidden="true"></i> Anterior</a
+          >
+        } @else {
+          <span aria-disabled="true"
+            ><i class="bi bi-chevron-left" aria-hidden="true"></i> Anterior</span
+          >
+        }
+      </li>
+
+      @for (item of items(); track $index) {
+        <li>
+          @if (item === 'gap') {
+            <span aria-hidden="true">…</span>
+          } @else if (item === currentPage()) {
+            <a
+              routerLink="."
+              [queryParams]="queryParams(item)"
+              queryParamsHandling="merge"
+              aria-current="page"
+              [attr.aria-label]="'Página ' + item + ', atual'"
+              >{{ item }}</a
+            >
+          } @else {
+            <a
+              routerLink="."
+              [queryParams]="queryParams(item)"
+              queryParamsHandling="merge"
+              [attr.aria-label]="'Página ' + item"
+              >{{ item }}</a
+            >
+          }
+        </li>
+      }
+
+      <li>
+        @if (hasNext()) {
+          <a
+            routerLink="."
+            [queryParams]="queryParams(currentPage() + 1)"
+            queryParamsHandling="merge"
+            rel="next"
+            >Próxima <i class="bi bi-chevron-right" aria-hidden="true"></i
+          ></a>
+        } @else {
+          <span aria-disabled="true"
+            >Próxima <i class="bi bi-chevron-right" aria-hidden="true"></i
+          ></span>
+        }
+      </li>
+    </ul>
+  </nav>
+}

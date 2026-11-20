@@ -1,0 +1,41 @@
+<header class="navbar">
+  <nav class="container navbar__inner" aria-label="Principal">
+    <a class="brand" routerLink="/" aria-label="Ir para o início">
+      <span class="brand__mark" aria-hidden="true">VG</span>
+      <span class="brand__name">{{ siteName }}</span>
+    </a>
+
+    <ul class="nav-links">
+      <li>
+        <a
+          class="nav-link"
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          >Início</a
+        >
+      </li>
+      <li>
+        <a class="nav-link" [href]="feedUrl" title="Assinar o feed RSS">
+          <i class="bi bi-rss" aria-hidden="true"></i> RSS
+        </a>
+      </li>
+    </ul>
+
+    <button
+      type="button"
+      class="btn btn-ghost btn-sm btn-icon"
+      (click)="theme.toggle()"
+      [attr.aria-label]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
+      [title]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
+    >
+      <i
+        class="bi"
+        [class.bi-sun]="theme.theme() === 'dark'"
+        [class.bi-moon-stars]="theme.theme() === 'light'"
+        aria-hidden="true"
+      ></i>
+    </button>
+  </nav>
+</header>
