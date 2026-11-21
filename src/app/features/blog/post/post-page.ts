@@ -16,6 +16,7 @@ import { RouterLink } from '@angular/router';
 import { scrollToCurrentFragment } from '../../../core/navigation/in-page-links';
 import { SeoService } from '../../../core/seo/seo.service';
 import { BlogApi } from '../blog-api';
+import { PostComments } from './comments/post-comments';
 import { prepareArticleHtml, restoreHeadingIds } from './article-html';
 
 /**
@@ -23,7 +24,7 @@ import { prepareArticleHtml, restoreHeadingIds } from './article-html';
  */
 @Component({
   selector: 'app-post-page',
-  imports: [DatePipe, NgOptimizedImage, RouterLink],
+  imports: [DatePipe, NgOptimizedImage, RouterLink, PostComments],
   templateUrl: './post-page.html',
   styleUrl: './post-page.scss',
 })

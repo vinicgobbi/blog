@@ -63,6 +63,8 @@
 
       <div #content class="prose" [innerHTML]="bodyHtml()"></div>
     </article>
+
+    <app-post-comments [slug]="post.slug" />
   } @else {
     <p class="state">Carregando post…</p>
   }

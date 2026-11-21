@@ -31,6 +31,26 @@ const POST: PostDetail = {
     '<ul><li><input checked="" disabled="" type="checkbox"> feito</li></ul>',
 };
 
+const EMPTY_COMMENTS = {
+  data: [],
+  links: { first: null, last: null, prev: null, next: null },
+  meta: { current_page: 1, from: null, last_page: 1, per_page: 50, to: null, total: 0 },
+};
+
+/** Responde o post e, em seguida, a lista de comentários que a página passa a buscar. */
+async function flushPost(
+  http: HttpTestingController,
+  fixture: { whenStable(): Promise<unknown>; detectChanges(): void },
+  slug = 'meu-post',
+) {
+  http.expectOne(`${API}/posts/${slug}`).flush({ data: POST });
+  fixture.detectChanges();
+  await vi
+    .waitFor(() => http.expectOne(`${API}/posts/${slug}/comments`))
+    .then((request) => request.flush(EMPTY_COMMENTS));
+  await fixture.whenStable();
+}
+
 async function render(slug = 'meu-post') {
   const response: ResponseInit = {};
   TestBed.configureTestingModule({
@@ -61,8 +81,7 @@ describe('PostPage', () => {
   it('requests the post by slug and renders header, metadata and body', async () => {
     const { fixture, http, element } = await render();
 
-    http.expectOne(`${API}/posts/meu-post`).flush({ data: POST });
-    await fixture.whenStable();
+    await flushPost(http, fixture);
 
     expect(element.querySelector('h1')?.textContent?.trim()).toBe('Meu post');
     expect(element.querySelector('.article__meta')?.textContent).toContain('Autora');
@@ -75,8 +94,7 @@ describe('PostPage', () => {
   it('restores heading anchors and task list symbols removed by the sanitizer', async () => {
     const { fixture, http, element } = await render();
 
-    http.expectOne(`${API}/posts/meu-post`).flush({ data: POST });
-    await fixture.whenStable();
+    await flushPost(http, fixture);
 
     expect(element.querySelector('.prose h2')?.id).toBe('secao-secao');
     expect(element.querySelector('.prose .task-box')?.textContent).toBe('☑');
@@ -85,8 +103,7 @@ describe('PostPage', () => {
   it('sets title, description and Open Graph article tags', async () => {
     const { fixture, http } = await render();
 
-    http.expectOne(`${API}/posts/meu-post`).flush({ data: POST });
-    await fixture.whenStable();
+    await flushPost(http, fixture);
 
     const meta = TestBed.inject(Meta);
     expect(TestBed.inject(Title).getTitle()).toContain('Meu post');
@@ -120,8 +137,7 @@ describe('PostPage', () => {
 
     element.querySelector<HTMLButtonElement>('[role="alert"] button')?.click();
     fixture.detectChanges();
-    http.expectOne(`${API}/posts/meu-post`).flush({ data: POST });
-    await fixture.whenStable();
+    await flushPost(http, fixture);
 
     expect(element.querySelector('h1')?.textContent?.trim()).toBe('Meu post');
   });

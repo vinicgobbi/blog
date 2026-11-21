@@ -1,8 +1,15 @@
-import { httpResource, HttpResourceRef } from '@angular/common/http';
+import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
 import { API_URL } from '../../core/api';
 import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
-import { PostDetail, PostQuery, PostSummary } from '../../shared/models/blog';
+import { Observable } from 'rxjs';
+import {
+  CommentInput,
+  PostComment,
+  PostDetail,
+  PostQuery,
+  PostSummary,
+} from '../../shared/models/blog';
 
 /**
  * Endpoints públicos da blog-api como recursos baseados em signals.
@@ -14,6 +21,7 @@ import { PostDetail, PostQuery, PostSummary } from '../../shared/models/blog';
 @Service()
 export class BlogApi {
   private readonly apiUrl = inject(API_URL);
+  private readonly http = inject(HttpClient);
 
   posts(query: () => PostQuery): HttpResourceRef<PaginatedResponse<PostSummary> | undefined> {
     return httpResource<PaginatedResponse<PostSummary>>(() => ({
@@ -29,6 +37,25 @@ export class BlogApi {
 
       return value ? `${this.apiUrl}/posts/${encodeURIComponent(value)}` : undefined;
     });
+  }
+
+  /** Comentários aprovados do post, em ordem cronológica (até 50). */
+  comments(
+    slug: () => string | undefined,
+  ): HttpResourceRef<PaginatedResponse<PostComment> | undefined> {
+    return httpResource<PaginatedResponse<PostComment>>(() => {
+      const value = slug();
+
+      return value ? `${this.apiUrl}/posts/${encodeURIComponent(value)}/comments` : undefined;
+    });
+  }
+
+  /** Envia um comentário; ele só aparece no blog depois de aprovado na moderação. */
+  sendComment(slug: string, comment: CommentInput): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/posts/${encodeURIComponent(slug)}/comments`,
+      comment,
+    );
   }
 }
 
