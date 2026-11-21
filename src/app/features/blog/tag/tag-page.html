@@ -1,0 +1,24 @@
+@if (notFound()) {
+  <app-not-found title="Tag não encontrada" message="Não existe nenhuma tag com este endereço." />
+} @else {
+  <div class="container">
+    <header class="section-header">
+      <span class="eyebrow">Tag</span>
+      <h1 class="section-title">#{{ data()?.name ?? slug() }}</h1>
+      @if (data(); as tag) {
+        <p class="section-subtitle">
+          {{ tag.posts_count === 1 ? '1 post publicado' : tag.posts_count + ' posts publicados' }}
+        </p>
+      }
+      <a class="btn btn-outline btn-sm feed-link" [href]="feedUrl()">
+        <i class="bi bi-rss" aria-hidden="true"></i> Feed RSS desta tag
+      </a>
+    </header>
+
+    <app-post-list
+      [posts]="posts"
+      [page]="page()"
+      emptyMessage="Nenhum post publicado com esta tag."
+    />
+  </div>
+}

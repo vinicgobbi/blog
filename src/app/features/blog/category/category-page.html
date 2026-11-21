@@ -1,0 +1,25 @@
+@if (notFound()) {
+  <app-not-found
+    title="Categoria não encontrada"
+    message="Não existe nenhuma categoria com este endereço."
+  />
+} @else {
+  <div class="container">
+    <header class="section-header">
+      <span class="eyebrow">Categoria</span>
+      <h1 class="section-title">{{ data()?.name ?? slug() }}</h1>
+      @if (data()?.description; as description) {
+        <p class="section-subtitle">{{ description }}</p>
+      }
+      <a class="btn btn-outline btn-sm feed-link" [href]="feedUrl()">
+        <i class="bi bi-rss" aria-hidden="true"></i> Feed RSS desta categoria
+      </a>
+    </header>
+
+    <app-post-list
+      [posts]="posts"
+      [page]="page()"
+      emptyMessage="Nenhum post publicado nesta categoria."
+    />
+  </div>
+}

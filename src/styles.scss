@@ -12,6 +12,7 @@
 @use '@fontsource/manrope/700.css' as *;
 @use '@fontsource/manrope/800.css' as *;
 @use 'bootstrap-icons/font/bootstrap-icons.css';
+@use './styles/prose';
 
 /* ---------- Tokens ---------- */
 :root {
@@ -212,6 +213,21 @@ a {
   margin-top: 0.75rem;
   color: var(--text-muted);
   font-size: 1.05rem;
+}
+
+/* Página estática: mesma largura de leitura dos posts. */
+.static-page {
+  max-width: var(--reading);
+  margin-inline: auto;
+
+  .section-title {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Botão de feed RSS no cabeçalho das listagens (tag, categoria). */
+.section-header .feed-link {
+  margin-top: 1.25rem;
 }
 
 /* ---------- Componentes reutilizáveis ---------- */

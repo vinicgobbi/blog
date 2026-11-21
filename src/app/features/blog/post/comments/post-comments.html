@@ -1,0 +1,139 @@
+<section class="comments" aria-labelledby="comentarios-titulo">
+  <h2 id="comentarios-titulo" class="comments__title">
+    Comentários
+    @if (total()) {
+      <span class="comments__count">{{ total() }}</span>
+    }
+  </h2>
+
+  @if (comments.error()) {
+    <div class="notice" role="alert">
+      <p>Não foi possível carregar os comentários.</p>
+      <button type="button" class="btn btn-sm btn-outline" (click)="comments.reload()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (comments.hasValue()) {
+    @if (list().length) {
+      <ol class="comment-list">
+        @for (comment of list(); track comment.id) {
+          <li class="comment">
+            <span class="comment__avatar" aria-hidden="true">{{
+              initial(comment.author_name)
+            }}</span>
+            <div class="comment__content">
+              <p class="comment__header">
+                <strong>{{ comment.author_name }}</strong>
+                <time [attr.datetime]="comment.created_at">{{
+                  comment.created_at | date: 'longDate'
+                }}</time>
+              </p>
+              <p class="comment__body">{{ comment.body }}</p>
+            </div>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p class="comments__empty">Ainda não há comentários. Seja o primeiro!</p>
+    }
+  }
+
+  <form class="card comment-form" novalidate (submit)="send($event)">
+    <h3>Deixe um comentário</h3>
+    <p class="comment-form__hint">
+      Seu e-mail não será publicado. Os comentários aparecem depois de aprovados.
+    </p>
+
+    @if (status() === 'sent') {
+      <p class="notice notice--success" role="status">
+        <i class="bi bi-check-circle" aria-hidden="true"></i>
+        Comentário enviado! Ele será publicado após a moderação.
+      </p>
+    } @else if (status() === 'rate-limited') {
+      <p class="notice" role="alert">
+        Você enviou muitos comentários seguidos. Aguarde um minuto e tente novamente.
+      </p>
+    } @else if (status() === 'failed') {
+      <p class="notice" role="alert">Não foi possível enviar o comentário. Tente novamente.</p>
+    }
+
+    <div class="comment-form__row">
+      <div class="field">
+        <label for="comentario-nome">Nome</label>
+        <input
+          id="comentario-nome"
+          type="text"
+          autocomplete="name"
+          [formField]="commentForm.author_name"
+          [attr.aria-invalid]="
+            commentForm.author_name().touched() && commentForm.author_name().invalid()
+          "
+          aria-describedby="comentario-nome-erro"
+        />
+        <div id="comentario-nome-erro" class="field__errors">
+          @if (commentForm.author_name().touched()) {
+            @for (error of commentForm.author_name().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="comentario-email">E-mail</label>
+        <input
+          id="comentario-email"
+          type="email"
+          autocomplete="email"
+          [formField]="commentForm.author_email"
+          [attr.aria-invalid]="
+            commentForm.author_email().touched() && commentForm.author_email().invalid()
+          "
+          aria-describedby="comentario-email-erro"
+        />
+        <div id="comentario-email-erro" class="field__errors">
+          @if (commentForm.author_email().touched()) {
+            @for (error of commentForm.author_email().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="comentario-texto">Comentário</label>
+      <textarea
+        id="comentario-texto"
+        rows="5"
+        [formField]="commentForm.body"
+        [attr.aria-invalid]="commentForm.body().touched() && commentForm.body().invalid()"
+        aria-describedby="comentario-texto-erro"
+      ></textarea>
+      <div id="comentario-texto-erro" class="field__errors">
+        @if (commentForm.body().touched()) {
+          @for (error of commentForm.body().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Honeypot: escondido de pessoas e leitores de tela; só bots preenchem. -->
+    <div class="honeypot" aria-hidden="true">
+      <label for="comentario-site">Não preencha este campo</label>
+      <input
+        id="comentario-site"
+        type="text"
+        tabindex="-1"
+        autocomplete="off"
+        [formField]="commentForm.website"
+      />
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="commentForm().submitting()">
+      <i class="bi bi-send" aria-hidden="true"></i>
+      {{ commentForm().submitting() ? 'Enviando…' : 'Enviar comentário' }}
+    </button>
+  </form>
+</section>

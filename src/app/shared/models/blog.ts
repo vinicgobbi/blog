@@ -47,3 +47,31 @@ export interface PostQuery {
   category?: string;
   q?: string;
 }
+
+/** Comentário aprovado (CommentResource da API). */
+export interface PostComment {
+  id: number;
+  author_name: string;
+  /** Texto puro: deve ser exibido escapado, nunca como HTML. */
+  body: string;
+  created_at: string;
+}
+
+/** Dados enviados em `POST /posts/{slug}/comments`. */
+export interface CommentInput {
+  author_name: string;
+  author_email: string;
+  body: string;
+  /** Honeypot: deve ser enviado vazio (só bots preenchem). */
+  website: string;
+}
+
+/** Página estática publicada (PageResource da API). */
+export interface StaticPage {
+  id: number;
+  title: string;
+  slug: string;
+  /** HTML já renderizado e sanitizado pela API. */
+  body_html: string;
+  updated_at: string;
+}

@@ -66,4 +66,28 @@ describe('SeoService', () => {
     expect(links).toHaveLength(1);
     expect(links[0].getAttribute('href')).toBe(`${environment.siteUrl}/b`);
   });
+
+  it('announces the site RSS feed by default and a specific feed when given', () => {
+    const alternate = () =>
+      TestBed.inject(DOCUMENT).querySelectorAll(
+        'link[rel="alternate"][type="application/rss+xml"]',
+      );
+
+    seo.update({});
+    expect(alternate()).toHaveLength(1);
+    expect(alternate()[0].getAttribute('href')).toBe(environment.feedUrl);
+
+    seo.update({ feed: { url: 'http://api.test/feed/tags/php', title: 'Blog — #php' } });
+    expect(alternate()).toHaveLength(1);
+    expect(alternate()[0].getAttribute('href')).toBe('http://api.test/feed/tags/php');
+    expect(alternate()[0].getAttribute('title')).toBe('Blog — #php');
+  });
+
+  it('marks pages as noindex only when requested', () => {
+    seo.update({ noindex: true });
+    expect(meta.getTag('name="robots"')?.content).toBe('noindex, follow');
+
+    seo.update({});
+    expect(meta.getTag('name="robots"')).toBeNull();
+  });
 });

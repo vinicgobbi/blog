@@ -1,0 +1,69 @@
+@if (notFound()) {
+  <app-not-found
+    title="Post não encontrado"
+    message="O post que você procura não existe ou ainda não foi publicado."
+  />
+} @else {
+  <div class="container">
+    @if (post.error()) {
+      <div class="state" role="alert">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+        <p>Não foi possível carregar o post.</p>
+        <button type="button" class="btn btn-outline" (click)="post.reload()">
+          <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Tentar novamente
+        </button>
+      </div>
+    } @else if (data(); as post) {
+      <article class="article">
+        <a class="back" routerLink="/">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i> Todos os posts
+        </a>
+
+        <header class="article__header">
+          @if (post.category; as category) {
+            <a class="eyebrow" [routerLink]="['/categorias', category.slug]">{{ category.name }}</a>
+          }
+          <h1 class="article__title">{{ post.title }}</h1>
+          @if (post.excerpt) {
+            <p class="article__lead">{{ post.excerpt }}</p>
+          }
+
+          <p class="article__meta">
+            <span><i class="bi bi-person" aria-hidden="true"></i> {{ post.author.name }}</span>
+            <span>
+              <i class="bi bi-calendar3" aria-hidden="true"></i>
+              <time [attr.datetime]="post.published_at">{{
+                post.published_at | date: 'longDate'
+              }}</time>
+            </span>
+            <span>
+              <i class="bi bi-clock" aria-hidden="true"></i> {{ post.reading_time }} min de leitura
+            </span>
+          </p>
+
+          @if (post.tags.length) {
+            <ul class="chips" aria-label="Tags">
+              @for (tag of post.tags; track tag.id) {
+                <li>
+                  <a class="chip" [routerLink]="['/tags', tag.slug]">#{{ tag.name }}</a>
+                </li>
+              }
+            </ul>
+          }
+        </header>
+
+        @if (post.cover_image_url; as cover) {
+          <div class="article__cover">
+            <img [ngSrc]="cover" fill priority alt="" />
+          </div>
+        }
+
+        <div #content class="prose" [innerHTML]="bodyHtml()"></div>
+      </article>
+
+      <app-post-comments [slug]="post.slug" />
+    } @else {
+      <p class="state">Carregando post…</p>
+    }
+  </div>
+}

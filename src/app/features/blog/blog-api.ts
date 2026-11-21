@@ -1,8 +1,18 @@
-import { httpResource, HttpResourceRef } from '@angular/common/http';
+import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
 import { API_URL } from '../../core/api';
-import { PaginatedResponse } from '../../shared/models/api';
-import { PostQuery, PostSummary } from '../../shared/models/blog';
+import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
+import { Observable } from 'rxjs';
+import {
+  Category,
+  CommentInput,
+  PostComment,
+  PostDetail,
+  PostQuery,
+  PostSummary,
+  StaticPage,
+  Tag,
+} from '../../shared/models/blog';
 
 /**
  * Endpoints públicos da blog-api como recursos baseados em signals.
@@ -14,12 +24,71 @@ import { PostQuery, PostSummary } from '../../shared/models/blog';
 @Service()
 export class BlogApi {
   private readonly apiUrl = inject(API_URL);
+  private readonly http = inject(HttpClient);
 
-  posts(query: () => PostQuery): HttpResourceRef<PaginatedResponse<PostSummary> | undefined> {
-    return httpResource<PaginatedResponse<PostSummary>>(() => ({
-      url: `${this.apiUrl}/posts`,
-      params: toPostParams(query()),
-    }));
+  /** Posts publicados; quando `query` retorna undefined, nenhuma requisição é feita. */
+  posts(
+    query: () => PostQuery | undefined,
+  ): HttpResourceRef<PaginatedResponse<PostSummary> | undefined> {
+    return httpResource<PaginatedResponse<PostSummary>>(() => {
+      const value = query();
+
+      return value ? { url: `${this.apiUrl}/posts`, params: toPostParams(value) } : undefined;
+    });
+  }
+
+  tag(slug: () => string | undefined): HttpResourceRef<ResourceResponse<Tag> | undefined> {
+    return this.bySlug<Tag>('tags', slug);
+  }
+
+  category(
+    slug: () => string | undefined,
+  ): HttpResourceRef<ResourceResponse<Category> | undefined> {
+    return this.bySlug<Category>('categories', slug);
+  }
+
+  /** Página estática publicada (ex.: "sobre"). */
+  page(slug: () => string | undefined): HttpResourceRef<ResourceResponse<StaticPage> | undefined> {
+    return this.bySlug<StaticPage>('pages', slug);
+  }
+
+  /** Post publicado pelo slug; responde 404 para rascunhos, agendados e inexistentes. */
+  post(slug: () => string | undefined): HttpResourceRef<ResourceResponse<PostDetail> | undefined> {
+    return httpResource<ResourceResponse<PostDetail>>(() => {
+      const value = slug();
+
+      return value ? `${this.apiUrl}/posts/${encodeURIComponent(value)}` : undefined;
+    });
+  }
+
+  /** Comentários aprovados do post, em ordem cronológica (até 50). */
+  comments(
+    slug: () => string | undefined,
+  ): HttpResourceRef<PaginatedResponse<PostComment> | undefined> {
+    return httpResource<PaginatedResponse<PostComment>>(() => {
+      const value = slug();
+
+      return value ? `${this.apiUrl}/posts/${encodeURIComponent(value)}/comments` : undefined;
+    });
+  }
+
+  /** Envia um comentário; ele só aparece no blog depois de aprovado na moderação. */
+  sendComment(slug: string, comment: CommentInput): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.apiUrl}/posts/${encodeURIComponent(slug)}/comments`,
+      comment,
+    );
+  }
+
+  private bySlug<T>(
+    resource: string,
+    slug: () => string | undefined,
+  ): HttpResourceRef<ResourceResponse<T> | undefined> {
+    return httpResource<ResourceResponse<T>>(() => {
+      const value = slug();
+
+      return value ? `${this.apiUrl}/${resource}/${encodeURIComponent(value)}` : undefined;
+    });
   }
 }
 
