@@ -1,3 +1,11 @@
+## v0.1.3 (2026-11-21)
+
+### Fix
+
+- **blog**: alinha ícones da navegação, meta dos posts e listas de tarefas
+- **admin**: mantém a barra em uma linha e solta no celular
+- **ui**: padroniza avisos, filtros, badges e cabeçalhos entre as telas
+
 ## v0.1.2 (2026-11-21)
 
 ### Fix
