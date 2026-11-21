@@ -95,7 +95,8 @@ body {
     color 0.2s ease;
 }
 
-app-root {
+app-root,
+.layout {
   display: flex;
   flex: 1;
   flex-direction: column;
