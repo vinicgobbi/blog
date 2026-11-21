@@ -71,7 +71,12 @@ export interface StaticPage {
   id: number;
   title: string;
   slug: string;
+  /** Nome do ícone do Bootstrap Icons, sem o prefixo "bi-" (ex.: "person"). */
+  icon: string;
   /** HTML já renderizado e sanitizado pela API. */
   body_html: string;
   updated_at: string;
 }
+
+/** Página publicada no menu do blog (`GET /pages`, sem o corpo). */
+export type PageLink = Pick<StaticPage, 'id' | 'title' | 'slug' | 'icon'>;

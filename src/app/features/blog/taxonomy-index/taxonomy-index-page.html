@@ -1,0 +1,61 @@
+<div class="container">
+  <header class="section-header">
+    <span class="eyebrow">Explorar</span>
+    <h1 class="section-title">{{ config().title }}</h1>
+    <p class="section-subtitle">{{ config().description }}</p>
+  </header>
+
+  <div aria-live="polite" [attr.aria-busy]="items.isLoading()">
+    @if (items.error()) {
+      <div class="state" role="alert">
+        <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
+        <p>Não foi possível carregar {{ config().title.toLowerCase() }}.</p>
+        <button type="button" class="btn btn-outline" (click)="items.reload()">
+          <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Tentar novamente
+        </button>
+      </div>
+    } @else if (categories(); as categories) {
+      @if (categories.length) {
+        <ul class="category-grid">
+          @for (category of categories; track category.id) {
+            <li>
+              <a class="card category-card" [routerLink]="['/categorias', category.slug]">
+                <h2 class="category-card__name">{{ category.name }}</h2>
+                @if (category.description; as description) {
+                  <p class="category-card__description">{{ description }}</p>
+                }
+                <span class="category-card__count">
+                  <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
+                  {{ postsCountLabel(category.posts_count) }}
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="state">{{ config().empty }}</p>
+      }
+    } @else if (tags(); as tags) {
+      @if (tags.length) {
+        <ul class="chips tag-cloud">
+          @for (tag of tags; track tag.id) {
+            <li>
+              <a
+                class="chip"
+                [routerLink]="['/tags', tag.slug]"
+                [attr.aria-label]="'#' + tag.name + ', ' + postsCountLabel(tag.posts_count)"
+              >
+                #{{ tag.name }}
+                <span class="tag-cloud__count" aria-hidden="true">{{ tag.posts_count ?? 0 }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="state">{{ config().empty }}</p>
+      }
+    } @else {
+      <p class="state">Carregando…</p>
+    }
+  </div>
+</div>
