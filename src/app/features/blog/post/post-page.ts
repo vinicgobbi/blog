@@ -4,7 +4,6 @@ import {
   Component,
   DOCUMENT,
   ElementRef,
-  RESPONSE_INIT,
   afterRenderEffect,
   computed,
   effect,
@@ -15,6 +14,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { scrollToCurrentFragment } from '../../../core/navigation/in-page-links';
 import { SeoService } from '../../../core/seo/seo.service';
+import { NotFound } from '../../../shared/components/not-found/not-found';
 import { BlogApi } from '../blog-api';
 import { PostComments } from './comments/post-comments';
 import { prepareArticleHtml, restoreHeadingIds } from './article-html';
@@ -24,7 +24,7 @@ import { prepareArticleHtml, restoreHeadingIds } from './article-html';
  */
 @Component({
   selector: 'app-post-page',
-  imports: [DatePipe, NgOptimizedImage, RouterLink, PostComments],
+  imports: [DatePipe, NgOptimizedImage, RouterLink, PostComments, NotFound],
   templateUrl: './post-page.html',
   styleUrl: './post-page.scss',
 })
@@ -48,7 +48,6 @@ export class PostPage {
 
   constructor() {
     const seo = inject(SeoService);
-    const response = inject(RESPONSE_INIT, { optional: true });
     const document = inject(DOCUMENT);
 
     effect(() => {
@@ -62,12 +61,6 @@ export class PostPage {
           path: `/posts/${post.slug}`,
           type: 'article',
         });
-      } else if (this.notFound()) {
-        seo.update({ title: 'Post não encontrado' });
-
-        if (response) {
-          response.status = 404;
-        }
       }
     });
 
