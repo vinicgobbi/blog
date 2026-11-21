@@ -14,7 +14,7 @@
           <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Tentar novamente
         </button>
       </div>
-    } @else if (posts.value(); as response) {
+    } @else if (posts.hasValue() ? posts.value() : undefined; as response) {
       @if (response.data.length) {
         <ul class="grid">
           @for (post of response.data; track post.id; let first = $first) {
