@@ -1,8 +1,8 @@
 import { httpResource, HttpResourceRef } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
 import { API_URL } from '../../core/api';
-import { PaginatedResponse } from '../../shared/models/api';
-import { PostQuery, PostSummary } from '../../shared/models/blog';
+import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
+import { PostDetail, PostQuery, PostSummary } from '../../shared/models/blog';
 
 /**
  * Endpoints públicos da blog-api como recursos baseados em signals.
@@ -20,6 +20,15 @@ export class BlogApi {
       url: `${this.apiUrl}/posts`,
       params: toPostParams(query()),
     }));
+  }
+
+  /** Post publicado pelo slug; responde 404 para rascunhos, agendados e inexistentes. */
+  post(slug: () => string | undefined): HttpResourceRef<ResourceResponse<PostDetail> | undefined> {
+    return httpResource<ResourceResponse<PostDetail>>(() => {
+      const value = slug();
+
+      return value ? `${this.apiUrl}/posts/${encodeURIComponent(value)}` : undefined;
+    });
   }
 }
 

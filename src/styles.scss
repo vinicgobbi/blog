@@ -12,6 +12,7 @@
 @use '@fontsource/manrope/700.css' as *;
 @use '@fontsource/manrope/800.css' as *;
 @use 'bootstrap-icons/font/bootstrap-icons.css';
+@use './styles/prose';
 
 /* ---------- Tokens ---------- */
 :root {
