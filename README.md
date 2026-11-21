@@ -48,6 +48,18 @@ NG_ALLOWED_HOSTS=seudominio.com.br PORT=4000 pnpm serve:ssr:blog_novo
 pnpm test
 ```
 
+## Commits e versionamento
+
+Os commits seguem o [Conventional Commits](https://www.conventionalcommits.org/pt-br/v1.0.0/). A configuração do [Commitizen](https://commitizen-tools.github.io/commitizen/) fica no `.cz.toml`:
+
+```sh
+pipx install commitizen   # uma vez
+cz commit                 # monta a mensagem do commit
+cz bump                   # nova versão: atualiza o package.json e src/app/core/version.ts, gera o CHANGELOG.md e cria a tag vX.Y.Z
+```
+
+O rodapé do blog mostra a versão do front e a da API (lida de `GET /api`).
+
 ## Roadmap
 
 O desenvolvimento é organizado por [issues e marcos](https://github.com/vinicgobbi/blog-front/milestones):
