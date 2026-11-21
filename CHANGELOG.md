@@ -1,3 +1,10 @@
+## v0.2.0 (2026-11-21)
+
+### Feat
+
+- **blog**: adiciona índices de categorias e tags e menu com as páginas
+- **admin**: adiciona seletor de ícone obrigatório nas páginas
+
 ## v0.1.3 (2026-11-21)
 
 ### Fix
