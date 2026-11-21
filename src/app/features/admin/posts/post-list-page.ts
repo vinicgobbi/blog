@@ -23,7 +23,7 @@ const STATES = Object.keys(STATE_LABELS) as PostState[];
   selector: 'app-post-list-page',
   imports: [DatePipe, RouterLink, Pagination],
   templateUrl: './post-list-page.html',
-  styleUrl: './post-list-page.scss',
+  styleUrls: ['../admin-list.scss', './post-list-page.scss'],
 })
 export class PostListPage {
   /** Query params `?state=`, `?q=` e `?page=`. */

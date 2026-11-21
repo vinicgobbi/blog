@@ -10,7 +10,7 @@ import { AdminLayout } from './admin-layout';
 
 const API = 'http://api.test/api';
 
-async function render() {
+async function render(pending = 0) {
   localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, 'token-1');
   TestBed.configureTestingModule({
     providers: [
@@ -33,6 +33,10 @@ async function render() {
   vi.spyOn(router, 'navigate').mockResolvedValue(true);
   const fixture = TestBed.createComponent(AdminLayout);
   fixture.detectChanges();
+  http
+    .expectOne(`${API}/admin/comments/counts`)
+    .flush({ data: { pending, approved: 4, rejected: 0, spam: 1 } });
+  await fixture.whenStable();
 
   return { fixture, http, auth, router, element: fixture.nativeElement as HTMLElement };
 }
@@ -50,6 +54,24 @@ describe('AdminLayout', () => {
     expect(element.querySelector('nav[aria-label="Administração"] a')?.textContent).toContain(
       'Dashboard',
     );
+  });
+
+  it('shows the number of pending comments next to the menu item', async () => {
+    const { element } = await render(3);
+
+    const link = [...element.querySelectorAll('.admin-nav__link')].find((a) =>
+      a.textContent?.includes('Comentários'),
+    )!;
+    expect(link.getAttribute('href')).toBe('/admin/comentarios');
+    expect(link.querySelector('.admin-nav__badge')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
+      '3 pendentes',
+    );
+  });
+
+  it('hides the badge when there are no pending comments', async () => {
+    const { element } = await render(0);
+
+    expect(element.querySelector('.admin-nav__badge')).toBeNull();
   });
 
   it('logs out, ending the session, and returns to the login page', async () => {

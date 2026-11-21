@@ -36,6 +36,40 @@ export const routes: Routes = [
           import('./features/admin/posts/post-editor-page').then((m) => m.PostEditorPage),
       },
       {
+        path: 'categorias',
+        data: { kind: 'categories' },
+        loadComponent: () =>
+          import('./features/admin/taxonomies/taxonomy-page').then((m) => m.TaxonomyPage),
+      },
+      {
+        path: 'tags',
+        data: { kind: 'tags' },
+        loadComponent: () =>
+          import('./features/admin/taxonomies/taxonomy-page').then((m) => m.TaxonomyPage),
+      },
+      {
+        path: 'paginas',
+        loadComponent: () =>
+          import('./features/admin/pages/page-list-page').then((m) => m.PageListPage),
+      },
+      {
+        path: 'paginas/nova',
+        canDeactivate: [unsavedChangesGuard],
+        loadComponent: () =>
+          import('./features/admin/pages/page-editor-page').then((m) => m.PageEditorPage),
+      },
+      {
+        path: 'paginas/:id',
+        canDeactivate: [unsavedChangesGuard],
+        loadComponent: () =>
+          import('./features/admin/pages/page-editor-page').then((m) => m.PageEditorPage),
+      },
+      {
+        path: 'comentarios',
+        loadComponent: () =>
+          import('./features/admin/comments/comment-list-page').then((m) => m.CommentListPage),
+      },
+      {
         path: 'midia',
         loadComponent: () => import('./features/admin/media/media-page').then((m) => m.MediaPage),
       },

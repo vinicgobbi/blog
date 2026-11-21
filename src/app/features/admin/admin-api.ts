@@ -3,20 +3,29 @@ import { Service, inject } from '@angular/core';
 import { API_URL } from '../../core/api';
 import { Observable } from 'rxjs';
 import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
-import { AdminPost, AdminPostInput, AdminPostQuery, Media } from '../../shared/models/admin';
+import {
+  AdminComment,
+  AdminCommentQuery,
+  AdminPage,
+  AdminPageInput,
+  AdminPost,
+  AdminPostInput,
+  AdminPostQuery,
+  CommentStatus,
+  Media,
+  TaxonomyInput,
+} from '../../shared/models/admin';
 import { UploadEvent, toUploadEvents } from './media/image-upload';
-import { Category } from '../../shared/models/blog';
+import { Category, Tag } from '../../shared/models/blog';
 
 import { PostState } from '../../shared/models/admin';
 
 export type { PostState };
 
-export interface CommentCounts {
-  pending: number;
-  approved: number;
-  rejected: number;
-  spam: number;
-}
+/** Recursos de taxonomia, pelo segmento da URL na API. */
+export type TaxonomyKind = 'categories' | 'tags';
+
+export type CommentCounts = Record<CommentStatus, number>;
 
 /**
  * Endpoints da área administrativa (`/admin/*`). O token é anexado pelo
@@ -39,6 +48,40 @@ export class AdminApi {
     return httpResource<CommentCounts>(() => `${this.apiUrl}/admin/comments/counts`, {
       parse: (response) => (response as { data: CommentCounts }).data,
     });
+  }
+
+  /** Comentários do mais recente ao mais antigo (30 por página), filtrados por status. */
+  comments(
+    query: () => AdminCommentQuery,
+  ): HttpResourceRef<PaginatedResponse<AdminComment> | undefined> {
+    return httpResource<PaginatedResponse<AdminComment>>(() => {
+      const { status, page } = query();
+      const params: Record<string, string | number> = {};
+
+      if (status) {
+        params['status'] = status;
+      }
+      if (page && page > 1) {
+        params['page'] = page;
+      }
+
+      return { url: `${this.apiUrl}/admin/comments`, params };
+    });
+  }
+
+  /** Aprova, rejeita, marca como spam ou devolve o comentário para pendente. */
+  updateCommentStatus(
+    id: number,
+    status: CommentStatus,
+  ): Observable<ResourceResponse<AdminComment>> {
+    return this.http.put<ResourceResponse<AdminComment>>(`${this.apiUrl}/admin/comments/${id}`, {
+      status,
+    });
+  }
+
+  /** Exclusão definitiva. */
+  deleteComment(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/admin/comments/${id}`);
   }
 
   /** Todos os posts (rascunhos, agendados e publicados), com filtros. */
@@ -77,6 +120,61 @@ export class AdminApi {
     return httpResource<Category[]>(() => `${this.apiUrl}/admin/categories`, {
       parse: (response) => (response as ResourceResponse<Category[]>).data,
     });
+  }
+
+  /** Categorias ou tags em ordem alfabética, com a contagem de posts (sem paginação). */
+  taxonomies(kind: () => TaxonomyKind): HttpResourceRef<(Category | Tag)[] | undefined> {
+    return httpResource<(Category | Tag)[]>(() => `${this.apiUrl}/admin/${kind()}`, {
+      parse: (response) => (response as ResourceResponse<(Category | Tag)[]>).data,
+    });
+  }
+
+  /** Cria (id nulo) ou atualiza uma categoria ou tag. */
+  saveTaxonomy(
+    kind: TaxonomyKind,
+    id: number | null,
+    input: TaxonomyInput,
+  ): Observable<ResourceResponse<Category | Tag>> {
+    const url = `${this.apiUrl}/admin/${kind}`;
+
+    return id
+      ? this.http.put<ResourceResponse<Category | Tag>>(`${url}/${id}`, input)
+      : this.http.post<ResourceResponse<Category | Tag>>(url, input);
+  }
+
+  /** Excluir uma categoria deixa os posts sem categoria; excluir uma tag a remove dos posts. */
+  deleteTaxonomy(kind: TaxonomyKind, id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/admin/${kind}/${id}`);
+  }
+
+  /** Páginas estáticas (publicadas ou não), em ordem alfabética, sem o conteúdo. */
+  pages(): HttpResourceRef<AdminPage[] | undefined> {
+    return httpResource<AdminPage[]>(() => `${this.apiUrl}/admin/pages`, {
+      parse: (response) => (response as ResourceResponse<AdminPage[]>).data,
+    });
+  }
+
+  /** Página completa, com o Markdown original; undefined não faz requisição (página nova). */
+  page(id: () => number | undefined): HttpResourceRef<AdminPage | undefined> {
+    return httpResource<AdminPage>(
+      () => {
+        const value = id();
+
+        return value ? `${this.apiUrl}/admin/pages/${value}` : undefined;
+      },
+      { parse: (response) => (response as ResourceResponse<AdminPage>).data },
+    );
+  }
+
+  /** Cria (id nulo) ou atualiza uma página. */
+  savePage(id: number | null, page: AdminPageInput): Observable<ResourceResponse<AdminPage>> {
+    return id
+      ? this.http.put<ResourceResponse<AdminPage>>(`${this.apiUrl}/admin/pages/${id}`, page)
+      : this.http.post<ResourceResponse<AdminPage>>(`${this.apiUrl}/admin/pages`, page);
+  }
+
+  deletePage(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/admin/pages/${id}`);
   }
 
   /** Cria (id nulo) ou atualiza um post. */

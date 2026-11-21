@@ -1,0 +1,113 @@
+<header class="page-header">
+  <div>
+    <a class="back" routerLink="/admin/paginas"
+      ><i class="bi bi-arrow-left" aria-hidden="true"></i> Páginas</a
+    >
+    <h1 class="section-title">{{ id() ? 'Editar página' : 'Nova página' }}</h1>
+    @if (saved(); as page) {
+      <p class="page-header__meta">
+        @if (page.is_published) {
+          <span class="badge badge--published">Publicada</span>
+          <a [href]="'/' + page.slug" target="_blank" rel="noopener">
+            Ver no blog <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+          </a>
+        } @else {
+          <span class="badge badge--draft">Rascunho</span>
+        }
+      </p>
+    }
+  </div>
+</header>
+
+@if (id() && page.error()) {
+  <div class="state" role="alert">
+    <p>Não foi possível carregar a página.</p>
+    <a class="btn btn-outline" routerLink="/admin/paginas">Voltar para a lista</a>
+  </div>
+} @else if (id() && !saved()) {
+  <p class="state">Carregando página…</p>
+} @else {
+  <form class="post-form" novalidate (submit)="save($event)">
+    @if (feedback(); as feedback) {
+      <p
+        class="feedback feedback--{{ feedback.kind }}"
+        [attr.role]="feedback.kind === 'error' ? 'alert' : 'status'"
+      >
+        {{ feedback.message }}
+      </p>
+    }
+
+    <div class="post-form__main">
+      <div class="field">
+        <label for="pagina-titulo">Título</label>
+        <input
+          id="pagina-titulo"
+          type="text"
+          [formField]="pageForm.title"
+          [attr.aria-invalid]="pageForm.title().touched() && pageForm.title().invalid()"
+          aria-describedby="pagina-titulo-erro"
+        />
+        <div id="pagina-titulo-erro" class="field__errors">
+          @if (pageForm.title().touched()) {
+            @for (error of pageForm.title().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pagina-conteudo">Conteúdo</label>
+        <app-markdown-editor
+          inputId="pagina-conteudo"
+          describedBy="pagina-conteudo-erro"
+          [formField]="pageForm.body_markdown"
+        />
+        <div id="pagina-conteudo-erro" class="field__errors">
+          @if (pageForm.body_markdown().touched()) {
+            @for (error of pageForm.body_markdown().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <aside class="card post-form__side" aria-label="Publicação">
+      <div class="field">
+        <label class="checkbox" for="pagina-publicada">
+          <input id="pagina-publicada" type="checkbox" [formField]="pageForm.is_published" />
+          Publicada
+        </label>
+        <p class="field__help">Páginas não publicadas não aparecem no blog.</p>
+      </div>
+
+      <div class="post-form__actions">
+        <button type="submit" class="btn btn-primary" [disabled]="pageForm().submitting()">
+          <i class="bi bi-floppy" aria-hidden="true"></i> Salvar
+        </button>
+      </div>
+
+      <hr />
+
+      <div class="field">
+        <label for="pagina-slug">Slug <span class="field__optional">(opcional)</span></label>
+        <input
+          id="pagina-slug"
+          type="text"
+          placeholder="gerado a partir do título"
+          [formField]="pageForm.slug"
+          aria-describedby="pagina-slug-ajuda pagina-slug-erro"
+        />
+        <p id="pagina-slug-ajuda" class="field__help">
+          A página fica em /{{ pageForm.slug().value() || 'slug' }}.
+        </p>
+        <div id="pagina-slug-erro" class="field__errors">
+          @for (error of pageForm.slug().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        </div>
+      </div>
+    </aside>
+  </form>
+}

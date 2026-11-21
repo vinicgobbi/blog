@@ -1,0 +1,130 @@
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Admin</span>
+    <h1 class="section-title">Comentários</h1>
+  </div>
+</header>
+
+<div class="filters" role="group" aria-label="Filtrar por status">
+  @for (option of filters; track option.value) {
+    <button
+      type="button"
+      [attr.aria-pressed]="status() === option.value"
+      (click)="filter(option.value)"
+    >
+      {{ option.label }}
+      @if (countFor(option.value); as count) {
+        <span class="filters__count">{{ count }}</span>
+      }
+    </button>
+  }
+</div>
+
+<p class="visually-hidden" aria-live="polite">
+  @if (message()?.kind === 'success') {
+    {{ message()!.text }}
+  }
+</p>
+@if (message(); as message) {
+  @if (message.kind === 'error') {
+    <p class="notice" role="alert">{{ message.text }}</p>
+  }
+}
+
+<div aria-live="polite" [attr.aria-busy]="comments.isLoading()">
+  @if (comments.error()) {
+    <div class="state" role="alert">
+      <p>Não foi possível carregar os comentários.</p>
+      <button type="button" class="btn btn-outline" (click)="comments.reload()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (response(); as response) {
+    @if (response.data.length) {
+      <ul class="comments">
+        @for (comment of response.data; track comment.id) {
+          <li class="card comment" [attr.aria-labelledby]="'comentario-' + comment.id">
+            <div class="comment__header">
+              <div>
+                <p class="comment__author" [id]="'comentario-' + comment.id">
+                  {{ comment.author_name }}
+                </p>
+                <p class="comment__meta">
+                  {{ comment.author_email }}
+                  @if (comment.ip_address) {
+                    · IP {{ comment.ip_address }}
+                  }
+                  ·
+                  <time [attr.datetime]="comment.created_at">{{
+                    comment.created_at | date: 'short'
+                  }}</time>
+                </p>
+              </div>
+              <span class="badge badge--{{ comment.status }}">{{
+                statusLabels[comment.status]
+              }}</span>
+            </div>
+
+            @if (comment.post; as post) {
+              <p class="comment__post">
+                Em
+                <a [routerLink]="['/admin/posts', post.id]">{{ post.title }}</a>
+                <a
+                  class="comment__post-link"
+                  [href]="'/posts/' + post.slug + '#comentarios-titulo'"
+                  target="_blank"
+                  rel="noopener"
+                  [attr.aria-label]="'Ver ' + post.title + ' no blog'"
+                  title="Ver no blog"
+                  ><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i
+                ></a>
+              </p>
+            }
+
+            <p class="comment__body">{{ comment.body }}</p>
+
+            <div class="comment__actions">
+              @for (action of actionsFor(comment); track action.status) {
+                <button
+                  type="button"
+                  class="btn btn-sm"
+                  [class.btn-primary]="action.status === 'approved'"
+                  [class.btn-outline]="action.status !== 'approved'"
+                  [disabled]="busy().has(comment.id)"
+                  (click)="moderate(comment, action.status)"
+                >
+                  <i class="bi {{ action.icon }}" aria-hidden="true"></i> {{ action.label }}
+                  <span class="visually-hidden">o comentário de {{ comment.author_name }}</span>
+                </button>
+              }
+              <button
+                type="button"
+                class="btn btn-ghost btn-sm"
+                [disabled]="busy().has(comment.id)"
+                (click)="remove(comment)"
+              >
+                <i class="bi bi-trash" aria-hidden="true"></i> Excluir
+                <span class="visually-hidden">o comentário de {{ comment.author_name }}</span>
+              </button>
+            </div>
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="state">
+        {{
+          status() === 'pending'
+            ? 'Nenhum comentário aguardando moderação.'
+            : 'Nenhum comentário encontrado.'
+        }}
+      </p>
+    }
+
+    <app-pagination
+      [currentPage]="response.meta.current_page"
+      [lastPage]="response.meta.last_page"
+    />
+  } @else {
+    <p class="state">Carregando comentários…</p>
+  }
+</div>

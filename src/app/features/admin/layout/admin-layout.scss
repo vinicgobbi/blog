@@ -79,3 +79,15 @@
   color: var(--text-subtle);
   font-size: 0.875rem;
 }
+
+.admin-nav__badge {
+  min-width: 1.3rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--danger);
+  color: var(--bg);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3rem;
+  text-align: center;
+}
