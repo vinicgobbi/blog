@@ -91,3 +91,25 @@ export interface TaxonomyInput {
   slug: string | null;
   description?: string | null;
 }
+
+export type CommentStatus = 'pending' | 'approved' | 'rejected' | 'spam';
+
+/** Comentário na visão do admin (Admin\CommentResource da API). */
+export interface AdminComment {
+  id: number;
+  author_name: string;
+  author_email: string;
+  body: string;
+  status: CommentStatus;
+  ip_address: string | null;
+  user_agent: string | null;
+  /** O post vem mesmo que esteja na lixeira. */
+  post?: { id: number; title: string; slug: string };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdminCommentQuery {
+  status?: CommentStatus;
+  page?: number;
+}

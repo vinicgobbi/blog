@@ -4,11 +4,14 @@ import { API_URL } from '../../core/api';
 import { Observable } from 'rxjs';
 import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
 import {
+  AdminComment,
+  AdminCommentQuery,
   AdminPage,
   AdminPageInput,
   AdminPost,
   AdminPostInput,
   AdminPostQuery,
+  CommentStatus,
   Media,
   TaxonomyInput,
 } from '../../shared/models/admin';
@@ -22,12 +25,7 @@ export type { PostState };
 /** Recursos de taxonomia, pelo segmento da URL na API. */
 export type TaxonomyKind = 'categories' | 'tags';
 
-export interface CommentCounts {
-  pending: number;
-  approved: number;
-  rejected: number;
-  spam: number;
-}
+export type CommentCounts = Record<CommentStatus, number>;
 
 /**
  * Endpoints da área administrativa (`/admin/*`). O token é anexado pelo
@@ -50,6 +48,40 @@ export class AdminApi {
     return httpResource<CommentCounts>(() => `${this.apiUrl}/admin/comments/counts`, {
       parse: (response) => (response as { data: CommentCounts }).data,
     });
+  }
+
+  /** Comentários do mais recente ao mais antigo (30 por página), filtrados por status. */
+  comments(
+    query: () => AdminCommentQuery,
+  ): HttpResourceRef<PaginatedResponse<AdminComment> | undefined> {
+    return httpResource<PaginatedResponse<AdminComment>>(() => {
+      const { status, page } = query();
+      const params: Record<string, string | number> = {};
+
+      if (status) {
+        params['status'] = status;
+      }
+      if (page && page > 1) {
+        params['page'] = page;
+      }
+
+      return { url: `${this.apiUrl}/admin/comments`, params };
+    });
+  }
+
+  /** Aprova, rejeita, marca como spam ou devolve o comentário para pendente. */
+  updateCommentStatus(
+    id: number,
+    status: CommentStatus,
+  ): Observable<ResourceResponse<AdminComment>> {
+    return this.http.put<ResourceResponse<AdminComment>>(`${this.apiUrl}/admin/comments/${id}`, {
+      status,
+    });
+  }
+
+  /** Exclusão definitiva. */
+  deleteComment(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/admin/comments/${id}`);
   }
 
   /** Todos os posts (rascunhos, agendados e publicados), com filtros. */
