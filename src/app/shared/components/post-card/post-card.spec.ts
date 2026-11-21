@@ -48,7 +48,7 @@ describe('PostCard', () => {
   it('shows the publication date in Brazilian Portuguese and Brasília time', () => {
     const time = render(POST).querySelector('time');
 
-    expect(time?.textContent?.trim()).toBe('20 de novembro de 2026');
+    expect(time?.textContent?.trim()).toBe('20 de nov. de 2026');
     expect(time?.getAttribute('datetime')).toBe(POST.published_at);
   });
 
