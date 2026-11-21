@@ -29,7 +29,7 @@ export function handleInPageLinkClick(event: MouseEvent, document: Document): bo
   }
 
   event.preventDefault();
-  scrollToElement(target);
+  scrollToElement(target, true);
 
   const { pathname, search } = document.location;
   document.defaultView?.history.replaceState(
@@ -43,21 +43,26 @@ export function handleInPageLinkClick(event: MouseEvent, document: Document): bo
 
 /**
  * Rola até o fragmento atual da URL, se o elemento existir (ex.: ao abrir
- * /posts/x#secao-y depois que o conteúdo foi renderizado).
+ * /posts/x#secao-y depois que o conteúdo foi renderizado). Não move o foco:
+ * o usuário não interagiu com nenhum link.
  */
 export function scrollToCurrentFragment(document: Document): boolean {
   const id = decodeURIComponent(document.location.hash.slice(1));
   const target = id ? document.getElementById(id) : null;
 
   if (target) {
-    scrollToElement(target);
+    scrollToElement(target, false);
   }
 
   return target !== null;
 }
 
-function scrollToElement(target: HTMLElement): void {
+function scrollToElement(target: HTMLElement, moveFocus: boolean): void {
   target.scrollIntoView?.();
+
+  if (!moveFocus) {
+    return;
+  }
 
   if (
     !target.hasAttribute('tabindex') &&

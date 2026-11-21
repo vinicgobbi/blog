@@ -81,6 +81,7 @@ describe('scrollToCurrentFragment', () => {
 
     expect(scrollToCurrentFragment(document)).toBe(true);
     expect(heading.scrollIntoView).toHaveBeenCalled();
+    expect(document.activeElement).not.toBe(heading);
   });
 
   it('does nothing when there is no fragment', () => {
