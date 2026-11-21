@@ -7,6 +7,10 @@ import { unsavedChangesGuard } from './features/admin/posts/unsaved-changes.guar
  * Duas cascas: a área admin (renderizada só no navegador, ver app.routes.server.ts)
  * e o blog público. Entre as rotas públicas, `:slug` (páginas estáticas, ex.:
  * /sobre) fica por último entre as com parâmetro, para não capturar as demais.
+ *
+ * Toda rota de primeiro nível nova (ex.: `busca`) precisa entrar também em
+ * `reserved_page_slugs`, no config/blog.php da API, para que nenhuma página
+ * estática seja criada com o mesmo slug e fique inacessível.
  */
 export const routes: Routes = [
   {
