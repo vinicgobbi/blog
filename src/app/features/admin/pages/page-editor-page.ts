@@ -14,11 +14,13 @@ import { firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
 import { AdminPage, AdminPageInput } from '../../../shared/models/admin';
 import { AdminApi } from '../admin-api';
+import { IconPicker } from '../editor/icon-picker';
 import { MarkdownEditor } from '../editor/markdown-editor';
 
 export interface PageFormModel {
   title: string;
   slug: string;
+  icon: string;
   body_markdown: string;
   is_published: boolean;
 }
@@ -28,7 +30,13 @@ interface Feedback {
   message: string;
 }
 
-const EMPTY_PAGE: PageFormModel = { title: '', slug: '', body_markdown: '', is_published: false };
+const EMPTY_PAGE: PageFormModel = {
+  title: '',
+  slug: '',
+  icon: '',
+  body_markdown: '',
+  is_published: false,
+};
 
 /** Campos que a API pode apontar com erro de validação (422). */
 const SERVER_FIELDS = Object.keys(EMPTY_PAGE) as (keyof PageFormModel)[];
@@ -37,6 +45,7 @@ export function toPageFormModel(page: AdminPage): PageFormModel {
   return {
     title: page.title,
     slug: page.slug,
+    icon: page.icon,
     body_markdown: page.body_markdown ?? '',
     is_published: page.is_published,
   };
@@ -46,6 +55,7 @@ export function toPageInput(model: PageFormModel): AdminPageInput {
   return {
     title: model.title.trim(),
     slug: model.slug.trim() || null,
+    icon: model.icon,
     body_markdown: model.body_markdown,
     is_published: model.is_published,
   };
@@ -57,7 +67,7 @@ export function toPageInput(model: PageFormModel): AdminPageInput {
  */
 @Component({
   selector: 'app-page-editor-page',
-  imports: [FormField, MarkdownEditor, RouterLink],
+  imports: [FormField, IconPicker, MarkdownEditor, RouterLink],
   templateUrl: './page-editor-page.html',
   styleUrls: ['../posts/post-editor-page.scss', './page-editor-page.scss'],
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
@@ -79,6 +89,7 @@ export class PageEditorPage {
     required(path.title, { message: 'Informe o título.' });
     maxLength(path.title, 255, { message: 'O título pode ter no máximo 255 caracteres.' });
     maxLength(path.slug, 255, { message: 'O slug pode ter no máximo 255 caracteres.' });
+    required(path.icon, { message: 'Escolha um ícone para o menu do blog.' });
     required(path.body_markdown, { message: 'Escreva o conteúdo da página.' });
   });
 

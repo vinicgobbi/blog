@@ -6,6 +6,7 @@ import { FormValueControl } from '@angular/forms/signals';
 import { Router, provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
 import { AdminPage } from '../../../shared/models/admin';
+import { IconPicker } from '../editor/icon-picker';
 import { MarkdownEditor } from '../editor/markdown-editor';
 import { PageEditorPage, toPageFormModel, toPageInput } from './page-editor-page';
 
@@ -26,12 +27,30 @@ class MarkdownEditorStub implements FormValueControl<string> {
   readonly describedBy = input<string | null>(null);
 }
 
+/** Substitui o seletor de ícones (que tem testes próprios) por um input de texto. */
+@Component({
+  selector: 'app-icon-picker',
+  template: `<input
+    [id]="inputId()"
+    [value]="value()"
+    (input)="value.set($any($event.target).value)"
+    (blur)="touch.emit()"
+  />`,
+})
+class IconPickerStub implements FormValueControl<string> {
+  readonly value = model('');
+  readonly touch = output<void>();
+  readonly inputId = input('');
+  readonly describedBy = input<string | null>(null);
+}
+
 const API = 'http://api.test/api';
 
 const PAGE: AdminPage = {
   id: 4,
   title: 'Sobre',
   slug: 'sobre',
+  icon: 'person',
   body_markdown: '# Olá',
   body_html: '<h1>Olá</h1>',
   is_published: false,
@@ -49,8 +68,8 @@ function render(id?: number) {
     ],
   });
   TestBed.overrideComponent(PageEditorPage, {
-    remove: { imports: [MarkdownEditor] },
-    add: { imports: [MarkdownEditorStub] },
+    remove: { imports: [MarkdownEditor, IconPicker] },
+    add: { imports: [MarkdownEditorStub, IconPickerStub] },
   });
   const router = TestBed.inject(Router);
   vi.spyOn(router, 'navigate').mockResolvedValue(true);
@@ -86,12 +105,14 @@ describe('page form conversions', () => {
     expect(model).toEqual({
       title: 'Sobre',
       slug: 'sobre',
+      icon: 'person',
       body_markdown: '# Olá',
       is_published: false,
     });
     expect(toPageInput({ ...model, title: '  Sobre mim ', slug: ' ' })).toEqual({
       title: 'Sobre mim',
       slug: null,
+      icon: 'person',
       body_markdown: '# Olá',
       is_published: false,
     });
@@ -104,6 +125,7 @@ describe('PageEditorPage', () => {
   it('creates a published page and opens it for editing', async () => {
     const { fixture, router, http, element } = render();
     type(element, '#pagina-titulo', 'Contato');
+    type(element, '#pagina-icone', 'envelope');
     type(element, '#pagina-conteudo', 'Fale comigo');
     element.querySelector<HTMLInputElement>('#pagina-publicada')!.click();
     await fixture.whenStable();
@@ -113,6 +135,7 @@ describe('PageEditorPage', () => {
     expect(request.request.body).toEqual({
       title: 'Contato',
       slug: null,
+      icon: 'envelope',
       body_markdown: 'Fale comigo',
       is_published: true,
     });
@@ -129,7 +152,7 @@ describe('PageEditorPage', () => {
     );
   });
 
-  it('does not save without title and content', async () => {
+  it('does not save without title, icon and content', async () => {
     const { fixture, http, element } = render();
 
     await save(fixture, element);
@@ -138,6 +161,9 @@ describe('PageEditorPage', () => {
     http.expectNone({ method: 'POST', url: `${API}/admin/pages` });
     expect(element.querySelector('#pagina-titulo-erro')?.textContent).toContain(
       'Informe o título.',
+    );
+    expect(element.querySelector('#pagina-icone-erro')?.textContent).toContain(
+      'Escolha um ícone para o menu do blog.',
     );
     expect(element.querySelector('#pagina-conteudo-erro')?.textContent).toContain(
       'Escreva o conteúdo da página.',
@@ -172,6 +198,7 @@ describe('PageEditorPage', () => {
   it('shows API validation errors next to the fields', async () => {
     const { fixture, http, element } = render();
     type(element, '#pagina-titulo', 'Sobre');
+    type(element, '#pagina-icone', 'person');
     type(element, '#pagina-conteudo', 'Texto');
     type(element, '#pagina-slug', 'sobre');
     await fixture.whenStable();

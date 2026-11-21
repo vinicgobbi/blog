@@ -69,9 +69,15 @@
   }
 }
 
-@media (max-width: 480px) {
-  .brand__name,
+/* Com as páginas do admin o menu cresce: abaixo disto ficam só os ícones (os links têm aria-label). */
+@media (max-width: 860px) {
   .nav-link__label {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand__name {
     display: none;
   }
 }

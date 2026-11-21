@@ -103,6 +103,22 @@ export const routes: Routes = [
         loadComponent: () => import('./features/blog/post/post-page').then((m) => m.PostPage),
       },
       {
+        path: 'categorias',
+        data: { kind: 'categories' },
+        loadComponent: () =>
+          import('./features/blog/taxonomy-index/taxonomy-index-page').then(
+            (m) => m.TaxonomyIndexPage,
+          ),
+      },
+      {
+        path: 'tags',
+        data: { kind: 'tags' },
+        loadComponent: () =>
+          import('./features/blog/taxonomy-index/taxonomy-index-page').then(
+            (m) => m.TaxonomyIndexPage,
+          ),
+      },
+      {
         path: 'tags/:slug',
         loadComponent: () => import('./features/blog/tag/tag-page').then((m) => m.TagPage),
       },

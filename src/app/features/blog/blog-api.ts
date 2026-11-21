@@ -10,9 +10,12 @@ import {
   PostDetail,
   PostQuery,
   PostSummary,
+  PageLink,
   StaticPage,
   Tag,
 } from '../../shared/models/blog';
+
+export type TaxonomyKind = 'categories' | 'tags';
 
 /**
  * Endpoints públicos da blog-api como recursos baseados em signals.
@@ -40,6 +43,18 @@ export class BlogApi {
 
       return value ? { url: `${this.apiUrl}/posts`, params: toPostParams(value) } : undefined;
     });
+  }
+
+  /** Categorias ou tags com posts publicados, em ordem alfabética e com a contagem. */
+  taxonomies(
+    kind: () => TaxonomyKind,
+  ): HttpResourceRef<ResourceResponse<(Category | Tag)[]> | undefined> {
+    return httpResource<ResourceResponse<(Category | Tag)[]>>(() => `${this.apiUrl}/${kind()}`);
+  }
+
+  /** Páginas publicadas, em ordem de criação, para o menu. */
+  pages(): HttpResourceRef<ResourceResponse<PageLink[]> | undefined> {
+    return httpResource<ResourceResponse<PageLink[]>>(() => `${this.apiUrl}/pages`);
   }
 
   tag(slug: () => string | undefined): HttpResourceRef<ResourceResponse<Tag> | undefined> {
