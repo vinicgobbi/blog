@@ -205,7 +205,7 @@ describe('CommentListPage', () => {
 
     await vi.waitFor(() => {
       fixture.detectChanges();
-      expect(element.querySelector('.notice')?.textContent).toContain(
+      expect(element.querySelector('.alert')?.textContent).toContain(
         'Não foi possível atualizar o comentário de "Leitor 1".',
       );
     });

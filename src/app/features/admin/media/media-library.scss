@@ -46,16 +46,6 @@
 
 .message {
   margin-bottom: 1rem;
-  padding: 0.6rem 0.9rem;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius-sm);
-  background: var(--accent-soft);
-  font-size: 0.9rem;
-}
-
-.message--error {
-  border-color: var(--danger);
-  background: var(--danger-soft);
 }
 
 .grid {

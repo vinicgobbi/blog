@@ -10,12 +10,13 @@
     <h2 id="taxonomia-lista-titulo" class="visually-hidden">Lista de {{ config().title }}</h2>
 
     @if (deleteError(); as message) {
-      <p class="notice" role="alert">{{ message }}</p>
+      <p class="alert alert--error" role="alert">{{ message }}</p>
     }
 
     <div aria-live="polite" [attr.aria-busy]="items.isLoading()">
       @if (items.error()) {
         <div class="state" role="alert">
+          <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
           <p>Não foi possível carregar {{ config().title.toLowerCase() }}.</p>
           <button type="button" class="btn btn-outline" (click)="items.reload()">
             Tentar novamente
@@ -95,7 +96,7 @@
 
     @if (feedback(); as feedback) {
       <p
-        class="feedback feedback--{{ feedback.kind }}"
+        class="alert alert--{{ feedback.kind }}"
         [attr.role]="feedback.kind === 'error' ? 'alert' : 'status'"
       >
         {{ feedback.message }}

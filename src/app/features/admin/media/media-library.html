@@ -31,7 +31,7 @@
 
 @if (message(); as message) {
   <p
-    class="message message--{{ message.kind }}"
+    class="alert alert--{{ message.kind }} message"
     [attr.role]="message.kind === 'error' ? 'alert' : 'status'"
   >
     {{ message.text }}
@@ -41,6 +41,7 @@
 <div aria-live="polite" [attr.aria-busy]="media.isLoading()">
   @if (media.error()) {
     <div class="state" role="alert">
+      <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
       <p>Não foi possível carregar as imagens.</p>
       <button type="button" class="btn btn-outline btn-sm" (click)="media.reload()">
         Tentar novamente

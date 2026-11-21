@@ -9,7 +9,7 @@
 </header>
 
 <div class="filters">
-  <div class="filters__states" role="group" aria-label="Filtrar por situação">
+  <div class="filters__states segmented" role="group" aria-label="Filtrar por situação">
     <button type="button" [attr.aria-pressed]="!state()" (click)="filter({ state: undefined })">
       Todos
     </button>
@@ -38,12 +38,13 @@
 </div>
 
 @if (deleteError(); as message) {
-  <p class="notice" role="alert">{{ message }}</p>
+  <p class="alert alert--error" role="alert">{{ message }}</p>
 }
 
 <div aria-live="polite" [attr.aria-busy]="posts.isLoading()">
   @if (posts.error()) {
     <div class="state" role="alert">
+      <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
       <p>Não foi possível carregar os posts.</p>
       <button type="button" class="btn btn-outline" (click)="posts.reload()">
         Tentar novamente

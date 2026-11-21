@@ -21,6 +21,7 @@
 
 @if (id() && page.error()) {
   <div class="state" role="alert">
+    <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
     <p>Não foi possível carregar a página.</p>
     <a class="btn btn-outline" routerLink="/admin/paginas">Voltar para a lista</a>
   </div>
@@ -30,7 +31,7 @@
   <form class="post-form" novalidate (submit)="save($event)">
     @if (feedback(); as feedback) {
       <p
-        class="feedback feedback--{{ feedback.kind }}"
+        class="alert alert--{{ feedback.kind }}"
         [attr.role]="feedback.kind === 'error' ? 'alert' : 'status'"
       >
         {{ feedback.message }}

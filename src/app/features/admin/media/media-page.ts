@@ -7,13 +7,15 @@ import { MediaLibrary } from './media-library';
   selector: 'app-media-page',
   imports: [MediaLibrary],
   template: `
-    <header class="section-header">
-      <span class="eyebrow">Admin</span>
-      <h1 class="section-title">Mídia</h1>
-      <p class="section-subtitle">
-        Envie imagens e copie o Markdown para usar nos posts. Imagens em uso não podem ser
-        excluídas.
-      </p>
+    <header class="page-header">
+      <div>
+        <span class="eyebrow">Admin</span>
+        <h1 class="section-title">Mídia</h1>
+        <p class="section-subtitle">
+          Envie imagens e copie o Markdown para usar nos posts. Imagens em uso não podem ser
+          excluídas.
+        </p>
+      </div>
     </header>
     <app-media-library />
   `,

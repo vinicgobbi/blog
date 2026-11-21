@@ -97,21 +97,8 @@
   gap: 1rem;
 }
 
-.notice {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  font-size: 0.9rem;
-}
-
-.notice--success {
-  border-color: var(--accent);
-  background: var(--accent-soft);
+.comments__alert {
+  margin-bottom: 2rem;
 }
 
 /* Fora da tela em vez de display:none, que alguns bots detectam. */
