@@ -1,3 +1,9 @@
+## v0.1.1 (2026-11-21)
+
+### Fix
+
+- **ssr**: libera o domínio de produção nos allowedHosts
+
 ## v0.1.0 (2026-11-21)
 
 ### Feat
