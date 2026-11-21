@@ -1,6 +1,11 @@
 <footer class="footer">
   <div class="container footer__inner">
-    <p>© {{ year }} {{ siteName }}</p>
+    <div class="footer__meta">
+      <p>© {{ year }} {{ siteName }}</p>
+      <p class="footer__versions">
+        Front v{{ appVersion }} <span aria-hidden="true">·</span> API {{ apiVersion() }}
+      </p>
+    </div>
     <nav aria-label="Rodapé">
       <ul class="footer__links">
         <li>

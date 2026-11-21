@@ -21,3 +21,11 @@ export interface PaginatedResponse<T> {
     total: number;
   };
 }
+
+/** Resposta de GET /api: situação e versão da API. */
+export interface ApiStatus {
+  api: string;
+  status: string;
+  version: string;
+  documentation: string;
+}
