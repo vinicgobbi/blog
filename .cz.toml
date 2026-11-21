@@ -1,0 +1,15 @@
+# Configuração do Commitizen (https://commitizen-tools.github.io/commitizen/).
+#
+# - `cz commit` guia a mensagem no padrão Conventional Commits;
+# - `cz bump` calcula a próxima versão pelos commits desde a última tag,
+#   atualiza o package.json e src/app/core/version.ts (exibida no rodapé),
+#   gera o CHANGELOG.md e cria a tag vX.Y.Z.
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "npm"
+version_scheme = "semver2"
+tag_format = "v$version"
+version_files = ["src/app/core/version.ts:APP_VERSION"]
+update_changelog_on_bump = true
+# Enquanto estiver em 0.x, mudanças incompatíveis sobem o minor, não o major.
+major_version_zero = true
