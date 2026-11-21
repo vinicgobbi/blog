@@ -13,6 +13,17 @@
   gap: 1rem;
 }
 
+.footer__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.footer__versions {
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .footer__links {
   display: flex;
   flex-wrap: wrap;

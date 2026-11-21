@@ -1,7 +1,7 @@
 import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
 import { API_URL } from '../../core/api';
-import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
+import { ApiStatus, PaginatedResponse, ResourceResponse } from '../../shared/models/api';
 import { Observable } from 'rxjs';
 import {
   Category,
@@ -25,6 +25,11 @@ import {
 export class BlogApi {
   private readonly apiUrl = inject(API_URL);
   private readonly http = inject(HttpClient);
+
+  /** Situação e versão da API (exibida no rodapé). */
+  status(): HttpResourceRef<ApiStatus | undefined> {
+    return httpResource<ApiStatus>(() => this.apiUrl);
+  }
 
   /** Posts publicados; quando `query` retorna undefined, nenhuma requisição é feita. */
   posts(
