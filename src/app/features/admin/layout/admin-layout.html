@@ -19,6 +19,14 @@
               ariaCurrentWhenActive="page"
             >
               <i class="bi {{ item.icon }}" aria-hidden="true"></i> {{ item.label }}
+              @if (item.showsPendingComments && commentCounts.pending(); as pending) {
+                <span class="admin-nav__badge"
+                  >{{ pending
+                  }}<span class="visually-hidden">
+                    {{ pending === 1 ? 'pendente' : 'pendentes' }}</span
+                  ></span
+                >
+              }
             </a>
           </li>
         }
