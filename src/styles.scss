@@ -376,6 +376,34 @@ a.chip:hover {
   font-size: 0.85rem;
 }
 
+/* Situação de posts no admin (rascunho, agendado, publicado) */
+.badge {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge--published {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.badge--scheduled {
+  background: rgba(234, 179, 8, 0.15);
+  color: #a16207;
+}
+
+:root[data-theme='dark'] .badge--scheduled {
+  color: #facc15;
+}
+
+.badge--draft {
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+
 /* Mensagens de estado (carregando, vazio, erro) */
 .state {
   display: flex;

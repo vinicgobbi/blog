@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { guestGuard } from './core/auth/guest.guard';
+import { unsavedChangesGuard } from './features/admin/posts/unsaved-changes.guard';
 
 /**
  * Duas cascas: a área admin (renderizada só no navegador, ver app.routes.server.ts)
@@ -22,6 +23,23 @@ export const routes: Routes = [
         path: '',
         loadComponent: () =>
           import('./features/admin/dashboard/dashboard-page').then((m) => m.DashboardPage),
+      },
+      {
+        path: 'posts',
+        loadComponent: () =>
+          import('./features/admin/posts/post-list-page').then((m) => m.PostListPage),
+      },
+      {
+        path: 'posts/novo',
+        canDeactivate: [unsavedChangesGuard],
+        loadComponent: () =>
+          import('./features/admin/posts/post-editor-page').then((m) => m.PostEditorPage),
+      },
+      {
+        path: 'posts/:id',
+        canDeactivate: [unsavedChangesGuard],
+        loadComponent: () =>
+          import('./features/admin/posts/post-editor-page').then((m) => m.PostEditorPage),
       },
       {
         path: '**',
