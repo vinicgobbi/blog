@@ -63,3 +63,31 @@ export interface Media {
   markdown: string;
   created_at: string;
 }
+
+/** Página estática na visão do admin (Admin\PageResource da API). */
+export interface AdminPage {
+  id: number;
+  title: string;
+  slug: string;
+  /** Só presentes no detalhe (GET /admin/pages/{id}). */
+  body_markdown?: string;
+  body_html?: string;
+  is_published: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Corpo de POST/PUT /admin/pages. */
+export interface AdminPageInput {
+  title: string;
+  slug: string | null;
+  body_markdown: string;
+  is_published: boolean;
+}
+
+/** Corpo de POST/PUT /admin/categories e /admin/tags (tags ignoram a descrição). */
+export interface TaxonomyInput {
+  name: string;
+  slug: string | null;
+  description?: string | null;
+}
