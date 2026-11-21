@@ -1,0 +1,96 @@
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Admin</span>
+    <h1 class="section-title">Páginas</h1>
+  </div>
+  <a class="btn btn-primary" routerLink="/admin/paginas/nova">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i> Nova página
+  </a>
+</header>
+
+@if (deleteError(); as message) {
+  <p class="notice" role="alert">{{ message }}</p>
+}
+
+<div aria-live="polite" [attr.aria-busy]="pages.isLoading()">
+  @if (pages.error()) {
+    <div class="state" role="alert">
+      <p>Não foi possível carregar as páginas.</p>
+      <button type="button" class="btn btn-outline" (click)="pages.reload()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (pages.hasValue()) {
+    @if (pages.value().length) {
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Título</th>
+              <th scope="col">Situação</th>
+              <th scope="col">Atualizada</th>
+              <th scope="col"><span class="visually-hidden">Ações</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (page of pages.value(); track page.id) {
+              <tr>
+                <td>
+                  <a class="table__title" [routerLink]="['/admin/paginas', page.id]">{{
+                    page.title
+                  }}</a>
+                  <span class="table__meta">/{{ page.slug }}</span>
+                </td>
+                <td>
+                  @if (page.is_published) {
+                    <span class="badge badge--published">Publicada</span>
+                  } @else {
+                    <span class="badge badge--draft">Rascunho</span>
+                  }
+                </td>
+                <td class="table__date">
+                  <time [attr.datetime]="page.updated_at">{{
+                    page.updated_at | date: 'shortDate'
+                  }}</time>
+                </td>
+                <td class="table__actions">
+                  @if (page.is_published) {
+                    <a
+                      class="btn btn-ghost btn-sm btn-icon"
+                      [href]="'/' + page.slug"
+                      target="_blank"
+                      rel="noopener"
+                      [attr.aria-label]="'Ver ' + page.title + ' no blog'"
+                      title="Ver no blog"
+                      ><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i
+                    ></a>
+                  }
+                  <a
+                    class="btn btn-ghost btn-sm btn-icon"
+                    [routerLink]="['/admin/paginas', page.id]"
+                    [attr.aria-label]="'Editar ' + page.title"
+                    title="Editar"
+                    ><i class="bi bi-pencil" aria-hidden="true"></i
+                  ></a>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm btn-icon"
+                    [attr.aria-label]="'Excluir ' + page.title"
+                    title="Excluir"
+                    (click)="remove(page)"
+                  >
+                    <i class="bi bi-trash" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="state">Nenhuma página criada ainda.</p>
+    }
+  } @else {
+    <p class="state">Carregando páginas…</p>
+  }
+</div>
