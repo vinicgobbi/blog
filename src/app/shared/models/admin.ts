@@ -45,3 +45,21 @@ export interface AdminPostQuery {
   q?: string;
   page?: number;
 }
+
+/** Imagem da biblioteca de mídia (Admin\MediaResource da API). */
+export interface Media {
+  id: number;
+  url: string;
+  /** Caminho no disco público; é o valor usado em cover_image_path. */
+  path: string;
+  original_name: string;
+  mime_type: string;
+  /** Tamanho em bytes. */
+  size: number;
+  width: number | null;
+  height: number | null;
+  alt: string | null;
+  /** Snippet pronto para o editor, ex.: ![alt](url). */
+  markdown: string;
+  created_at: string;
+}

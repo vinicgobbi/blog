@@ -3,7 +3,8 @@ import { Service, inject } from '@angular/core';
 import { API_URL } from '../../core/api';
 import { Observable } from 'rxjs';
 import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
-import { AdminPost, AdminPostInput, AdminPostQuery } from '../../shared/models/admin';
+import { AdminPost, AdminPostInput, AdminPostQuery, Media } from '../../shared/models/admin';
+import { UploadEvent, toUploadEvents } from './media/image-upload';
 import { Category } from '../../shared/models/blog';
 
 import { PostState } from '../../shared/models/admin';
@@ -106,5 +107,39 @@ export class AdminApi {
       },
       { parse: (response) => (response as { html: string }).html },
     );
+  }
+
+  /** Biblioteca de mídia, das imagens mais recentes às mais antigas (30 por página). */
+  media(page: () => number): HttpResourceRef<PaginatedResponse<Media> | undefined> {
+    return httpResource<PaginatedResponse<Media>>(() => {
+      const params: Record<string, number> = page() > 1 ? { page: page() } : {};
+
+      return { url: `${this.apiUrl}/admin/media`, params };
+    });
+  }
+
+  /** Envia uma imagem (multipart) informando o progresso. */
+  uploadMedia(file: File, alt: string | null): Observable<UploadEvent> {
+    const body = new FormData();
+    body.append('file', file);
+    if (alt) {
+      body.append('alt', alt);
+    }
+
+    return toUploadEvents(
+      this.http.post<ResourceResponse<Media>>(`${this.apiUrl}/admin/media`, body, {
+        reportProgress: true,
+        observe: 'events',
+      }),
+    );
+  }
+
+  updateMediaAlt(id: number, alt: string | null): Observable<ResourceResponse<Media>> {
+    return this.http.put<ResourceResponse<Media>>(`${this.apiUrl}/admin/media/${id}`, { alt });
+  }
+
+  /** A API responde 409 quando a imagem está em uso (capa ou conteúdo). */
+  deleteMedia(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/admin/media/${id}`);
   }
 }
