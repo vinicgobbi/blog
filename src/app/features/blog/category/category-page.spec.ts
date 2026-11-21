@@ -40,11 +40,9 @@ describe('CategoryPage', () => {
   it('shows the category with description, its posts and announces its feed', async () => {
     const { fixture, http, element } = render('laravel');
 
-    http
-      .expectOne(`${API}/categories/laravel`)
-      .flush({
-        data: { id: 1, name: 'Laravel', slug: 'laravel', description: 'Tudo sobre Laravel' },
-      });
+    http.expectOne(`${API}/categories/laravel`).flush({
+      data: { id: 1, name: 'Laravel', slug: 'laravel', description: 'Tudo sobre Laravel' },
+    });
     http.expectOne(`${API}/posts?category=laravel`).flush(postsPage([{}, {}]));
     await fixture.whenStable();
 

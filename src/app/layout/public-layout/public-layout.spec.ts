@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { environment } from '../environments/environment';
-import { App } from './app';
+import { environment } from '../../../environments/environment';
+import { PublicLayout } from './public-layout';
 
-describe('App', () => {
+describe('PublicLayout', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideRouter([])] });
   });
 
   it('renders skip link pointing to the main content', async () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(PublicLayout);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
 
@@ -19,7 +19,7 @@ describe('App', () => {
   });
 
   it('toggles the theme from the header button with an accessible label', async () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(PublicLayout);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -34,7 +34,7 @@ describe('App', () => {
   });
 
   it('renders site name, main navigation and RSS links', async () => {
-    const fixture = TestBed.createComponent(App);
+    const fixture = TestBed.createComponent(PublicLayout);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
 

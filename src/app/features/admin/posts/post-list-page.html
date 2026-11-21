@@ -1,0 +1,134 @@
+<header class="page-header">
+  <div>
+    <span class="eyebrow">Admin</span>
+    <h1 class="section-title">Posts</h1>
+  </div>
+  <a class="btn btn-primary" routerLink="/admin/posts/novo">
+    <i class="bi bi-plus-lg" aria-hidden="true"></i> Novo post
+  </a>
+</header>
+
+<div class="filters">
+  <div class="filters__states" role="group" aria-label="Filtrar por situação">
+    <button type="button" [attr.aria-pressed]="!state()" (click)="filter({ state: undefined })">
+      Todos
+    </button>
+    @for (option of states; track option) {
+      <button
+        type="button"
+        [attr.aria-pressed]="state() === option"
+        (click)="filter({ state: option })"
+      >
+        {{ labels[option] }}
+      </button>
+    }
+  </div>
+
+  <form class="filters__search" role="search" (submit)="search($event, term.value)">
+    <label for="posts-busca" class="visually-hidden">Buscar posts</label>
+    <input
+      #term
+      id="posts-busca"
+      type="search"
+      placeholder="Buscar por título ou resumo"
+      [value]="q()"
+    />
+    <button type="submit" class="btn btn-outline btn-sm">Buscar</button>
+  </form>
+</div>
+
+@if (deleteError(); as message) {
+  <p class="notice" role="alert">{{ message }}</p>
+}
+
+<div aria-live="polite" [attr.aria-busy]="posts.isLoading()">
+  @if (posts.error()) {
+    <div class="state" role="alert">
+      <p>Não foi possível carregar os posts.</p>
+      <button type="button" class="btn btn-outline" (click)="posts.reload()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (response(); as response) {
+    @if (response.data.length) {
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Título</th>
+              <th scope="col">Situação</th>
+              <th scope="col">Data</th>
+              <th scope="col"><span class="visually-hidden">Ações</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (post of response.data; track post.id) {
+              <tr>
+                <td>
+                  <a class="table__title" [routerLink]="['/admin/posts', post.id]">{{
+                    post.title
+                  }}</a>
+                  @if (post.category) {
+                    <span class="table__meta">{{ post.category.name }}</span>
+                  }
+                </td>
+                <td>
+                  <span class="badge badge--{{ post.state }}">{{ labels[post.state] }}</span>
+                </td>
+                <td class="table__date">
+                  @if (post.published_at) {
+                    <time [attr.datetime]="post.published_at">{{
+                      post.published_at | date: 'short'
+                    }}</time>
+                  } @else {
+                    <span class="table__meta"
+                      >Editado em {{ post.updated_at | date: 'shortDate' }}</span
+                    >
+                  }
+                </td>
+                <td class="table__actions">
+                  @if (post.state === 'published') {
+                    <a
+                      class="btn btn-ghost btn-sm btn-icon"
+                      [href]="'/posts/' + post.slug"
+                      target="_blank"
+                      rel="noopener"
+                      [attr.aria-label]="'Ver ' + post.title + ' no blog'"
+                      title="Ver no blog"
+                      ><i class="bi bi-box-arrow-up-right" aria-hidden="true"></i
+                    ></a>
+                  }
+                  <a
+                    class="btn btn-ghost btn-sm btn-icon"
+                    [routerLink]="['/admin/posts', post.id]"
+                    [attr.aria-label]="'Editar ' + post.title"
+                    title="Editar"
+                    ><i class="bi bi-pencil" aria-hidden="true"></i
+                  ></a>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm btn-icon"
+                    [attr.aria-label]="'Excluir ' + post.title"
+                    title="Excluir"
+                    (click)="remove(post)"
+                  >
+                    <i class="bi bi-trash" aria-hidden="true"></i>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="state">Nenhum post encontrado.</p>
+    }
+
+    <app-pagination
+      [currentPage]="response.meta.current_page"
+      [lastPage]="response.meta.last_page"
+    />
+  } @else {
+    <p class="state">Carregando posts…</p>
+  }
+</div>

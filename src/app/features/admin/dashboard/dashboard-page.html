@@ -1,0 +1,22 @@
+<header class="section-header">
+  <span class="eyebrow">Admin</span>
+  <h1 class="section-title">Dashboard</h1>
+</header>
+
+<ul class="stats">
+  @for (card of cards; track card.label) {
+    <li class="card stat">
+      <i class="bi {{ card.icon }}" aria-hidden="true"></i>
+      <span class="stat__value">{{ count(card.value) }}</span>
+      <span class="stat__label">{{ card.label }}</span>
+    </li>
+  }
+  <li
+    class="card stat"
+    [class.stat--alert]="comments.hasValue() && (comments.value()?.pending ?? 0) > 0"
+  >
+    <i class="bi bi-chat-left-dots" aria-hidden="true"></i>
+    <span class="stat__value">{{ pending() }}</span>
+    <span class="stat__label">Comentários pendentes</span>
+  </li>
+</ul>

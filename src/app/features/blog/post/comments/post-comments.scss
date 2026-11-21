@@ -97,46 +97,6 @@
   gap: 1rem;
 }
 
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-
-  label {
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    padding: 0.6rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--bg);
-    color: var(--text);
-    font: inherit;
-    resize: vertical;
-
-    &:focus-visible {
-      border-color: var(--accent);
-    }
-
-    &[aria-invalid='true'] {
-      border-color: #dc2626;
-    }
-  }
-}
-
-.field__errors p {
-  color: #dc2626;
-  font-size: 0.85rem;
-}
-
-:host-context([data-theme='dark']) .field__errors p {
-  color: #f87171;
-}
-
 .notice {
   display: flex;
   flex-wrap: wrap;

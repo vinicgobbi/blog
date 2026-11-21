@@ -1,0 +1,239 @@
+<header class="page-header">
+  <div>
+    <a class="back" routerLink="/admin/posts"
+      ><i class="bi bi-arrow-left" aria-hidden="true"></i> Posts</a
+    >
+    <h1 class="section-title">{{ id() ? 'Editar post' : 'Novo post' }}</h1>
+    @if (saved(); as post) {
+      <p class="page-header__meta">
+        <span class="badge badge--{{ post.state }}">{{ stateLabels[post.state] }}</span>
+        @if (post.state === 'published') {
+          <a [href]="'/posts/' + post.slug" target="_blank" rel="noopener">
+            Ver no blog <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+          </a>
+        }
+      </p>
+    }
+  </div>
+</header>
+
+@if (id() && post.error()) {
+  <div class="state" role="alert">
+    <p>Não foi possível carregar o post.</p>
+    <a class="btn btn-outline" routerLink="/admin/posts">Voltar para a lista</a>
+  </div>
+} @else if (id() && !saved()) {
+  <p class="state">Carregando post…</p>
+} @else {
+  <form class="post-form" novalidate (submit)="save($event, 'published')">
+    @if (feedback(); as feedback) {
+      <p
+        class="feedback feedback--{{ feedback.kind }}"
+        [attr.role]="feedback.kind === 'error' ? 'alert' : 'status'"
+      >
+        {{ feedback.message }}
+      </p>
+    }
+
+    <div class="post-form__main">
+      <div class="field">
+        <label for="post-titulo">Título</label>
+        <input
+          id="post-titulo"
+          type="text"
+          [formField]="postForm.title"
+          [attr.aria-invalid]="postForm.title().touched() && postForm.title().invalid()"
+          aria-describedby="post-titulo-erro"
+        />
+        <div id="post-titulo-erro" class="field__errors">
+          @if (postForm.title().touched()) {
+            @for (error of postForm.title().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="post-resumo">Resumo <span class="field__optional">(opcional)</span></label>
+        <textarea
+          id="post-resumo"
+          rows="2"
+          [formField]="postForm.excerpt"
+          [attr.aria-invalid]="postForm.excerpt().touched() && postForm.excerpt().invalid()"
+          aria-describedby="post-resumo-erro"
+        ></textarea>
+        <div id="post-resumo-erro" class="field__errors">
+          @if (postForm.excerpt().touched()) {
+            @for (error of postForm.excerpt().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="post-conteudo">Conteúdo</label>
+        <app-markdown-editor
+          inputId="post-conteudo"
+          describedBy="post-conteudo-erro"
+          [formField]="postForm.body_markdown"
+        />
+        <div id="post-conteudo-erro" class="field__errors">
+          @if (postForm.body_markdown().touched()) {
+            @for (error of postForm.body_markdown().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <aside class="card post-form__side" aria-label="Publicação">
+      <div class="field">
+        <label for="post-data"
+          >Data de publicação <span class="field__optional">(opcional)</span></label
+        >
+        <input
+          id="post-data"
+          type="datetime-local"
+          [formField]="postForm.published_at"
+          aria-describedby="post-data-ajuda post-data-erro"
+        />
+        <p id="post-data-ajuda" class="field__help">
+          Vazio publica agora; uma data futura agenda o post.
+        </p>
+        <div id="post-data-erro" class="field__errors">
+          @for (error of postForm.published_at().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="post-form__actions">
+        <button type="submit" class="btn btn-primary" [disabled]="postForm().submitting()">
+          <i
+            class="bi"
+            [class.bi-send]="!isFutureDate()"
+            [class.bi-calendar-check]="isFutureDate()"
+            aria-hidden="true"
+          ></i>
+          {{ isFutureDate() ? 'Agendar' : 'Publicar' }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline"
+          [disabled]="postForm().submitting()"
+          (click)="save($event, 'draft')"
+        >
+          <i class="bi bi-floppy" aria-hidden="true"></i> Salvar rascunho
+        </button>
+      </div>
+
+      <hr />
+
+      <div class="field">
+        <label for="post-categoria">Categoria</label>
+        <select
+          id="post-categoria"
+          [formField]="postForm.category_id"
+          aria-describedby="post-categoria-erro"
+        >
+          <option value="">Sem categoria</option>
+          @for (category of categories.hasValue() ? categories.value() : []; track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+        <div id="post-categoria-erro" class="field__errors">
+          @for (error of postForm.category_id().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="post-tags">Tags</label>
+        <input
+          id="post-tags"
+          type="text"
+          placeholder="laravel, angular"
+          [formField]="postForm.tags"
+          aria-describedby="post-tags-ajuda post-tags-erro"
+        />
+        <p id="post-tags-ajuda" class="field__help">Separe por vírgulas; tags novas são criadas.</p>
+        <div id="post-tags-erro" class="field__errors">
+          @for (error of postForm.tags().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="post-slug">Slug <span class="field__optional">(opcional)</span></label>
+        <input
+          id="post-slug"
+          type="text"
+          placeholder="gerado a partir do título"
+          [formField]="postForm.slug"
+          aria-describedby="post-slug-erro"
+        />
+        <div id="post-slug-erro" class="field__errors">
+          @for (error of postForm.slug().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field__label" id="post-capa-rotulo">Imagem de capa</span>
+        <div class="cover" aria-labelledby="post-capa-rotulo">
+          @if (coverUrl(); as url) {
+            <img class="cover__image" [src]="url" alt="Capa atual do post" />
+          } @else if (postForm.cover_image_path().value()) {
+            <p class="field__help">{{ postForm.cover_image_path().value() }}</p>
+          } @else {
+            <p class="cover__empty">Sem capa</p>
+          }
+          <div class="cover__actions">
+            <button type="button" class="btn btn-outline btn-sm" (click)="openCoverPicker()">
+              <i class="bi bi-image" aria-hidden="true"></i>
+              {{ postForm.cover_image_path().value() ? 'Trocar' : 'Escolher imagem' }}
+            </button>
+            @if (postForm.cover_image_path().value()) {
+              <button type="button" class="btn btn-ghost btn-sm" (click)="removeCover()">
+                Remover
+              </button>
+            }
+          </div>
+        </div>
+        <div id="post-capa-erro" class="field__errors">
+          @for (error of postForm.cover_image_path().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        </div>
+      </div>
+    </aside>
+  </form>
+}
+
+<dialog
+  #coverDialog
+  class="cover-dialog"
+  aria-labelledby="capa-dialogo-titulo"
+  (cancel)="closeCoverPicker()"
+>
+  <div class="cover-dialog__header">
+    <h2 id="capa-dialogo-titulo">Escolher imagem de capa</h2>
+    <button
+      type="button"
+      class="btn btn-ghost btn-sm btn-icon"
+      aria-label="Fechar"
+      (click)="closeCoverPicker()"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+  @if (coverPickerOpen()) {
+    <app-media-library selectable (picked)="setCover($event)" />
+  }
+</dialog>
