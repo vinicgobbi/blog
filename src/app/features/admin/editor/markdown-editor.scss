@@ -1,0 +1,123 @@
+.editor {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+
+  /* O textarea não tem contorno próprio: o foco é indicado no editor inteiro. */
+  &:focus-within {
+    border-color: var(--accent);
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}
+
+.editor--invalid {
+  border-color: var(--danger);
+}
+
+.editor__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+}
+
+.tool {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--surface);
+    color: var(--accent-text);
+  }
+}
+
+.editor__tabs {
+  display: none;
+  gap: 0.25rem;
+
+  button {
+    padding: 0.3rem 0.75rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    font: 500 0.85rem var(--font-sans);
+    cursor: pointer;
+
+    &[aria-pressed='true'] {
+      background: var(--accent-soft);
+      color: var(--accent-text);
+    }
+  }
+}
+
+.editor__panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 480px;
+}
+
+.editor__input {
+  min-height: 480px;
+  padding: 1rem 1.25rem;
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: 0.95rem/1.7 var(--font-mono);
+  resize: vertical;
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.editor__preview {
+  max-height: 70vh;
+  padding: 1rem 1.25rem;
+  overflow-y: auto;
+}
+
+.editor__hint {
+  color: var(--text-subtle);
+  font-size: 0.9rem;
+}
+
+/* No celular, um painel por vez, alternado pelas abas. */
+@media (max-width: 860px) {
+  .editor__tabs {
+    display: flex;
+  }
+
+  .editor__panes {
+    grid-template-columns: 1fr;
+
+    &[data-mode='write'] .editor__preview,
+    &[data-mode='preview'] .editor__input {
+      display: none;
+    }
+  }
+
+  .editor__input {
+    border-right: 0;
+  }
+}

@@ -1,0 +1,65 @@
+<div class="editor" [class.editor--invalid]="invalid()">
+  <div class="editor__bar">
+    <div
+      class="editor__toolbar"
+      role="toolbar"
+      aria-label="Formatação"
+      [attr.aria-controls]="inputId()"
+    >
+      @for (button of buttons; track button.action) {
+        <button
+          type="button"
+          class="tool"
+          [attr.aria-label]="title(button)"
+          [title]="title(button)"
+          [disabled]="disabled()"
+          (click)="apply(button.action)"
+        >
+          <i class="bi {{ button.icon }}" aria-hidden="true"></i>
+        </button>
+      }
+    </div>
+
+    <div class="editor__tabs" role="group" aria-label="Modo de visualização">
+      <button type="button" [attr.aria-pressed]="mode() === 'write'" (click)="mode.set('write')">
+        Escrever
+      </button>
+      <button
+        type="button"
+        [attr.aria-pressed]="mode() === 'preview'"
+        (click)="mode.set('preview')"
+      >
+        Pré-visualizar
+      </button>
+    </div>
+  </div>
+
+  <div class="editor__panes" [attr.data-mode]="mode()">
+    <textarea
+      #textarea
+      class="editor__input"
+      [id]="inputId()"
+      [value]="value()"
+      [disabled]="disabled()"
+      [attr.aria-invalid]="invalid()"
+      [attr.aria-describedby]="describedBy()"
+      spellcheck="true"
+      placeholder="Escreva em Markdown…"
+      (input)="onInput($event)"
+      (keydown)="onKeydown($event)"
+      (blur)="touch.emit()"
+    ></textarea>
+
+    <section class="editor__preview" aria-label="Pré-visualização" aria-live="polite">
+      @if (preview.error()) {
+        <p class="editor__hint" role="alert">Não foi possível gerar a pré-visualização.</p>
+      } @else if (!value().trim()) {
+        <p class="editor__hint">A pré-visualização aparece aqui.</p>
+      } @else if (previewHtml()) {
+        <div class="prose" [innerHTML]="previewHtml()"></div>
+      } @else {
+        <p class="editor__hint">Gerando pré-visualização…</p>
+      }
+    </section>
+  </div>
+</div>
