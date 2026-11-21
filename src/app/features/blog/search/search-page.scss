@@ -41,12 +41,8 @@
 
 .search__error p {
   margin-top: 0.5rem;
-  color: #dc2626;
+  color: var(--danger);
   font-size: 0.85rem;
-}
-
-:host-context([data-theme='dark']) .search__error p {
-  color: #f87171;
 }
 
 .search__summary {

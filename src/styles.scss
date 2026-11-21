@@ -43,6 +43,8 @@
   --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
   --shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.06), 0 16px 40px rgba(15, 23, 42, 0.1);
   --nav-bg: rgba(248, 250, 252, 0.8);
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
 }
 
 :root[data-theme='dark'] {
@@ -62,6 +64,8 @@
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.4);
   --nav-bg: rgba(11, 15, 20, 0.75);
+  --danger: #f87171;
+  --danger-soft: rgba(248, 113, 113, 0.12);
 }
 
 /* ---------- Base ---------- */
@@ -332,6 +336,44 @@ a {
 a.chip:hover {
   background: var(--accent);
   color: var(--accent-contrast);
+}
+
+/* Campos de formulário (comentários, login, admin) */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    resize: vertical;
+
+    &:focus-visible {
+      border-color: var(--accent);
+    }
+
+    &[aria-invalid='true'] {
+      border-color: var(--danger);
+    }
+  }
+}
+
+.field__errors p {
+  color: var(--danger);
+  font-size: 0.85rem;
 }
 
 /* Mensagens de estado (carregando, vazio, erro) */
