@@ -62,9 +62,14 @@
     margin-left: -1.5em;
   }
 
+  /*
+   * Largura e margem compensam o font-size maior e o espaço depois do símbolo,
+   * para o texto alinhar com o dos itens com bullet (recuo de 1.5em do li).
+   */
   .task-box {
     display: inline-block;
-    width: 1.5em;
+    width: calc(1.5em / 1.15);
+    margin-right: -0.26em;
     color: var(--text-subtle);
     font-size: 1.15em;
     line-height: 1;

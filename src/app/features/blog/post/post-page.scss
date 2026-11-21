@@ -4,18 +4,7 @@
 }
 
 .back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
   margin-bottom: 2rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-
-  &:hover {
-    color: var(--accent-text);
-  }
 }
 
 .article__header {
@@ -50,8 +39,10 @@
   color: var(--text-subtle);
   font-size: 0.9rem;
 
-  i {
-    margin-right: 0.25rem;
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
   }
 }
 

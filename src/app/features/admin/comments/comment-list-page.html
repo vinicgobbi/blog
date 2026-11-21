@@ -5,7 +5,7 @@
   </div>
 </header>
 
-<div class="filters" role="group" aria-label="Filtrar por status">
+<div class="filters segmented" role="group" aria-label="Filtrar por status">
   @for (option of filters; track option.value) {
     <button
       type="button"
@@ -14,7 +14,7 @@
     >
       {{ option.label }}
       @if (countFor(option.value); as count) {
-        <span class="filters__count">{{ count }}</span>
+        <span class="segmented__count">{{ count }}</span>
       }
     </button>
   }
@@ -27,13 +27,14 @@
 </p>
 @if (message(); as message) {
   @if (message.kind === 'error') {
-    <p class="notice" role="alert">{{ message.text }}</p>
+    <p class="alert alert--error" role="alert">{{ message.text }}</p>
   }
 }
 
 <div aria-live="polite" [attr.aria-busy]="comments.isLoading()">
   @if (comments.error()) {
     <div class="state" role="alert">
+      <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
       <p>Não foi possível carregar os comentários.</p>
       <button type="button" class="btn btn-outline" (click)="comments.reload()">
         Tentar novamente

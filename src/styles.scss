@@ -180,6 +180,11 @@ a {
   padding-inline: 1.25rem;
 }
 
+/* Área admin: mais largura para o menu e as tabelas. */
+.container--wide {
+  max-width: 1320px;
+}
+
 .page {
   flex: 1;
   padding-block: 3.5rem 5rem;
@@ -257,6 +262,12 @@ a {
 
   &:active {
     transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 }
 
@@ -344,12 +355,13 @@ a.chip:hover {
   flex-direction: column;
   gap: 0.35rem;
 
-  label {
+  label,
+  .field__label {
     font-size: 0.9rem;
     font-weight: 600;
   }
 
-  input,
+  input:not([type='checkbox'], [type='radio']),
   textarea,
   select {
     width: 100%;
@@ -376,8 +388,133 @@ a.chip:hover {
   font-size: 0.85rem;
 }
 
-/* Situação de posts no admin (rascunho, agendado, publicado) */
+.field__optional {
+  color: var(--text-subtle);
+  font-weight: 400;
+}
+
+.field__help {
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+}
+
+/* Avisos (sucesso, erro ou neutro) em formulários e listagens */
+.alert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-size: 0.9rem;
+}
+
+.alert--success {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.alert--error {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* Link discreto de "voltar" acima do título */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--accent-text);
+  }
+}
+
+/* Grupo de botões de filtro em formato de pílula (aria-pressed marca o ativo) */
+.segmented {
+  display: inline-flex;
+  gap: 0.25rem;
+  max-width: 100%;
+  padding: 0.3rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  scrollbar-width: none;
+
+  button {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.9rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    font: 500 0.88rem var(--font-sans);
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text);
+      background: var(--surface-2);
+    }
+
+    &[aria-pressed='true'] {
+      background: var(--accent);
+      color: var(--accent-contrast);
+    }
+  }
+}
+
+.segmented__count {
+  min-width: 1.4rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Cabeçalho das telas do admin: título à esquerda, ação principal à direita */
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  .back {
+    margin-bottom: 0.75rem;
+  }
+
+  .section-subtitle {
+    max-width: 640px;
+  }
+}
+
+.page-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Situação de posts e comentários no admin */
 .badge {
+  display: inline-block;
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
   font-size: 0.78rem;
@@ -385,23 +522,31 @@ a.chip:hover {
   white-space: nowrap;
 }
 
-.badge--published {
+.badge--published,
+.badge--approved {
   background: var(--accent-soft);
   color: var(--accent-text);
 }
 
-.badge--scheduled {
+.badge--scheduled,
+.badge--pending {
   background: rgba(234, 179, 8, 0.15);
   color: #a16207;
 }
 
-:root[data-theme='dark'] .badge--scheduled {
+:root[data-theme='dark'] :is(.badge--scheduled, .badge--pending) {
   color: #facc15;
 }
 
-.badge--draft {
+.badge--draft,
+.badge--rejected {
   background: var(--surface-2);
   color: var(--text-muted);
+}
+
+.badge--spam {
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 /* Mensagens de estado (carregando, vazio, erro) */

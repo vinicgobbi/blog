@@ -1,13 +1,13 @@
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
 <header class="admin-bar">
-  <div class="container admin-bar__inner">
+  <div class="container container--wide admin-bar__inner">
     <a class="brand" routerLink="/admin">
       <span class="brand__mark" aria-hidden="true">VG</span>
       <span>Admin</span>
     </a>
 
-    <nav aria-label="Administração">
+    <nav class="admin-bar__nav" aria-label="Administração">
       <ul class="admin-nav">
         @for (item of menu; track item.link) {
           <li>
@@ -39,8 +39,15 @@
           ><i class="bi bi-person-circle" aria-hidden="true"></i> {{ user.name }}</span
         >
       }
-      <a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">
-        <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Ver blog
+      <a
+        class="btn btn-ghost btn-sm btn-icon"
+        href="/"
+        target="_blank"
+        rel="noopener"
+        aria-label="Ver blog (abre em nova aba)"
+        title="Ver blog"
+      >
+        <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
       </a>
       <button
         type="button"
@@ -64,7 +71,7 @@
 </header>
 
 <main id="conteudo" class="page" tabindex="-1">
-  <div class="container">
+  <div class="container container--wide">
     <router-outlet />
   </div>
 </main>

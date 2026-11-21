@@ -205,7 +205,7 @@ describe('TaxonomyPage', () => {
 
     await vi.waitFor(() => {
       fixture.detectChanges();
-      expect(element.querySelector('.notice')?.textContent).toContain(
+      expect(element.querySelector('.alert')?.textContent).toContain(
         'Não foi possível excluir "Vazia".',
       );
     });

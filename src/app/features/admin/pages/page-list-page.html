@@ -9,12 +9,13 @@
 </header>
 
 @if (deleteError(); as message) {
-  <p class="notice" role="alert">{{ message }}</p>
+  <p class="alert alert--error" role="alert">{{ message }}</p>
 }
 
 <div aria-live="polite" [attr.aria-busy]="pages.isLoading()">
   @if (pages.error()) {
     <div class="state" role="alert">
+      <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
       <p>Não foi possível carregar as páginas.</p>
       <button type="button" class="btn btn-outline" (click)="pages.reload()">
         Tentar novamente

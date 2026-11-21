@@ -10,7 +10,6 @@
 
 .admin-bar__inner {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem 1.25rem;
   min-height: var(--nav-height);
@@ -38,11 +37,22 @@
   font-weight: 800;
 }
 
+.admin-bar__nav {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Uma linha só: se não couber, o menu rola na horizontal em vez de quebrar. */
 .admin-nav {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.25rem;
+  overflow-x: auto;
   list-style: none;
+  scrollbar-width: none;
+
+  li {
+    flex-shrink: 0;
+  }
 }
 
 .admin-nav__link {
@@ -75,6 +85,9 @@
 }
 
 .admin-bar__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   margin-right: 0.5rem;
   color: var(--text-subtle);
   font-size: 0.875rem;
@@ -90,4 +103,27 @@
   font-weight: 700;
   line-height: 1.3rem;
   text-align: center;
+}
+
+/* Telas médias: marca e ações na primeira linha, menu inteiro na segunda. */
+@media (max-width: 1180px) {
+  .admin-bar__inner {
+    flex-wrap: wrap;
+  }
+
+  .admin-bar__nav {
+    flex-basis: 100%;
+    order: 3;
+  }
+}
+
+/* No celular a barra não fica fixa, para não ocupar boa parte da tela. */
+@media (max-width: 640px) {
+  .admin-bar {
+    position: static;
+  }
+
+  .admin-bar__user {
+    display: none;
+  }
 }
