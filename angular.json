@@ -34,7 +34,7 @@
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": []
+              "allowedHosts": ["blog.vinicgobbi.dev.br"]
             },
             "ssr": {
               "entry": "src/server.ts"
