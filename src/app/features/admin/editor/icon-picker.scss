@@ -1,0 +1,147 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+.icon-picker__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.4rem 0.8rem 0.4rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible,
+  &[aria-expanded='true'] {
+    border-color: var(--accent);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--danger);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.icon-picker__preview {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 1.1rem;
+}
+
+.icon-picker__preview--empty {
+  background: var(--surface);
+  color: var(--text-subtle);
+}
+
+.icon-picker__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.icon-picker__name--empty {
+  color: var(--text-subtle);
+}
+
+.icon-picker__chevron {
+  color: var(--text-subtle);
+  transition: transform 0.15s ease;
+
+  [aria-expanded='true'] > & {
+    transform: rotate(180deg);
+  }
+}
+
+.icon-picker__panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 260px;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+/* Mesmo visual dos campos de .field, que não alcança o input dentro do componente. */
+.icon-picker__search {
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+
+  &:focus-visible {
+    border-color: var(--accent);
+  }
+}
+
+.icon-picker__hint,
+.icon-picker__state {
+  color: var(--text-subtle);
+  font-size: 0.8rem;
+}
+
+.icon-picker__state {
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.icon-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.4rem, 1fr));
+  gap: 0.25rem;
+  max-height: 15rem;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.icon-picker__option {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--accent-soft);
+    color: var(--accent-text);
+  }
+
+  &.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent-text);
+  }
+}

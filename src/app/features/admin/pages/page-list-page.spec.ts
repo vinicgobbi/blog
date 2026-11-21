@@ -18,6 +18,7 @@ const PAGES: AdminPage[] = [
     id: 1,
     title: 'Sobre',
     slug: 'sobre',
+    icon: 'person',
     is_published: true,
     created_at: '2026-11-20T10:00:00-03:00',
     updated_at: '2026-11-20T10:00:00-03:00',
@@ -26,6 +27,7 @@ const PAGES: AdminPage[] = [
     id: 2,
     title: 'Contato',
     slug: 'contato',
+    icon: 'envelope',
     is_published: false,
     created_at: '2026-11-20T10:00:00-03:00',
     updated_at: '2026-11-20T10:00:00-03:00',
@@ -65,6 +67,8 @@ describe('PageListPage', () => {
     expect(rows[0].querySelector('.badge')?.textContent?.trim()).toBe('Publicada');
     expect(rows[1].querySelector('.badge')?.textContent?.trim()).toBe('Rascunho');
     expect(rows[0].querySelector('a.table__title')?.getAttribute('href')).toBe('/admin/paginas/1');
+    expect(rows[0].querySelector('a.table__title i.bi-person')).not.toBeNull();
+    expect(rows[1].querySelector('a.table__title i.bi-envelope')).not.toBeNull();
     expect(rows[0].querySelector('a[href="/sobre"]')).not.toBeNull();
     expect(rows[1].querySelector('a[href="/contato"]')).toBeNull();
   });

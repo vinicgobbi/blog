@@ -69,6 +69,8 @@ export interface AdminPage {
   id: number;
   title: string;
   slug: string;
+  /** Nome do ícone do Bootstrap Icons, sem o prefixo "bi-" (ex.: "person"). */
+  icon: string;
   /** Só presentes no detalhe (GET /admin/pages/{id}). */
   body_markdown?: string;
   body_html?: string;
@@ -81,6 +83,7 @@ export interface AdminPage {
 export interface AdminPageInput {
   title: string;
   slug: string | null;
+  icon: string;
   body_markdown: string;
   is_published: boolean;
 }

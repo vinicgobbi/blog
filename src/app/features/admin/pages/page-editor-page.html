@@ -58,6 +58,25 @@
       </div>
 
       <div class="field">
+        <label for="pagina-icone">Ícone</label>
+        <app-icon-picker
+          inputId="pagina-icone"
+          describedBy="pagina-icone-ajuda pagina-icone-erro"
+          [formField]="pageForm.icon"
+        />
+        <p id="pagina-icone-ajuda" class="field__help">
+          Aparece ao lado do título no menu do blog.
+        </p>
+        <div id="pagina-icone-erro" class="field__errors">
+          @if (pageForm.icon().touched()) {
+            @for (error of pageForm.icon().errors(); track error.kind) {
+              <p>{{ error.message }}</p>
+            }
+          }
+        </div>
+      </div>
+
+      <div class="field">
         <label for="pagina-conteudo">Conteúdo</label>
         <app-markdown-editor
           inputId="pagina-conteudo"
@@ -80,7 +99,9 @@
           <input id="pagina-publicada" type="checkbox" [formField]="pageForm.is_published" />
           Publicada
         </label>
-        <p class="field__help">Páginas não publicadas não aparecem no blog.</p>
+        <p class="field__help">
+          Páginas publicadas aparecem no menu do blog; as não publicadas ficam ocultas.
+        </p>
       </div>
 
       <div class="post-form__actions">

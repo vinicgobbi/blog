@@ -37,9 +37,9 @@
             @for (page of pages.value(); track page.id) {
               <tr>
                 <td>
-                  <a class="table__title" [routerLink]="['/admin/paginas', page.id]">{{
-                    page.title
-                  }}</a>
+                  <a class="table__title" [routerLink]="['/admin/paginas', page.id]"
+                    ><i class="bi bi-{{ page.icon }}" aria-hidden="true"></i> {{ page.title }}</a
+                  >
                   <span class="table__meta">/{{ page.slug }}</span>
                 </td>
                 <td>

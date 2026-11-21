@@ -1,0 +1,72 @@
+<button
+  #toggleButton
+  type="button"
+  class="icon-picker__toggle"
+  [id]="inputId()"
+  [disabled]="disabled()"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="panelId"
+  [attr.aria-invalid]="touched() && invalid()"
+  [attr.aria-describedby]="describedBy()"
+  (click)="toggle()"
+>
+  @if (value(); as icon) {
+    <span class="icon-picker__preview"><i class="bi bi-{{ icon }}" aria-hidden="true"></i></span>
+    <span class="icon-picker__name">{{ icon }}</span>
+  } @else {
+    <span class="icon-picker__preview icon-picker__preview--empty"
+      ><i class="bi bi-question-lg" aria-hidden="true"></i
+    ></span>
+    <span class="icon-picker__name icon-picker__name--empty">Escolher ícone</span>
+  }
+  <i class="bi bi-chevron-down icon-picker__chevron" aria-hidden="true"></i>
+</button>
+
+@if (open()) {
+  <div class="icon-picker__panel" [id]="panelId">
+    <input
+      #search
+      type="search"
+      class="icon-picker__search"
+      placeholder="Buscar (em inglês: user, mail…)"
+      aria-label="Buscar ícone"
+      [value]="query()"
+      (input)="query.set($any($event.target).value)"
+    />
+
+    @if (searching() && names.error()) {
+      <p class="icon-picker__state" role="alert">Não foi possível carregar os ícones.</p>
+    } @else if (searching() && names.isLoading()) {
+      <p class="icon-picker__state">Carregando ícones…</p>
+    } @else {
+      <p class="icon-picker__hint" aria-live="polite">
+        @if (!searching()) {
+          Sugestões. Busque para ver todos os ícones.
+        } @else if (!results().length) {
+          Nenhum ícone encontrado.
+        } @else if (truncated()) {
+          Mostrando os primeiros {{ results().length }}. Refine a busca.
+        } @else {
+          {{ results().length }} {{ results().length === 1 ? 'ícone' : 'ícones' }}.
+        }
+      </p>
+      <ul class="icon-picker__grid">
+        @for (name of results(); track name) {
+          <li>
+            <button
+              type="button"
+              class="icon-picker__option"
+              [class.selected]="name === value()"
+              [attr.aria-pressed]="name === value()"
+              [attr.aria-label]="name"
+              [title]="name"
+              (click)="select(name)"
+            >
+              <i class="bi bi-{{ name }}" aria-hidden="true"></i>
+            </button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+}
