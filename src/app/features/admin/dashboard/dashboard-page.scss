@@ -1,0 +1,32 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  list-style: none;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.25rem;
+
+  i {
+    color: var(--accent-text);
+    font-size: 1.35rem;
+  }
+}
+
+.stat__value {
+  font: 800 2rem/1.1 var(--font-display);
+}
+
+.stat__label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.stat--alert {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}

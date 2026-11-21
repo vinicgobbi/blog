@@ -1,0 +1,64 @@
+<main class="login" id="conteudo">
+  <form class="card login__card" novalidate (submit)="login($event)">
+    <div class="login__brand">
+      <span class="brand__mark" aria-hidden="true">VG</span>
+      <div>
+        <h1>Entrar</h1>
+        <p>Área administrativa do {{ siteName }}</p>
+      </div>
+    </div>
+
+    @if (failure(); as message) {
+      <p class="login__failure" role="alert">
+        <i class="bi bi-exclamation-circle" aria-hidden="true"></i> {{ message }}
+      </p>
+    }
+
+    <div class="field">
+      <label for="login-email">E-mail</label>
+      <input
+        id="login-email"
+        type="email"
+        autocomplete="username"
+        [formField]="loginForm.email"
+        [attr.aria-invalid]="loginForm.email().touched() && loginForm.email().invalid()"
+        aria-describedby="login-email-erro"
+      />
+      <div id="login-email-erro" class="field__errors">
+        @if (loginForm.email().touched()) {
+          @for (error of loginForm.email().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="login-senha">Senha</label>
+      <input
+        id="login-senha"
+        type="password"
+        autocomplete="current-password"
+        [formField]="loginForm.password"
+        [attr.aria-invalid]="loginForm.password().touched() && loginForm.password().invalid()"
+        aria-describedby="login-senha-erro"
+      />
+      <div id="login-senha-erro" class="field__errors">
+        @if (loginForm.password().touched()) {
+          @for (error of loginForm.password().errors(); track error.kind) {
+            <p>{{ error.message }}</p>
+          }
+        }
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="loginForm().submitting()">
+      <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
+      {{ loginForm().submitting() ? 'Entrando…' : 'Entrar' }}
+    </button>
+
+    <a class="login__back" href="/"
+      ><i class="bi bi-arrow-left" aria-hidden="true"></i> Voltar ao blog</a
+    >
+  </form>
+</main>

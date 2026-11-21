@@ -4,7 +4,8 @@
  */
 export const environment = {
   siteName: 'Blog do Vinícius',
-  siteDescription: 'Artigos sobre desenvolvimento web, Laravel, Angular e o que mais eu estiver aprendendo.',
+  siteDescription:
+    'Artigos sobre desenvolvimento web, Laravel, Angular e o que mais eu estiver aprendendo.',
   portfolioUrl: 'https://vinicgobbi.dev.br',
   siteUrl: 'https://seudominio.com.br',
   apiUrl: 'https://api.seudominio.com.br/api',

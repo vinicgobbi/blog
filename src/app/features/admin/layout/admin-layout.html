@@ -1,0 +1,62 @@
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<header class="admin-bar">
+  <div class="container admin-bar__inner">
+    <a class="brand" routerLink="/admin">
+      <span class="brand__mark" aria-hidden="true">VG</span>
+      <span>Admin</span>
+    </a>
+
+    <nav aria-label="Administração">
+      <ul class="admin-nav">
+        @for (item of menu; track item.link) {
+          <li>
+            <a
+              class="admin-nav__link"
+              [routerLink]="item.link"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+              ariaCurrentWhenActive="page"
+            >
+              <i class="bi {{ item.icon }}" aria-hidden="true"></i> {{ item.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="admin-bar__actions">
+      @if (auth.user(); as user) {
+        <span class="admin-bar__user"
+          ><i class="bi bi-person-circle" aria-hidden="true"></i> {{ user.name }}</span
+        >
+      }
+      <a class="btn btn-ghost btn-sm" href="/" target="_blank" rel="noopener">
+        <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i> Ver blog
+      </a>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-icon"
+        (click)="theme.toggle()"
+        [attr.aria-label]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
+        [title]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
+      >
+        <i
+          class="bi"
+          [class.bi-sun]="theme.theme() === 'dark'"
+          [class.bi-moon-stars]="theme.theme() === 'light'"
+          aria-hidden="true"
+        ></i>
+      </button>
+      <button type="button" class="btn btn-outline btn-sm" (click)="logout()">
+        <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sair
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="conteudo" class="page" tabindex="-1">
+  <div class="container">
+    <router-outlet />
+  </div>
+</main>
