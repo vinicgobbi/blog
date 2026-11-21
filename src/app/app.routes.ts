@@ -65,6 +65,11 @@ export const routes: Routes = [
           import('./features/admin/pages/page-editor-page').then((m) => m.PageEditorPage),
       },
       {
+        path: 'comentarios',
+        loadComponent: () =>
+          import('./features/admin/comments/comment-list-page').then((m) => m.CommentListPage),
+      },
+      {
         path: 'midia',
         loadComponent: () => import('./features/admin/media/media-page').then((m) => m.MediaPage),
       },
