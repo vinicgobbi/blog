@@ -7,7 +7,7 @@ import {
   withEventReplay,
   withHttpTransferCacheOptions,
 } from '@angular/platform-browser';
-import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
 
@@ -16,7 +16,11 @@ registerLocaleData(localePt, 'pt-BR');
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes, withComponentInputBinding()),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+    ),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     provideClientHydration(
       withEventReplay(),
