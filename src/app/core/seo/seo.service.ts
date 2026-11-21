@@ -12,10 +12,14 @@ export interface SeoData {
   /** Caminho da página (ex.: `/posts/meu-post`), usado no canonical e no og:url. */
   path?: string;
   type?: 'website' | 'article';
+  /** Pede aos buscadores para não indexar a página (ex.: busca, páginas de erro). */
+  noindex?: boolean;
+  /** Feed RSS anunciado pela página; o feed geral do blog é usado quando omitido. */
+  feed?: { url: string; title: string };
 }
 
 /**
- * Define título, description, canonical e as tags Open Graph/Twitter.
+ * Define título, description, canonical, robots, feed RSS e as tags Open Graph/Twitter.
  * Funciona no SSR, então as tags já chegam prontas para buscadores e para
  * o preview de links em redes sociais.
  */
@@ -29,8 +33,17 @@ export class SeoService {
     const title = data.title ? `${data.title} | ${environment.siteName}` : environment.siteName;
     const url = `${environment.siteUrl}${data.path ?? ''}`;
 
+    const feed = data.feed ?? { url: environment.feedUrl, title: environment.siteName };
+
     this.title.setTitle(title);
-    this.setCanonical(url);
+    this.setLink('link[rel="canonical"]', { rel: 'canonical', href: url });
+    this.setLink('link[rel="alternate"][type="application/rss+xml"]', {
+      rel: 'alternate',
+      type: 'application/rss+xml',
+      title: feed.title,
+      href: feed.url,
+    });
+    this.setTag('name', 'robots', data.noindex ? 'noindex, follow' : null);
 
     this.setTag('name', 'description', data.description);
     this.setTag('property', 'og:site_name', environment.siteName);
@@ -58,15 +71,17 @@ export class SeoService {
     }
   }
 
-  private setCanonical(url: string): void {
-    let link = this.document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+  /** Cria ou atualiza um único <link> no <head> (evita duplicatas entre páginas). */
+  private setLink(selector: string, attributes: Record<string, string>): void {
+    let link = this.document.head.querySelector<HTMLLinkElement>(selector);
 
     if (!link) {
       link = this.document.createElement('link');
-      link.setAttribute('rel', 'canonical');
       this.document.head.appendChild(link);
     }
 
-    link.setAttribute('href', url);
+    for (const [name, value] of Object.entries(attributes)) {
+      link.setAttribute(name, value);
+    }
   }
 }
