@@ -1,4 +1,4 @@
-import { EditorState, applyMarkdown } from './markdown-actions';
+import { EditorState, applyMarkdown, insertText, replaceFirst } from './markdown-actions';
 
 /**
  * Nos testes, a seleção é marcada com « e » (colchetes conflitariam com a
@@ -58,5 +58,21 @@ describe('applyMarkdown', () => {
     expect(show(applyMarkdown('codeBlock', state('texto «echo 1;»')))).toBe(
       'texto \n```\n«echo 1;»\n```\n',
     );
+  });
+});
+
+describe('insertText', () => {
+  it('replaces the selection and puts the cursor after the inserted text', () => {
+    expect(show(insertText(state('a «bc» d'), 'XY'))).toBe('a XY«» d');
+  });
+});
+
+describe('replaceFirst', () => {
+  it('replaces only the first occurrence of the placeholder', () => {
+    expect(replaceFirst('a [x] b [x]', '[x]', '!')).toBe('a ! b [x]');
+  });
+
+  it('keeps the text when the placeholder was removed by the author', () => {
+    expect(replaceFirst('texto editado', '[x]', '!')).toBe('texto editado');
   });
 });

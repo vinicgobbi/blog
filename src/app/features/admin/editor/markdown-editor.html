@@ -1,4 +1,15 @@
-<div class="editor" [class.editor--invalid]="invalid()">
+<input
+  #fileInput
+  class="visually-hidden"
+  type="file"
+  multiple
+  tabindex="-1"
+  aria-hidden="true"
+  [accept]="accept"
+  (change)="onFileInput($event)"
+/>
+
+<div class="editor" [class.editor--invalid]="invalid() && touched()">
   <div class="editor__bar">
     <div
       class="editor__toolbar"
@@ -41,13 +52,16 @@
       [id]="inputId()"
       [value]="value()"
       [disabled]="disabled()"
-      [attr.aria-invalid]="invalid()"
+      [attr.aria-invalid]="invalid() && touched()"
       [attr.aria-describedby]="describedBy()"
       spellcheck="true"
       placeholder="Escreva em Markdown…"
       (input)="onInput($event)"
       (keydown)="onKeydown($event)"
       (blur)="touch.emit()"
+      (dragover)="$event.preventDefault()"
+      (drop)="onDrop($event)"
+      (paste)="onPaste($event)"
     ></textarea>
 
     <section class="editor__preview" aria-label="Pré-visualização" aria-live="polite">
@@ -63,3 +77,16 @@
     </section>
   </div>
 </div>
+
+<p class="editor__status" aria-live="polite">
+  @if (uploading()) {
+    <span
+      ><i class="bi bi-cloud-arrow-up" aria-hidden="true"></i> Enviando
+      {{ uploading() === 1 ? '1 imagem' : uploading() + ' imagens' }}…</span
+    >
+  }
+  @if (uploadError(); as error) {
+    <span class="editor__error" role="alert">{{ error }}</span>
+  }
+</p>
+<p class="editor__help">Dica: arraste ou cole imagens no texto para enviá-las.</p>

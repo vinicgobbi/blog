@@ -260,4 +260,60 @@ describe('PostEditorPage', () => {
       'Corrija os campos destacados.',
     );
   });
+
+  it('sets the cover from the media library and sends its path', async () => {
+    const { fixture, http, element } = render();
+    type(element, '#post-titulo', 'Com capa');
+    type(element, '#post-conteudo', 'Conteúdo');
+    await fixture.whenStable();
+
+    [...element.querySelectorAll<HTMLButtonElement>('.cover__actions button')]
+      .find((b) => b.textContent?.includes('Escolher imagem'))!
+      .click();
+    fixture.detectChanges();
+    http.expectOne(`${API}/admin/media`).flush({
+      data: [
+        {
+          id: 5,
+          url: 'http://api.test/storage/media/capa.jpg',
+          path: 'media/capa.jpg',
+          original_name: 'capa.jpg',
+          mime_type: 'image/jpeg',
+          size: 1000,
+          width: 1200,
+          height: 600,
+          alt: null,
+          markdown: '',
+          created_at: '2026-11-20T10:00:00-03:00',
+        },
+      ],
+      links: { first: null, last: null, prev: null, next: null },
+      meta: { current_page: 1, from: 1, last_page: 1, per_page: 30, to: 1, total: 1 },
+    });
+    await fixture.whenStable();
+    [...element.querySelectorAll<HTMLButtonElement>('dialog button')]
+      .find((b) => b.textContent?.includes('Usar esta imagem'))!
+      .click();
+    await fixture.whenStable();
+
+    expect(element.querySelector('.cover__image')?.getAttribute('src')).toBe(
+      'http://api.test/storage/media/capa.jpg',
+    );
+    expect(fixture.componentInstance.hasUnsavedChanges()).toBe(true);
+
+    await click(fixture, element, 'Publicar');
+    const request = http.expectOne({ method: 'POST', url: `${API}/admin/posts` });
+    expect(request.request.body).toMatchObject({ cover_image_path: 'media/capa.jpg' });
+    request.flush(
+      {
+        data: {
+          ...POST,
+          id: 10,
+          cover_image_path: 'media/capa.jpg',
+          cover_image_url: 'http://api.test/storage/media/capa.jpg',
+        },
+      },
+      { status: 201, statusText: 'Created' },
+    );
+  });
 });

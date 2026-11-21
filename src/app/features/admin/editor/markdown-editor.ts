@@ -15,7 +15,14 @@ import {
 import { FormValueControl } from '@angular/forms/signals';
 import { prepareArticleHtml } from '../../blog/post/article-html';
 import { AdminApi } from '../admin-api';
-import { MarkdownAction, SHORTCUTS, applyMarkdown } from './markdown-actions';
+import { ACCEPTED_IMAGE_TYPES, altFromFileName, validateImage } from '../media/image-upload';
+import {
+  MarkdownAction,
+  SHORTCUTS,
+  applyMarkdown,
+  insertText,
+  replaceFirst,
+} from './markdown-actions';
 
 interface ToolbarButton {
   action: MarkdownAction;
@@ -40,6 +47,8 @@ export const PREVIEW_DEBOUNCE_MS = 400;
 export class MarkdownEditor implements FormValueControl<string> {
   readonly value = model('');
   readonly invalid = input(false);
+  /** Como nos demais campos, o erro só é destacado depois que o campo foi tocado. */
+  readonly touched = input(false);
   readonly disabled = input(false);
   readonly touch = output<void>();
   /** Id do textarea, para o <label for> e mensagens de erro. */
@@ -47,13 +56,20 @@ export class MarkdownEditor implements FormValueControl<string> {
   readonly describedBy = input<string | null>(null);
 
   private readonly injector = inject(Injector);
+  private readonly api = inject(AdminApi);
   private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('textarea');
+  private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
+  private nextUploadId = 1;
+
+  protected readonly accept = ACCEPTED_IMAGE_TYPES.join(',');
+  protected readonly uploading = signal(0);
+  protected readonly uploadError = signal<string | null>(null);
 
   /** Abas no celular; no desktop os dois painéis ficam lado a lado. */
   protected readonly mode = signal<'write' | 'preview'>('write');
 
   private readonly debouncedValue = debounced(() => this.value(), PREVIEW_DEBOUNCE_MS);
-  protected readonly preview = inject(AdminApi).markdownPreview(() =>
+  protected readonly preview = this.api.markdownPreview(() =>
     this.debouncedValue.hasValue() ? this.debouncedValue.value() : undefined,
   );
   protected readonly previewHtml = computed(() =>
@@ -70,10 +86,16 @@ export class MarkdownEditor implements FormValueControl<string> {
     { action: 'quote', icon: 'bi-quote', label: 'Citação' },
     { action: 'code', icon: 'bi-code', label: 'Código' },
     { action: 'codeBlock', icon: 'bi-code-square', label: 'Bloco de código' },
-    { action: 'image', icon: 'bi-image', label: 'Imagem' },
+    { action: 'image', icon: 'bi-image', label: 'Enviar imagem' },
   ];
 
   protected apply(action: MarkdownAction): void {
+    if (action === 'image') {
+      this.fileInput().nativeElement.click();
+
+      return;
+    }
+
     const element = this.textarea().nativeElement;
     const next = applyMarkdown(action, {
       value: this.value(),
@@ -90,6 +112,72 @@ export class MarkdownEditor implements FormValueControl<string> {
       },
       { injector: this.injector },
     );
+  }
+
+  /**
+   * Envia as imagens e insere um marcador no cursor, trocado pelo Markdown da
+   * imagem quando o envio termina (ou removido em caso de erro).
+   */
+  uploadImages(files: Iterable<File>): void {
+    this.uploadError.set(null);
+
+    for (const file of files) {
+      const error = validateImage(file);
+      if (error) {
+        this.uploadError.set(error);
+        continue;
+      }
+
+      const placeholder = `![Enviando ${file.name} (${this.nextUploadId++})…]()`;
+      const element = this.textarea().nativeElement;
+      const next = insertText(
+        { value: this.value(), start: element.selectionStart, end: element.selectionEnd },
+        placeholder,
+      );
+      this.value.set(next.value);
+      this.uploading.update((count) => count + 1);
+
+      this.api.uploadMedia(file, altFromFileName(file.name)).subscribe({
+        next: (event) => {
+          if (event.kind === 'done') {
+            this.value.update((value) => replaceFirst(value, placeholder, event.media.markdown));
+          }
+        },
+        error: () => {
+          this.value.update((value) => replaceFirst(value, placeholder, ''));
+          this.uploadError.set(`Não foi possível enviar "${file.name}".`);
+          this.uploading.update((count) => count - 1);
+        },
+        complete: () => this.uploading.update((count) => count - 1),
+      });
+    }
+  }
+
+  protected onFileInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.uploadImages(Array.from(input.files ?? []));
+    input.value = '';
+  }
+
+  protected onDrop(event: DragEvent): void {
+    const files = Array.from(event.dataTransfer?.files ?? []);
+
+    if (files.length) {
+      event.preventDefault();
+      this.uploadImages(files);
+    }
+  }
+
+  /** Imagens coladas (ex.: print da área de transferência) também são enviadas. */
+  protected onPaste(event: ClipboardEvent): void {
+    const files = Array.from(event.clipboardData?.files ?? []).filter((file) =>
+      file.type.startsWith('image/'),
+    );
+
+    if (files.length) {
+      event.preventDefault();
+      this.uploadImages(files);
+    }
   }
 
   protected onInput(event: Event): void {

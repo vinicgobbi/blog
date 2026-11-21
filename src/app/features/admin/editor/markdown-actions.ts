@@ -147,3 +147,27 @@ export const SHORTCUTS: Record<string, MarkdownAction> = {
   i: 'italic',
   k: 'link',
 };
+
+/** Insere texto na posição da seleção (substituindo-a) e põe o cursor logo depois. */
+export function insertText(state: EditorState, text: string): EditorState {
+  const position = state.start + text.length;
+
+  return {
+    value: state.value.slice(0, state.start) + text + state.value.slice(state.end),
+    start: position,
+    end: position,
+  };
+}
+
+/**
+ * Troca a primeira ocorrência de `search` (ex.: o marcador de upload em
+ * andamento) por `replacement`. Sem ocorrência, o texto fica igual (o autor
+ * pode ter apagado o marcador enquanto o envio acontecia).
+ */
+export function replaceFirst(value: string, search: string, replacement: string): string {
+  const index = value.indexOf(search);
+
+  return index === -1
+    ? value
+    : value.slice(0, index) + replacement + value.slice(index + search.length);
+}

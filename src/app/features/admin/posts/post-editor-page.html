@@ -185,14 +185,27 @@
       </div>
 
       <div class="field">
-        <label for="post-capa">Imagem de capa <span class="field__optional">(caminho)</span></label>
-        <input
-          id="post-capa"
-          type="text"
-          placeholder="media/2026/11/capa.jpg"
-          [formField]="postForm.cover_image_path"
-          aria-describedby="post-capa-erro"
-        />
+        <span class="field__label" id="post-capa-rotulo">Imagem de capa</span>
+        <div class="cover" aria-labelledby="post-capa-rotulo">
+          @if (coverUrl(); as url) {
+            <img class="cover__image" [src]="url" alt="Capa atual do post" />
+          } @else if (postForm.cover_image_path().value()) {
+            <p class="field__help">{{ postForm.cover_image_path().value() }}</p>
+          } @else {
+            <p class="cover__empty">Sem capa</p>
+          }
+          <div class="cover__actions">
+            <button type="button" class="btn btn-outline btn-sm" (click)="openCoverPicker()">
+              <i class="bi bi-image" aria-hidden="true"></i>
+              {{ postForm.cover_image_path().value() ? 'Trocar' : 'Escolher imagem' }}
+            </button>
+            @if (postForm.cover_image_path().value()) {
+              <button type="button" class="btn btn-ghost btn-sm" (click)="removeCover()">
+                Remover
+              </button>
+            }
+          </div>
+        </div>
         <div id="post-capa-erro" class="field__errors">
           @for (error of postForm.cover_image_path().errors(); track error.kind) {
             <p>{{ error.message }}</p>
@@ -202,3 +215,25 @@
     </aside>
   </form>
 }
+
+<dialog
+  #coverDialog
+  class="cover-dialog"
+  aria-labelledby="capa-dialogo-titulo"
+  (cancel)="closeCoverPicker()"
+>
+  <div class="cover-dialog__header">
+    <h2 id="capa-dialogo-titulo">Escolher imagem de capa</h2>
+    <button
+      type="button"
+      class="btn btn-ghost btn-sm btn-icon"
+      aria-label="Fechar"
+      (click)="closeCoverPicker()"
+    >
+      <i class="bi bi-x-lg" aria-hidden="true"></i>
+    </button>
+  </div>
+  @if (coverPickerOpen()) {
+    <app-media-library selectable (picked)="setCover($event)" />
+  }
+</dialog>

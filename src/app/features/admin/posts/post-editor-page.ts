@@ -1,5 +1,17 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Injector,
+  afterNextRender,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+  untracked,
+  viewChild,
+} from '@angular/core';
 import {
   FieldTree,
   FormField,
@@ -12,10 +24,11 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
-import { AdminPost, AdminPostInput, PostStatus } from '../../../shared/models/admin';
+import { AdminPost, AdminPostInput, Media, PostStatus } from '../../../shared/models/admin';
 import { AdminApi } from '../admin-api';
 import { fromDateTimeLocal, toDateTimeLocal } from '../editor/datetime-local';
 import { MarkdownEditor } from '../editor/markdown-editor';
+import { MediaLibrary } from '../media/media-library';
 import { STATE_LABELS } from './post-list-page';
 
 /** Valores do formulário (tudo como texto, como nos inputs). */
@@ -86,7 +99,7 @@ export function toPostInput(model: PostFormModel, status: PostStatus): AdminPost
  */
 @Component({
   selector: 'app-post-editor-page',
-  imports: [FormField, MarkdownEditor, RouterLink],
+  imports: [FormField, MarkdownEditor, MediaLibrary, RouterLink],
   templateUrl: './post-editor-page.html',
   styleUrl: './post-editor-page.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
@@ -104,6 +117,13 @@ export class PostEditorPage {
   protected readonly categories = this.api.categories();
   protected readonly saved = computed(() => (this.post.hasValue() ? this.post.value() : undefined));
   protected readonly stateLabels = STATE_LABELS;
+
+  /** URL da capa para a miniatura (o formulário guarda só o caminho). */
+  protected readonly coverUrl = signal<string | null>(null);
+  /** A biblioteca só é renderizada (e só busca as imagens) com o diálogo aberto. */
+  protected readonly coverPickerOpen = signal(false);
+  private readonly coverDialog = viewChild<ElementRef<HTMLDialogElement>>('coverDialog');
+  private readonly injector = inject(Injector);
 
   protected readonly model = signal<PostFormModel>({ ...EMPTY_POST });
   protected readonly postForm = form(this.model, (path) => {
@@ -189,8 +209,34 @@ export class PostEditorPage {
     return undefined;
   }
 
+  protected openCoverPicker(): void {
+    this.coverPickerOpen.set(true);
+    afterNextRender(() => this.coverDialog()?.nativeElement.showModal(), {
+      injector: this.injector,
+    });
+  }
+
+  protected closeCoverPicker(): void {
+    this.coverDialog()?.nativeElement.close();
+    this.coverPickerOpen.set(false);
+  }
+
+  protected setCover(media: Media): void {
+    this.postForm.cover_image_path().value.set(media.path);
+    this.postForm.cover_image_path().markAsDirty();
+    this.coverUrl.set(media.url);
+    this.closeCoverPicker();
+  }
+
+  protected removeCover(): void {
+    this.postForm.cover_image_path().value.set('');
+    this.postForm.cover_image_path().markAsDirty();
+    this.coverUrl.set(null);
+  }
+
   private fill(post: AdminPost): void {
     this.model.set(toFormModel(post));
+    this.coverUrl.set(post.cover_image_url);
     this.postForm().reset();
   }
 

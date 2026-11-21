@@ -91,3 +91,62 @@
     position: static;
   }
 }
+
+.field__label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cover {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cover__image {
+  width: 100%;
+  aspect-ratio: 2 / 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.cover__empty {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 1;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-subtle);
+  font-size: 0.85rem;
+}
+
+.cover__actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.cover-dialog {
+  width: min(960px, calc(100% - 2rem));
+  max-height: calc(100% - 2rem);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.55);
+  }
+}
+
+.cover-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}
