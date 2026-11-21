@@ -36,6 +36,10 @@ export const routes: Routes = [
           import('./features/admin/posts/post-editor-page').then((m) => m.PostEditorPage),
       },
       {
+        path: 'midia',
+        loadComponent: () => import('./features/admin/media/media-page').then((m) => m.MediaPage),
+      },
+      {
         path: 'posts/:id',
         canDeactivate: [unsavedChangesGuard],
         loadComponent: () =>

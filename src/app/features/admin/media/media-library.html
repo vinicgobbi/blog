@@ -1,0 +1,141 @@
+<div
+  class="dropzone"
+  [class.dropzone--active]="dragging()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="dragging.set(false)"
+  (drop)="onDrop($event)"
+>
+  <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+  <p>Arraste imagens para cá ou</p>
+  <label class="btn btn-primary btn-sm">
+    <i class="bi bi-upload" aria-hidden="true"></i> Escolher arquivos
+    <input
+      class="visually-hidden"
+      type="file"
+      multiple
+      [accept]="accept"
+      (change)="onFileInput($event)"
+    />
+  </label>
+  <p class="dropzone__hint">JPG, PNG, WebP ou GIF, até 5 MB.</p>
+</div>
+
+@for (upload of uploads(); track upload.id) {
+  <div class="upload">
+    <span>{{ upload.name }}</span>
+    <progress max="100" [value]="upload.percent" [attr.aria-label]="'Enviando ' + upload.name">
+      {{ upload.percent }}%
+    </progress>
+  </div>
+}
+
+@if (message(); as message) {
+  <p
+    class="message message--{{ message.kind }}"
+    [attr.role]="message.kind === 'error' ? 'alert' : 'status'"
+  >
+    {{ message.text }}
+  </p>
+}
+
+<div aria-live="polite" [attr.aria-busy]="media.isLoading()">
+  @if (media.error()) {
+    <div class="state" role="alert">
+      <p>Não foi possível carregar as imagens.</p>
+      <button type="button" class="btn btn-outline btn-sm" (click)="media.reload()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else if (response(); as response) {
+    @if (response.data.length) {
+      <ul class="grid">
+        @for (item of response.data; track item.id) {
+          <li class="card item">
+            <div class="item__thumb">
+              <img [src]="item.url" [alt]="item.alt ?? ''" loading="lazy" />
+            </div>
+            <div class="item__body">
+              <p class="item__name" [title]="item.original_name">{{ item.original_name }}</p>
+              <p class="item__meta">
+                @if (item.width && item.height) {
+                  {{ item.width }}×{{ item.height }} ·
+                }
+                {{ formatBytes(item.size) }}
+              </p>
+
+              @if (selectable()) {
+                <button type="button" class="btn btn-primary btn-sm" (click)="picked.emit(item)">
+                  Usar esta imagem
+                </button>
+              } @else {
+                <form
+                  class="item__alt"
+                  (submit)="$event.preventDefault(); saveAlt(item, alt.value)"
+                >
+                  <label class="visually-hidden" [for]="'alt-' + item.id"
+                    >Texto alternativo de {{ item.original_name }}</label
+                  >
+                  <input
+                    #alt
+                    [id]="'alt-' + item.id"
+                    type="text"
+                    placeholder="Texto alternativo"
+                    [value]="item.alt ?? ''"
+                  />
+                  <button
+                    type="submit"
+                    class="btn btn-ghost btn-sm btn-icon"
+                    aria-label="Salvar texto alternativo"
+                    title="Salvar texto alternativo"
+                  >
+                    <i class="bi bi-check-lg" aria-hidden="true"></i>
+                  </button>
+                </form>
+                <div class="item__actions">
+                  <button type="button" class="btn btn-outline btn-sm" (click)="copy(item)">
+                    <i class="bi bi-clipboard" aria-hidden="true"></i> Copiar Markdown
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm btn-icon"
+                    [attr.aria-label]="'Excluir ' + item.original_name"
+                    title="Excluir"
+                    (click)="remove(item)"
+                  >
+                    <i class="bi bi-trash" aria-hidden="true"></i>
+                  </button>
+                </div>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+
+      @if (response.meta.last_page > 1) {
+        <nav class="pager" aria-label="Páginas da biblioteca">
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            [disabled]="page() === 1"
+            (click)="page.set(page() - 1)"
+          >
+            <i class="bi bi-chevron-left" aria-hidden="true"></i> Anteriores
+          </button>
+          <span>Página {{ response.meta.current_page }} de {{ response.meta.last_page }}</span>
+          <button
+            type="button"
+            class="btn btn-outline btn-sm"
+            [disabled]="page() >= response.meta.last_page"
+            (click)="page.set(page() + 1)"
+          >
+            Próximas <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </button>
+        </nav>
+      }
+    } @else {
+      <p class="state">Nenhuma imagem enviada ainda.</p>
+    }
+  } @else {
+    <p class="state">Carregando imagens…</p>
+  }
+</div>

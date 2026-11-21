@@ -14,6 +14,7 @@ export interface AdminMenuItem {
 export const ADMIN_MENU: AdminMenuItem[] = [
   { label: 'Dashboard', icon: 'bi-speedometer2', link: '/admin', exact: true },
   { label: 'Posts', icon: 'bi-file-earmark-text', link: '/admin/posts' },
+  { label: 'Mídia', icon: 'bi-images', link: '/admin/midia' },
 ];
 
 /**
