@@ -4,11 +4,14 @@ import { API_URL } from '../../core/api';
 import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
 import { Observable } from 'rxjs';
 import {
+  Category,
   CommentInput,
   PostComment,
   PostDetail,
   PostQuery,
   PostSummary,
+  StaticPage,
+  Tag,
 } from '../../shared/models/blog';
 
 /**
@@ -23,11 +26,30 @@ export class BlogApi {
   private readonly apiUrl = inject(API_URL);
   private readonly http = inject(HttpClient);
 
-  posts(query: () => PostQuery): HttpResourceRef<PaginatedResponse<PostSummary> | undefined> {
-    return httpResource<PaginatedResponse<PostSummary>>(() => ({
-      url: `${this.apiUrl}/posts`,
-      params: toPostParams(query()),
-    }));
+  /** Posts publicados; quando `query` retorna undefined, nenhuma requisição é feita. */
+  posts(
+    query: () => PostQuery | undefined,
+  ): HttpResourceRef<PaginatedResponse<PostSummary> | undefined> {
+    return httpResource<PaginatedResponse<PostSummary>>(() => {
+      const value = query();
+
+      return value ? { url: `${this.apiUrl}/posts`, params: toPostParams(value) } : undefined;
+    });
+  }
+
+  tag(slug: () => string | undefined): HttpResourceRef<ResourceResponse<Tag> | undefined> {
+    return this.bySlug<Tag>('tags', slug);
+  }
+
+  category(
+    slug: () => string | undefined,
+  ): HttpResourceRef<ResourceResponse<Category> | undefined> {
+    return this.bySlug<Category>('categories', slug);
+  }
+
+  /** Página estática publicada (ex.: "sobre"). */
+  page(slug: () => string | undefined): HttpResourceRef<ResourceResponse<StaticPage> | undefined> {
+    return this.bySlug<StaticPage>('pages', slug);
   }
 
   /** Post publicado pelo slug; responde 404 para rascunhos, agendados e inexistentes. */
@@ -56,6 +78,17 @@ export class BlogApi {
       `${this.apiUrl}/posts/${encodeURIComponent(slug)}/comments`,
       comment,
     );
+  }
+
+  private bySlug<T>(
+    resource: string,
+    slug: () => string | undefined,
+  ): HttpResourceRef<ResourceResponse<T> | undefined> {
+    return httpResource<ResourceResponse<T>>(() => {
+      const value = slug();
+
+      return value ? `${this.apiUrl}/${resource}/${encodeURIComponent(value)}` : undefined;
+    });
   }
 }
 

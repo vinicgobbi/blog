@@ -65,3 +65,13 @@ export interface CommentInput {
   /** Honeypot: deve ser enviado vazio (só bots preenchem). */
   website: string;
 }
+
+/** Página estática publicada (PageResource da API). */
+export interface StaticPage {
+  id: number;
+  title: string;
+  slug: string;
+  /** HTML já renderizado e sanitizado pela API. */
+  body_html: string;
+  updated_at: string;
+}

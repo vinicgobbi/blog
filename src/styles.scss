@@ -215,6 +215,21 @@ a {
   font-size: 1.05rem;
 }
 
+/* Página estática: mesma largura de leitura dos posts. */
+.static-page {
+  max-width: var(--reading);
+  margin-inline: auto;
+
+  .section-title {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Botão de feed RSS no cabeçalho das listagens (tag, categoria). */
+.section-header .feed-link {
+  margin-top: 1.25rem;
+}
+
 /* ---------- Componentes reutilizáveis ---------- */
 .btn {
   display: inline-flex;

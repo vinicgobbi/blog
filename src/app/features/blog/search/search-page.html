@@ -1,0 +1,45 @@
+<div class="container">
+  <header class="section-header">
+    <span class="eyebrow">Busca</span>
+    <h1 class="section-title">Buscar posts</h1>
+  </header>
+
+  <form class="search" role="search" novalidate (submit)="search($event)">
+    <label for="busca-termo" class="visually-hidden">Termo de busca</label>
+    <div class="search__box">
+      <i class="bi bi-search" aria-hidden="true"></i>
+      <input
+        id="busca-termo"
+        type="search"
+        placeholder="Buscar por título ou resumo…"
+        autocomplete="off"
+        [formField]="searchForm.q"
+        aria-describedby="busca-erro"
+      />
+      <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+    </div>
+    <div id="busca-erro" class="search__error">
+      @if (searchForm.q().touched()) {
+        @for (error of searchForm.q().errors(); track error.kind) {
+          <p>{{ error.message }}</p>
+        }
+      }
+    </div>
+  </form>
+
+  @if (q()) {
+    @if (total() !== null) {
+      <p class="search__summary" role="status">
+        {{ total() === 1 ? '1 resultado' : total() + ' resultados' }} para
+        <strong>“{{ q() }}”</strong>
+      </p>
+    }
+    <app-post-list
+      [posts]="posts"
+      [page]="page()"
+      emptyMessage="Nenhum post encontrado. Tente outros termos."
+    />
+  } @else {
+    <p class="state">Digite um termo para buscar nos títulos e resumos dos posts.</p>
+  }
+</div>

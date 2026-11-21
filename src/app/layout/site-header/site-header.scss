@@ -70,7 +70,8 @@
 }
 
 @media (max-width: 480px) {
-  .brand__name {
+  .brand__name,
+  .nav-link__label {
     display: none;
   }
 }

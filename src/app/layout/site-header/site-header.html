@@ -17,6 +17,26 @@
         >
       </li>
       <li>
+        <a
+          class="nav-link"
+          routerLink="/sobre"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          >Sobre</a
+        >
+      </li>
+      <li>
+        <a
+          class="nav-link"
+          routerLink="/busca"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          aria-label="Buscar posts"
+        >
+          <i class="bi bi-search" aria-hidden="true"></i> <span class="nav-link__label">Busca</span>
+        </a>
+      </li>
+      <li>
         <a class="nav-link" [href]="feedUrl" title="Assinar o feed RSS">
           <i class="bi bi-rss" aria-hidden="true"></i> RSS
         </a>
