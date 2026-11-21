@@ -1,3 +1,9 @@
+## v0.1.2 (2026-11-21)
+
+### Fix
+
+- **ssr**: inicia o servidor quando executado por link simbólico
+
 ## v0.1.1 (2026-11-21)
 
 ### Fix
