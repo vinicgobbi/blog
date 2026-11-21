@@ -5,7 +5,9 @@ import {
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
 import express from 'express';
+import { realpathSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -49,7 +51,7 @@ app.use((req, res, next) => {
  * Start the server if this module is the main entry point, or it is ran via PM2.
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
-if (isMainModule(import.meta.url) || process.env['pm_id']) {
+if (isEntryPoint() || process.env['pm_id']) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, (error) => {
     if (error) {
@@ -58,6 +60,26 @@ if (isMainModule(import.meta.url) || process.env['pm_id']) {
 
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
+}
+
+/**
+ * O deploy executa o servidor pelo link simbólico `current/` (ex.:
+ * current/server/server.mjs), mas o Node resolve o link e o import.meta.url
+ * aponta para releases/<id>/. Sem comparar o caminho real, o isMainModule
+ * retorna false e o processo sai sem escutar a porta.
+ */
+function isEntryPoint(): boolean {
+  if (isMainModule(import.meta.url)) {
+    return true;
+  }
+
+  const entry = process.argv[1];
+
+  try {
+    return !!entry && realpathSync(entry) === fileURLToPath(import.meta.url);
+  } catch {
+    return false;
+  }
 }
 
 /**
