@@ -4,9 +4,9 @@ import { ArticleSection } from '../article-html';
 import { ACTIVE_SECTION_OFFSET, TableOfContents } from './table-of-contents';
 
 const SECTIONS: ArticleSection[] = [
-  { id: 'secao-intro', title: 'Introdução' },
-  { id: 'secao-uso', title: 'Uso' },
-  { id: 'secao-fim', title: 'Conclusão' },
+  { id: 'secao-intro', title: 'Introdução', level: 2 },
+  { id: 'secao-uso', title: 'Uso', level: 3 },
+  { id: 'secao-fim', title: 'Conclusão', level: 2 },
 ];
 
 @Component({
@@ -73,6 +73,7 @@ describe('TableOfContents', () => {
     ]);
     expect(element.querySelector('nav')?.getAttribute('aria-labelledby')).toBe('sumario-titulo');
   });
+
 
   it('highlights no section before the first heading is reached', async () => {
     const { element } = await render();
