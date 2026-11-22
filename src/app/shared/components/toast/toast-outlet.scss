@@ -1,0 +1,106 @@
+/* Pilha fixa no canto superior direito; só os toasts recebem o mouse. */
+:host {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 300;
+  width: min(24rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toaster__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* As listas não somem quando vazias: uma região "live" escondida pode não ser anunciada. */
+.toaster__list:not(:empty) + .toaster__list {
+  margin-top: 0.5rem;
+}
+
+.toast {
+  --toast-color: var(--text-muted);
+
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.75rem 0.5rem 0.75rem 0.9rem;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--toast-color);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-hover);
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  pointer-events: auto;
+}
+
+.toast--success {
+  --toast-color: var(--accent);
+}
+
+.toast--error {
+  --toast-color: var(--danger);
+}
+
+.toast--warning {
+  --toast-color: var(--warning);
+}
+
+.toast--info {
+  --toast-color: var(--info);
+}
+
+.toast__icon {
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  color: var(--toast-color);
+  font-size: 1.05rem;
+}
+
+.toast__message {
+  flex: 1;
+  min-width: 0;
+  padding-top: 0.05rem;
+  overflow-wrap: anywhere;
+}
+
+.toast__close {
+  flex-shrink: 0;
+  margin: -0.25rem 0;
+}
+
+/* Classes aplicadas pelo Angular (animate.enter / animate.leave no template). */
+.toast--enter {
+  animation: toast-in 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.toast--leave {
+  animation: toast-out 0.16s ease-in forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast--enter,
+  .toast--leave {
+    animation: none;
+  }
+}
