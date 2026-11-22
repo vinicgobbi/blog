@@ -11,6 +11,10 @@
 @if (deleteError(); as message) {
   <p class="alert alert--error" role="alert">{{ message }}</p>
 }
+@if (orderError(); as message) {
+  <p class="alert alert--error" role="alert">{{ message }}</p>
+}
+<p class="visually-hidden" role="status">{{ orderStatus() }}</p>
 
 <div aria-live="polite" [attr.aria-busy]="pages.isLoading()">
   @if (pages.error()) {
@@ -23,10 +27,15 @@
     </div>
   } @else if (pages.hasValue()) {
     @if (pages.value().length) {
+      <p class="page-list__hint">
+        As páginas publicadas aparecem no menu do blog nesta ordem. Arraste pela alça ou use as
+        setas para mudar a posição.
+      </p>
       <div class="table-wrapper">
         <table class="table">
           <thead>
             <tr>
+              <th scope="col"><span class="visually-hidden">Ordem no menu</span></th>
               <th scope="col">Título</th>
               <th scope="col">Situação</th>
               <th scope="col">Atualizada</th>
@@ -34,8 +43,51 @@
             </tr>
           </thead>
           <tbody>
-            @for (page of pages.value(); track page.id) {
-              <tr>
+            @for (page of pages.value(); track page.id; let first = $first, last = $last) {
+              <tr
+                [class.is-dragging]="draggedId() === page.id"
+                [class.drop-before]="
+                  dropTarget()?.id === page.id && dropTarget()?.placement === 'before'
+                "
+                [class.drop-after]="
+                  dropTarget()?.id === page.id && dropTarget()?.placement === 'after'
+                "
+                (dragover)="onDragOver($event, page)"
+                (drop)="onDrop($event)"
+              >
+                <td class="table__order">
+                  <span
+                    class="drag-handle"
+                    draggable="true"
+                    title="Arraste para mudar a posição"
+                    aria-hidden="true"
+                    (dragstart)="onDragStart($event, page)"
+                    (dragend)="onDragEnd()"
+                    ><i class="bi bi-grip-vertical"></i
+                  ></span>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm btn-icon"
+                    [id]="moveButtonId(page.id, -1)"
+                    [disabled]="first"
+                    [attr.aria-label]="'Mover ' + page.title + ' para cima'"
+                    title="Mover para cima"
+                    (click)="move(page, -1)"
+                  >
+                    <i class="bi bi-arrow-up" aria-hidden="true"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-ghost btn-sm btn-icon"
+                    [id]="moveButtonId(page.id, 1)"
+                    [disabled]="last"
+                    [attr.aria-label]="'Mover ' + page.title + ' para baixo'"
+                    title="Mover para baixo"
+                    (click)="move(page, 1)"
+                  >
+                    <i class="bi bi-arrow-down" aria-hidden="true"></i>
+                  </button>
+                </td>
                 <td>
                   <a class="table__title" [routerLink]="['/admin/paginas', page.id]"
                     ><i class="bi bi-{{ page.icon }}" aria-hidden="true"></i> {{ page.title }}</a

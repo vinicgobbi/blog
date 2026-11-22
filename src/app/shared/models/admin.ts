@@ -71,6 +71,8 @@ export interface AdminPage {
   slug: string;
   /** Nome do ícone do Bootstrap Icons, sem o prefixo "bi-" (ex.: "person"). */
   icon: string;
+  /** Posição no menu do blog (1 = primeira); muda só pela reordenação. */
+  position: number;
   /** Só presentes no detalhe (GET /admin/pages/{id}). */
   body_markdown?: string;
   body_html?: string;

@@ -51,6 +51,7 @@ const PAGE: AdminPage = {
   title: 'Sobre',
   slug: 'sobre',
   icon: 'person',
+  position: 1,
   body_markdown: '# Olá',
   body_html: '<h1>Olá</h1>',
   is_published: false,
