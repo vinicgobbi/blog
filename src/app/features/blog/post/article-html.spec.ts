@@ -55,16 +55,28 @@ describe('restoreHeadingIds', () => {
 });
 
 describe('extractSections', () => {
-  it('lists the h2 headings with the id of their permalink, in order', () => {
+  it('lists the h2 to h4 headings with their level and permalink id, in order', () => {
     const html =
       '<h2 id="secao-intro">Introdução<a href="#secao-intro" class="heading-permalink" aria-hidden="true">#</a></h2>' +
       '<p>texto</p><h3 id="secao-sub">Sub<a href="#secao-sub" class="heading-permalink">#</a></h3>' +
+      '<h4 id="secao-detalhe">Detalhe<a href="#secao-detalhe" class="heading-permalink">#</a></h4>' +
       '<h2 id="secao-uso">Uso<a href="#secao-uso" class="heading-permalink">#</a></h2>';
 
     expect(extractSections(html)).toEqual([
-      { id: 'secao-intro', title: 'Introdução' },
-      { id: 'secao-uso', title: 'Uso' },
+      { id: 'secao-intro', title: 'Introdução', level: 2 },
+      { id: 'secao-sub', title: 'Sub', level: 3 },
+      { id: 'secao-detalhe', title: 'Detalhe', level: 4 },
+      { id: 'secao-uso', title: 'Uso', level: 2 },
     ]);
+  });
+
+  it('leaves headings deeper than h4 out of the list', () => {
+    const html =
+      '<h2>Topo<a href="#secao-topo" class="heading-permalink">#</a></h2>' +
+      '<h5>Fundo<a href="#secao-fundo" class="heading-permalink">#</a></h5>' +
+      '<h6>Mais fundo<a href="#secao-mais-fundo" class="heading-permalink">#</a></h6>';
+
+    expect(extractSections(html)).toEqual([{ id: 'secao-topo', title: 'Topo', level: 2 }]);
   });
 
   it('keeps only the text of headings with inline markup and decodes entities', () => {
@@ -73,7 +85,7 @@ describe('extractSections', () => {
       '<a href="#secao-usando-router-outlet-rotas" class="heading-permalink">#</a></h2>';
 
     expect(extractSections(html)).toEqual([
-      { id: 'secao-usando-router-outlet-rotas', title: 'Usando <router-outlet> & rotas' },
+      { id: 'secao-usando-router-outlet-rotas', title: 'Usando <router-outlet> & rotas', level: 2 },
     ]);
   });
 

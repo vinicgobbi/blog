@@ -38,11 +38,16 @@ export function restoreHeadingIds(container: HTMLElement): void {
   }
 }
 
-/** Seção do post: um título `##` do Markdown, com o id da âncora gerada pela API. */
+/** Seção do post: um título `##` a `####` do Markdown, com o id da âncora gerada pela API. */
 export interface ArticleSection {
   id: string;
   title: string;
+  /** Nível do título: 2 para `##`, 3 para `###` e assim por diante. */
+  level: number;
 }
+
+/** Título mais profundo que entra no sumário; níveis abaixo dele deixariam a lista longa demais. */
+export const SECTION_MAX_LEVEL = 4;
 
 const HTML_ENTITIES: Record<string, string> = {
   '&amp;': '&',
@@ -55,7 +60,7 @@ const HTML_ENTITIES: Record<string, string> = {
 };
 
 /**
- * Lista as seções (`<h2>`) do HTML do post, na ordem do texto, para o sumário.
+ * Lista as seções (`<h2>` a `<h4>`) do HTML do post, na ordem do texto, para o sumário.
  * Trabalha sobre o texto do HTML (e não sobre o DOM) para funcionar também no
  * SSR. O id vem do link de âncora que a API põe em cada título; títulos sem ele
  * ficam de fora, pois não teriam para onde levar.
@@ -63,7 +68,9 @@ const HTML_ENTITIES: Record<string, string> = {
 export function extractSections(html: string): ArticleSection[] {
   const sections: ArticleSection[] = [];
 
-  for (const [, inner] of html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)) {
+  const headings = new RegExp(`<h([2-${SECTION_MAX_LEVEL}])\\b[^>]*>([\\s\\S]*?)<\\/h\\1>`, 'gi');
+
+  for (const [, level, inner] of html.matchAll(headings)) {
     const href = /<a\b[^>]*class="heading-permalink"[^>]*>/i
       .exec(inner)?.[0]
       .match(/href="#([^"]+)"/i)?.[1];
@@ -80,7 +87,7 @@ export function extractSections(html: string): ArticleSection[] {
       .trim();
 
     if (title) {
-      sections.push({ id: decodeURIComponent(href), title });
+      sections.push({ id: decodeURIComponent(href), title, level: Number(level) });
     }
   }
 

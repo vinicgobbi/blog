@@ -20,6 +20,8 @@
       <li>
         <a
           class="toc__link"
+          [class.toc__link--sub]="section.level === 3"
+          [class.toc__link--sub-2]="section.level >= 4"
           [href]="'#' + section.id"
           [class.active]="activeId() === section.id"
           [attr.aria-current]="activeId() === section.id ? 'location' : null"

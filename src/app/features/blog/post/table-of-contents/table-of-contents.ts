@@ -14,7 +14,7 @@ import { ArticleSection } from '../article-html';
 export const ACTIVE_SECTION_OFFSET = 120;
 
 /**
- * Sumário do post ("Nesta página") com as seções `##`. Em telas largas fica numa
+ * Sumário do post ("Nesta página") com as seções `##` a `####`, recuadas por nível. Em telas largas fica numa
  * coluna fixa ao lado do texto (ver post-page.scss); no celular, é um bloco
  * recolhível no topo do artigo. Destaca a seção que está sendo lida.
  *

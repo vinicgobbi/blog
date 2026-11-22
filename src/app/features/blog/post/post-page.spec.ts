@@ -109,7 +109,7 @@ describe('PostPage', () => {
     expect(element.querySelector('app-table-of-contents')).toBeNull();
   });
 
-  it('lists the ## sections of the post in the table of contents', async () => {
+  it('lists the ## to #### sections of the post in the table of contents', async () => {
     const { fixture, http, element } = await render();
     const body =
       '<h2>Instalação<a class="heading-permalink" href="#secao-instalacao">#</a></h2><p>a</p>' +
@@ -121,6 +121,7 @@ describe('PostPage', () => {
     const links = [...element.querySelectorAll<HTMLAnchorElement>('app-table-of-contents a')];
     expect(links.map((link) => [link.textContent?.trim(), link.getAttribute('href')])).toEqual([
       ['Instalação', '#secao-instalacao'],
+      ['Detalhe', '#secao-detalhe'],
       ['Uso', '#secao-uso'],
     ]);
   });

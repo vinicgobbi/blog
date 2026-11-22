@@ -4,9 +4,9 @@ import { ArticleSection } from '../article-html';
 import { ACTIVE_SECTION_OFFSET, TableOfContents } from './table-of-contents';
 
 const SECTIONS: ArticleSection[] = [
-  { id: 'secao-intro', title: 'Introdução' },
-  { id: 'secao-uso', title: 'Uso' },
-  { id: 'secao-fim', title: 'Conclusão' },
+  { id: 'secao-intro', title: 'Introdução', level: 2 },
+  { id: 'secao-uso', title: 'Uso', level: 3 },
+  { id: 'secao-fim', title: 'Conclusão', level: 2 },
 ];
 
 @Component({
@@ -72,6 +72,17 @@ describe('TableOfContents', () => {
       '#secao-fim',
     ]);
     expect(element.querySelector('nav')?.getAttribute('aria-labelledby')).toBe('sumario-titulo');
+  });
+
+  it('indents subsections according to their heading level', async () => {
+    const { element } = await render();
+
+    const links = [...element.querySelectorAll<HTMLAnchorElement>('.toc__link')];
+    expect(links.map((link) => link.classList.contains('toc__link--sub'))).toEqual([
+      false,
+      true,
+      false,
+    ]);
   });
 
   it('highlights no section before the first heading is reached', async () => {
