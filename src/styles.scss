@@ -407,7 +407,7 @@ a.chip:hover {
   font-size: 0.8rem;
 }
 
-/* Avisos (sucesso, erro ou neutro) em formulários e listagens */
+/* Avisos (erro ou neutro) em formulários e listagens */
 .alert {
   display: flex;
   flex-wrap: wrap;
@@ -418,11 +418,6 @@ a.chip:hover {
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   font-size: 0.9rem;
-}
-
-.alert--success {
-  border-color: var(--accent);
-  background: var(--accent-soft);
 }
 
 .alert--error {
