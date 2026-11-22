@@ -4,6 +4,7 @@ import { Component } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { API_URL } from '../../core/api';
+import { stubWideScreen } from '../../../testing/wide-screen';
 import { SiteSidebar } from './site-sidebar';
 
 const API = 'http://api.test/api';
@@ -41,7 +42,11 @@ function menuToggle(element: HTMLElement): HTMLButtonElement {
 }
 
 describe('SiteSidebar', () => {
-  afterEach(() => TestBed.inject(HttpTestingController).verify());
+  afterEach(() => {
+    TestBed.inject(HttpTestingController).verify();
+    localStorage.clear();
+    document.documentElement.removeAttribute('data-sidebar-blog');
+  });
 
   it('lists the default links and the published pages with their icons', async () => {
     const { fixture, http, element } = render();
@@ -150,5 +155,34 @@ describe('SiteSidebar', () => {
     await fixture.whenStable();
 
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  it('collapses to icons and shows the label as a tooltip on hover', async () => {
+    const restoreScreen = stubWideScreen();
+    const { fixture, http, element } = render();
+    http.expectOne(`${API}/pages`).flush({ data: [] });
+    await fixture.whenStable();
+    const collapse = element.querySelector<HTMLButtonElement>('.sidebar__collapse')!;
+    const categories = element.querySelector<HTMLElement>('a[href="/categorias"]')!;
+
+    categories.dispatchEvent(new MouseEvent('mouseenter'));
+    expect(document.querySelector('.tooltip')).toBeNull();
+
+    collapse.click();
+    await fixture.whenStable();
+
+    expect(collapse.getAttribute('aria-expanded')).toBe('false');
+    expect(collapse.textContent?.trim()).toBe('Expandir menu');
+    expect(document.documentElement.getAttribute('data-sidebar-blog')).toBe('collapsed');
+    expect(localStorage.getItem('sidebar.blog')).toBe('collapsed');
+
+    categories.dispatchEvent(new MouseEvent('mouseenter'));
+    expect(document.querySelector('.tooltip')?.textContent).toBe('Categorias');
+    categories.dispatchEvent(new MouseEvent('mouseleave'));
+
+    collapse.click();
+    await fixture.whenStable();
+    expect(collapse.getAttribute('aria-expanded')).toBe('true');
+    restoreScreen();
   });
 });
