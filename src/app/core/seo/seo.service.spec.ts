@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
-import { SeoService } from './seo.service';
+import { DEFAULT_SHARE_IMAGE, SeoService } from './seo.service';
 
 describe('SeoService', () => {
   let seo: SeoService;
@@ -49,13 +49,56 @@ describe('SeoService', () => {
       title: 'Post com capa',
       description: 'Resumo',
       image: 'https://cdn.example/capa.jpg',
+      type: 'article',
+      article: { publishedTime: '2026-11-20T10:00:00-03:00' },
     });
 
     seo.update({ title: 'Página sem capa' });
 
-    expect(meta.getTag('property="og:image"')).toBeNull();
-    expect(meta.getTag('name="description"')).toBeNull();
-    expect(meta.getTag('name="twitter:card"')?.content).toBe('summary');
+    expect(meta.getTag('property="og:image"')?.content).toBe(DEFAULT_SHARE_IMAGE.url);
+    expect(meta.getTag('property="article:published_time"')).toBeNull();
+  });
+
+  it('falls back to the site description and default image on pages without their own', () => {
+    seo.update({ path: '/' });
+
+    const description = environment.siteDescription.trim();
+    expect(meta.getTag('name="description"')?.content).toBe(description);
+    expect(meta.getTag('property="og:description"')?.content).toBe(description);
+    expect(meta.getTag('property="og:image"')?.content).toBe(DEFAULT_SHARE_IMAGE.url);
+    expect(meta.getTag('property="og:image:width"')?.content).toBe('1200');
+    expect(meta.getTag('property="og:image:height"')?.content).toBe('630');
+    expect(meta.getTag('property="og:image:alt"')?.content).toBe(environment.siteName);
+    expect(meta.getTag('name="twitter:card"')?.content).toBe('summary_large_image');
+    expect(meta.getTag('name="twitter:image"')?.content).toBe(DEFAULT_SHARE_IMAGE.url);
+  });
+
+  it('uses the default image instead of an SVG cover, which social networks do not render', () => {
+    seo.update({ image: 'https://cdn.example/capa.SVG?v=2', imageAlt: 'Capa' });
+
+    expect(meta.getTag('property="og:image"')?.content).toBe(DEFAULT_SHARE_IMAGE.url);
+    expect(meta.getTag('property="og:image:alt"')?.content).toBe(environment.siteName);
+  });
+
+  it('publishes the image alt and article dates, without dimensions for unknown images', () => {
+    seo.update({
+      image: 'https://cdn.example/capa.jpg',
+      imageAlt: 'Meu post',
+      type: 'article',
+      article: {
+        publishedTime: '2026-11-20T10:00:00-03:00',
+        modifiedTime: '2026-11-21T09:00:00-03:00',
+      },
+    });
+
+    expect(meta.getTag('property="og:image:alt"')?.content).toBe('Meu post');
+    expect(meta.getTag('property="og:image:width"')).toBeNull();
+    expect(meta.getTag('property="article:published_time"')?.content).toBe(
+      '2026-11-20T10:00:00-03:00',
+    );
+    expect(meta.getTag('property="article:modified_time"')?.content).toBe(
+      '2026-11-21T09:00:00-03:00',
+    );
   });
 
   it('keeps a single canonical link across updates', () => {

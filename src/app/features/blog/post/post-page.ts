@@ -62,8 +62,10 @@ export class PostPage {
           title: post.title,
           description: post.excerpt ?? undefined,
           image: post.cover_image_url,
+          imageAlt: post.title,
           path: `/posts/${post.slug}`,
           type: 'article',
+          article: { publishedTime: post.published_at, modifiedTime: post.updated_at },
         });
       }
     });
