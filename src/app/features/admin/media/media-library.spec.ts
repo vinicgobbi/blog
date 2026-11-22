@@ -115,12 +115,10 @@ describe('MediaLibrary', () => {
   it('rejects invalid files before sending them', async () => {
     const { http, element } = await render();
 
-    chooseFiles(element, [new File(['<svg/>'], 'logo.svg', { type: 'image/svg+xml' })]);
+    chooseFiles(element, [new File(['%PDF'], 'doc.pdf', { type: 'application/pdf' })]);
 
     http.expectNone({ method: 'POST', url: MEDIA_URL });
-    expect(shownToasts()).toEqual([
-      { kind: 'error', message: expect.stringContaining('logo.svg') },
-    ]);
+    expect(shownToasts()).toEqual([{ kind: 'error', message: expect.stringContaining('doc.pdf') }]);
   });
 
   it('explains that an image in use cannot be deleted (409)', async () => {
