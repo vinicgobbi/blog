@@ -1,0 +1,100 @@
+/* O contêiner "post" é definido em post-page.scss; a largura dele decide o formato. */
+$toc-wide: 62rem;
+
+:host {
+  display: block;
+}
+
+/* ---------- Celular e telas estreitas: bloco recolhível no topo ---------- */
+.toc {
+  margin-bottom: 2rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.toc__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.toc__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-subtle);
+  font: 600 0.75rem var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.toc__chevron {
+  transition: transform 0.2s ease;
+
+  .toc--open & {
+    transform: rotate(180deg);
+  }
+}
+
+.toc__list {
+  display: none;
+  margin: 0.75rem 0 0;
+  /* O reset global só zera o <ul>; o <ol> mantém o recuo padrão do navegador. */
+  padding: 0;
+  list-style: none;
+
+  .toc--open & {
+    display: block;
+  }
+}
+
+.toc__link {
+  display: block;
+  padding: 0.35rem 0 0.35rem 0.85rem;
+  border-left: 2px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+
+  &:hover {
+    color: var(--text);
+  }
+
+  &.active {
+    border-left-color: var(--accent);
+    color: var(--accent-text);
+    font-weight: 600;
+  }
+}
+
+/* ---------- Telas largas: coluna fixa ao lado do texto ---------- */
+@container post (min-width: #{$toc-wide}) {
+  .toc {
+    margin-bottom: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .toc__toggle {
+    display: none;
+  }
+
+  .toc__list {
+    display: block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc__chevron,
+  .toc__link {
+    transition: none;
+  }
+}

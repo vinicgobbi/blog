@@ -4,7 +4,7 @@
     message="O post que você procura não existe ou ainda não foi publicado."
   />
 } @else {
-  <div class="container">
+  <div class="container post-container">
     @if (post.error()) {
       <div class="state" role="alert">
         <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
@@ -56,6 +56,10 @@
           <div class="article__cover">
             <img [ngSrc]="cover" fill priority alt="" />
           </div>
+        }
+
+        @if (sections().length >= minSections) {
+          <app-table-of-contents class="article__toc" [sections]="sections()" />
         }
 
         <div #content class="prose" [innerHTML]="bodyHtml()"></div>
