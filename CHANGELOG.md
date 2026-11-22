@@ -1,3 +1,9 @@
+## v0.6.0 (2026-11-22)
+
+### Feat
+
+- **blog**: inclui títulos ### e #### no sumário do post
+
 ## v0.5.0 (2026-11-22)
 
 ### Feat
