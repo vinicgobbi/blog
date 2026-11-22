@@ -1,0 +1,14 @@
+.search-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-muted);
+}
+
+.search-summary__clear {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
