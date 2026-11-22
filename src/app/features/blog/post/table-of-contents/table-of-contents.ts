@@ -35,6 +35,8 @@ export class TableOfContents {
 
   private readonly document = inject(DOCUMENT);
   private frame: number | null = null;
+  /** Já há uma atualização agendada; marcado antes da chamada, pois o callback pode rodar na hora. */
+  private updateScheduled = false;
 
   constructor() {
     const destroyRef = inject(DestroyRef);
@@ -74,11 +76,13 @@ export class TableOfContents {
   private scheduleUpdate(): void {
     const view = this.document.defaultView;
 
-    if (!view || this.frame !== null) {
+    if (!view || this.updateScheduled) {
       return;
     }
 
+    this.updateScheduled = true;
     this.frame = view.requestAnimationFrame(() => {
+      this.updateScheduled = false;
       this.frame = null;
       this.updateActiveSection();
     });
