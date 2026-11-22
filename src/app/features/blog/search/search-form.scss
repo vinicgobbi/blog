@@ -1,6 +1,10 @@
+:host {
+  display: block;
+  margin-top: 1.5rem;
+}
+
 .search {
   max-width: 640px;
-  margin-bottom: 2rem;
 }
 
 .search__box {
@@ -43,9 +47,4 @@
   margin-top: 0.5rem;
   color: var(--danger);
   font-size: 0.85rem;
-}
-
-.search__summary {
-  margin-bottom: 1.5rem;
-  color: var(--text-muted);
 }

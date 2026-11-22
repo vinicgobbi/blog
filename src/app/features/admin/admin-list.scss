@@ -59,6 +59,59 @@
   white-space: nowrap;
 }
 
+/* Alça de arrastar e botões de subir e descer da lista de páginas. */
+.table .table__order {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.drag-handle {
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 2rem;
+  margin-right: 0.15rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-subtle);
+  vertical-align: middle;
+  cursor: grab;
+
+  &:hover {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+/* O arraste nativo não funciona com toque: sem mouse algum, ficam só os botões. */
+@media (any-hover: none) {
+  .drag-handle {
+    display: none;
+  }
+}
+
+.table tr.is-dragging {
+  opacity: 0.45;
+}
+
+/* Linha de destaque onde a página vai cair. */
+.table tr.drop-before td {
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+.table tr.drop-after td {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.page-list__hint {
+  margin-bottom: 1rem;
+  color: var(--text-subtle);
+  font-size: 0.875rem;
+}
+
 .alert {
   margin-bottom: 1rem;
 }

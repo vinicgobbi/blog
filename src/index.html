@@ -14,6 +14,20 @@
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
+    <!-- Aplica o menu lateral recolhido antes da renderização (ver SidebarState) -->
+    <script>
+      (function () {
+        ['blog', 'admin'].forEach(function (name) {
+          var state;
+          try {
+            state = localStorage.getItem('sidebar.' + name);
+          } catch (e) {}
+          if (state === 'collapsed') {
+            document.documentElement.setAttribute('data-sidebar-' + name, 'collapsed');
+          }
+        });
+      })();
+    </script>
     <meta charset="utf-8" />
     <title>Blog do Vinícius</title>
     <base href="/" />

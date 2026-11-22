@@ -1,0 +1,411 @@
+/*
+ * Menus laterais do blog e do admin (componente app-sidebar). Ficam aqui, e não
+ * no componente, porque a maior parte do conteúdo entra por projeção.
+ *
+ * Este arquivo entra antes dos estilos base (.layout, .btn) no CSS final; por
+ * isso algumas regras repetem a classe ou usam .sidebar como prefixo.
+ *
+ * Telas largas: coluna fixa, que pode ser recolhida para só os ícones.
+ * Telas estreitas: barra no topo e o menu abre como gaveta pela esquerda.
+ */
+
+/* Mesmo valor de SIDEBAR_WIDE_QUERY (sidebar-state.ts). */
+$sidebar-wide: 960px;
+$sidebar-narrow-max: $sidebar-wide - 0.02px;
+
+/* ---------- Layout com menu lateral ---------- */
+.layout__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+@media (min-width: $sidebar-wide) {
+  .layout.layout--sidebar {
+    flex-direction: row;
+  }
+
+  /* Sem barra fixa no topo para compensar no scroll até âncoras. */
+  :root:has(.layout--sidebar) {
+    --nav-height: 0px;
+  }
+}
+
+/* ---------- Coluna ---------- */
+.sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  height: 100dvh;
+  border-right: 1px solid var(--border);
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: width 0.2s ease;
+}
+
+.sidebar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.sidebar .sidebar__toggle {
+  display: none;
+}
+
+.sidebar .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  font: 700 1rem var(--font-display);
+}
+
+.sidebar .brand__mark {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.sidebar .brand__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Com muitos itens, só a lista rola; marca e rodapé do menu ficam no lugar. */
+.sidebar__nav {
+  flex: 1;
+  min-height: 0;
+  padding: 0.25rem 0.75rem 1rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ---------- Itens ---------- */
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  list-style: none;
+}
+
+.sidebar-section {
+  margin: 1.25rem 0.75rem 0.4rem;
+  color: var(--text-subtle);
+  font: 600 0.72rem var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sidebar-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-muted);
+  font: 500 0.92rem var(--font-sans);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  &.active {
+    color: var(--accent-text);
+    background: var(--accent-soft);
+  }
+
+  .bi {
+    flex-shrink: 0;
+    width: 1rem;
+    text-align: center;
+  }
+}
+
+/* Item que só informa (ex.: usuário logado), sem ação. */
+.sidebar-link--static {
+  cursor: default;
+
+  &:hover {
+    color: var(--text-muted);
+    background: none;
+  }
+}
+
+.sidebar-link__label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-link__badge {
+  min-width: 1.3rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--danger);
+  color: var(--bg);
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.3rem;
+  text-align: center;
+}
+
+.sidebar__collapse .bi {
+  transition: transform 0.2s ease;
+}
+
+.sidebar__backdrop {
+  display: none;
+}
+
+/* ---------- Recolhido (só ícones), em telas largas ---------- */
+@mixin sidebar-collapsed {
+  width: var(--sidebar-collapsed-width);
+
+  .sidebar__head {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .brand__name {
+    display: none;
+  }
+
+  .sidebar__nav {
+    padding-inline: 0.75rem;
+  }
+
+  .sidebar-link {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  /* O rótulo some da tela mas continua sendo o nome acessível do link. */
+  .sidebar-link__label,
+  .sidebar-section {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  /* No lugar do título da seção, um separador. */
+  .sidebar-section + .sidebar-links {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* O contador vira um ponto sobre o ícone. */
+  .sidebar-link__badge {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.65rem;
+    min-width: 0;
+    width: 0.6rem;
+    height: 0.6rem;
+    padding: 0;
+    overflow: hidden;
+    border: 2px solid var(--bg);
+    color: transparent;
+    line-height: 0;
+  }
+
+  .sidebar__collapse .bi {
+    transform: rotate(180deg);
+  }
+}
+
+@media (min-width: $sidebar-wide) {
+  :root[data-sidebar-blog='collapsed'] .sidebar--blog,
+  :root[data-sidebar-admin='collapsed'] .sidebar--admin {
+    @include sidebar-collapsed;
+  }
+}
+
+/* ---------- Celular e tablet: barra no topo e gaveta ---------- */
+@media (max-width: $sidebar-narrow-max) {
+  .sidebar {
+    width: auto;
+    height: auto;
+    border-right: 0;
+    /* Sem filtro aqui: ele faria a gaveta (position: fixed) se posicionar dentro da barra. */
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .sidebar__head {
+    height: var(--nav-height);
+    padding-block: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .sidebar .sidebar__toggle {
+    display: inline-flex;
+  }
+
+  /* Recolher só faz sentido na coluna das telas largas. */
+  .sidebar__collapse {
+    display: none;
+  }
+
+  .sidebar__panel {
+    position: fixed;
+    top: var(--nav-height);
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    width: min(300px, 85vw);
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow-hover);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.2s ease,
+      visibility 0.2s;
+  }
+
+  .sidebar__panel--open {
+    transform: none;
+    visibility: visible;
+  }
+
+  .sidebar__nav {
+    padding-top: 1rem;
+  }
+
+  .sidebar__backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--nav-height) 0 0;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar__panel,
+  .sidebar__collapse .bi {
+    transition: none;
+  }
+}
+
+/* ---------- Dica (diretiva appTooltip, ver tooltip-layer.ts) ---------- */
+.tooltip {
+  position: fixed;
+  z-index: 200;
+  max-width: 16rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-hover);
+  color: var(--text);
+  font: 500 0.82rem/1.3 var(--font-sans);
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateY(-50%);
+  /* Entre itens vizinhos a mesma dica desliza até o novo item. */
+  transition:
+    top 0.15s ease,
+    left 0.15s ease;
+
+  /* Seta apontando para o item. */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    width: 8px;
+    height: 8px;
+    border-bottom: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    background: var(--surface);
+    transform: translateY(-50%) rotate(45deg);
+  }
+}
+
+.tooltip--enter {
+  animation: tooltip-in 0.14s ease-out;
+}
+
+/* Sai na hora, sem animação. */
+.tooltip--hidden {
+  opacity: 0;
+}
+
+@keyframes tooltip-in {
+  from {
+    opacity: 0;
+    transform: translate(-4px, -50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip {
+    transition: none;
+  }
+
+  .tooltip--enter {
+    animation: none;
+  }
+}

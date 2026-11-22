@@ -1,0 +1,31 @@
+<nav class="toc" [class.toc--open]="open()" aria-labelledby="sumario-titulo">
+  <div class="toc__head">
+    <h2 class="toc__title" id="sumario-titulo">
+      <i class="bi bi-list-ul" aria-hidden="true"></i> Nesta página
+    </h2>
+    <button
+      type="button"
+      class="btn btn-ghost btn-sm toc__toggle"
+      aria-controls="sumario-lista"
+      [attr.aria-expanded]="open()"
+      (click)="toggle()"
+    >
+      {{ open() ? 'Ocultar' : 'Mostrar' }}
+      <i class="bi bi-chevron-down toc__chevron" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <ol class="toc__list" id="sumario-lista">
+    @for (section of sections(); track section.id) {
+      <li>
+        <a
+          class="toc__link"
+          [href]="'#' + section.id"
+          [class.active]="activeId() === section.id"
+          [attr.aria-current]="activeId() === section.id ? 'location' : null"
+          >{{ section.title }}</a
+        >
+      </li>
+    }
+  </ol>
+</nav>

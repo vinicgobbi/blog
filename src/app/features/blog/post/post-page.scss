@@ -59,3 +59,46 @@
     object-fit: cover;
   }
 }
+
+/*
+ * Sumário (app-table-of-contents): no celular fica no topo do texto; quando há
+ * espaço, vai para uma coluna fixa à direita. A largura vem do contêiner, e não
+ * da tela, para acompanhar o menu lateral recolhido ou expandido.
+ */
+.post-container {
+  container: post / inline-size;
+}
+
+@container post (min-width: 62rem) {
+  .article:has(.article__toc) {
+    display: grid;
+    grid-template-columns: minmax(0, var(--reading)) 13rem;
+    column-gap: 3rem;
+    align-items: start;
+    max-width: calc(var(--reading) + 16rem);
+
+    > * {
+      grid-column: 1;
+    }
+
+    > .article__toc {
+      position: sticky;
+      top: calc(var(--nav-height) + 2rem);
+      grid-column: 2;
+      grid-row: 1 / span 50;
+      max-height: calc(100dvh - var(--nav-height) - 4rem);
+      overflow-y: auto;
+    }
+  }
+
+  /*
+   * Os comentários ficam fora do artigo: com o sumário, ocupam a mesma largura
+   * dele e reservam a coluna do sumário, para alinhar com o texto do post.
+   */
+  .post-container:has(.article__toc) app-post-comments {
+    display: block;
+    max-width: calc(var(--reading) + 16rem);
+    margin-inline: auto;
+    padding-right: 16rem;
+  }
+}

@@ -1,7 +1,7 @@
 import { HttpClient, httpResource, HttpResourceRef } from '@angular/common/http';
 import { Service, inject } from '@angular/core';
 import { API_URL } from '../../core/api';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { PaginatedResponse, ResourceResponse } from '../../shared/models/api';
 import {
   AdminComment,
@@ -147,7 +147,7 @@ export class AdminApi {
     return this.http.delete<void>(`${this.apiUrl}/admin/${kind}/${id}`);
   }
 
-  /** Páginas estáticas (publicadas ou não), em ordem alfabética, sem o conteúdo. */
+  /** Páginas estáticas (publicadas ou não), na ordem do menu do blog, sem o conteúdo. */
   pages(): HttpResourceRef<AdminPage[] | undefined> {
     return httpResource<AdminPage[]>(() => `${this.apiUrl}/admin/pages`, {
       parse: (response) => (response as ResourceResponse<AdminPage[]>).data,
@@ -175,6 +175,13 @@ export class AdminApi {
 
   deletePage(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/admin/pages/${id}`);
+  }
+
+  /** Define a ordem das páginas no menu do blog; exige os ids de todas as páginas. */
+  reorderPages(ids: number[]): Observable<AdminPage[]> {
+    return this.http
+      .put<ResourceResponse<AdminPage[]>>(`${this.apiUrl}/admin/pages/order`, { ids })
+      .pipe(map((response) => response.data));
   }
 
   /** Cria (id nulo) ou atualiza um post. */

@@ -1,9 +1,30 @@
 <div class="container">
   <header class="section-header">
     <span class="eyebrow">Blog</span>
-    <h1 class="section-title">Posts recentes</h1>
+    <h1 class="section-title">{{ q() ? 'Resultados da busca' : 'Posts recentes' }}</h1>
     <p class="section-subtitle">{{ siteDescription }}</p>
+    <app-search-form [q]="q()" />
   </header>
 
-  <app-post-list [posts]="posts" [page]="page()" />
+  @if (q()) {
+    <div class="search-summary">
+      <p role="status">
+        @if (total() !== null) {
+          {{ total() === 1 ? '1 resultado' : total() + ' resultados' }} para
+          <strong>“{{ q() }}”</strong>
+        }
+      </p>
+      <a class="search-summary__clear" routerLink="/"
+        ><i class="bi bi-x-lg" aria-hidden="true"></i><span>Limpar busca</span></a
+      >
+    </div>
+  }
+
+  <app-post-list
+    [posts]="posts"
+    [page]="page()"
+    [emptyMessage]="
+      q() ? 'Nenhum post encontrado. Tente outros termos.' : 'Nenhum post publicado ainda.'
+    "
+  />
 </div>

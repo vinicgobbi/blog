@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 import { authGuard } from './core/auth/auth.guard';
 import { guestGuard } from './core/auth/guest.guard';
 import { unsavedChangesGuard } from './features/admin/posts/unsaved-changes.guard';
@@ -128,8 +129,11 @@ export const routes: Routes = [
           import('./features/blog/category/category-page').then((m) => m.CategoryPage),
       },
       {
+        // A busca agora fica na página inicial; o endereço antigo continua funcionando.
         path: 'busca',
-        loadComponent: () => import('./features/blog/search/search-page').then((m) => m.SearchPage),
+        pathMatch: 'full',
+        redirectTo: ({ queryParams }) =>
+          inject(Router).createUrlTree(['/'], { queryParams: { q: queryParams['q'] } }),
       },
       {
         path: ':slug',

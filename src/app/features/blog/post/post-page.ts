@@ -17,14 +17,15 @@ import { SeoService } from '../../../core/seo/seo.service';
 import { NotFound } from '../../../shared/components/not-found/not-found';
 import { BlogApi } from '../blog-api';
 import { PostComments } from './comments/post-comments';
-import { prepareArticleHtml, restoreHeadingIds } from './article-html';
+import { extractSections, prepareArticleHtml, restoreHeadingIds } from './article-html';
+import { TableOfContents } from './table-of-contents/table-of-contents';
 
 /**
  * Página de um post publicado (`/posts/:slug`).
  */
 @Component({
   selector: 'app-post-page',
-  imports: [DatePipe, NgOptimizedImage, RouterLink, PostComments, NotFound],
+  imports: [DatePipe, NgOptimizedImage, RouterLink, PostComments, NotFound, TableOfContents],
   templateUrl: './post-page.html',
   styleUrl: './post-page.scss',
 })
@@ -43,6 +44,9 @@ export class PostPage {
     return error instanceof HttpErrorResponse && error.status === 404;
   });
   protected readonly bodyHtml = computed(() => prepareArticleHtml(this.data()?.body_html ?? ''));
+  /** Seções `##` do post para o sumário, que só aparece a partir de duas. */
+  protected readonly sections = computed(() => extractSections(this.data()?.body_html ?? ''));
+  protected readonly minSections = 2;
 
   private readonly content = viewChild<ElementRef<HTMLElement>>('content');
 

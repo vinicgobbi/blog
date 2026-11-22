@@ -9,9 +9,11 @@
     </div>
   } @else if (response(); as response) {
     @if (response.data.length) {
-      <ul class="grid">
-        @for (post of response.data; track post.id; let first = $first) {
-          <li><app-post-card [post]="post" [priority]="first" /></li>
+      <ul class="grid" [class.grid--reveal]="revealAfterSkeleton()">
+        @for (post of response.data; track post.id; let first = $first, index = $index) {
+          <li [style.--reveal-index]="index">
+            <app-post-card [post]="post" [priority]="first" />
+          </li>
         }
       </ul>
     } @else {
@@ -37,6 +39,20 @@
       [lastPage]="response.meta.last_page"
     />
   } @else if (posts().isLoading()) {
-    <p class="state">Carregando posts…</p>
+    <p class="visually-hidden">Carregando posts…</p>
+    <ul class="grid" aria-hidden="true">
+      @for (item of skeletonCards; track item) {
+        <li class="card skeleton-card">
+          <div class="skeleton-card__media skeleton"></div>
+          <div class="skeleton-card__body">
+            <div class="skeleton skeleton--eyebrow"></div>
+            <div class="skeleton skeleton--title"></div>
+            <div class="skeleton skeleton--line"></div>
+            <div class="skeleton skeleton--line skeleton--short"></div>
+            <div class="skeleton skeleton--meta"></div>
+          </div>
+        </li>
+      }
+    </ul>
   }
 </div>

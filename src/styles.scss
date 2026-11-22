@@ -13,6 +13,8 @@
 @use '@fontsource/manrope/800.css' as *;
 @use 'bootstrap-icons/font/bootstrap-icons.css';
 @use './styles/prose';
+@use './styles/sidebar';
+@use './styles/view-transitions';
 
 /* ---------- Tokens ---------- */
 :root {
@@ -26,6 +28,8 @@
   --container: 1120px;
   --reading: 46rem;
   --nav-height: 68px;
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
 
   color-scheme: light;
   --bg: #f8fafc;

@@ -1,0 +1,99 @@
+<app-sidebar>
+  <a sidebarBrand class="brand" routerLink="/" aria-label="Ir para o início">
+    <span class="brand__mark" aria-hidden="true">VG</span>
+    <span class="brand__name">{{ siteName }}</span>
+  </a>
+
+  <nav aria-label="Principal">
+    <ul class="sidebar-links">
+      <li>
+        <a
+          class="sidebar-link"
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="homeActiveOptions"
+          ariaCurrentWhenActive="page"
+          appTooltip="Início"
+          [appTooltipDisabled]="!sidebar.showTooltips()"
+        >
+          <i class="bi bi-house" aria-hidden="true"></i>
+          <span class="sidebar-link__label">Início</span>
+        </a>
+      </li>
+      <li>
+        <a
+          class="sidebar-link"
+          routerLink="/categorias"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          appTooltip="Categorias"
+          [appTooltipDisabled]="!sidebar.showTooltips()"
+        >
+          <i class="bi bi-folder2" aria-hidden="true"></i>
+          <span class="sidebar-link__label">Categorias</span>
+        </a>
+      </li>
+      <li>
+        <a
+          class="sidebar-link"
+          routerLink="/tags"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          appTooltip="Tags"
+          [appTooltipDisabled]="!sidebar.showTooltips()"
+        >
+          <i class="bi bi-tags" aria-hidden="true"></i>
+          <span class="sidebar-link__label">Tags</span>
+        </a>
+      </li>
+    </ul>
+
+    @if (pages().length) {
+      <h2 class="sidebar-section" id="menu-paginas">Páginas</h2>
+      <ul class="sidebar-links" aria-labelledby="menu-paginas">
+        @for (page of pages(); track page.id) {
+          <li>
+            <a
+              class="sidebar-link"
+              [routerLink]="['/', page.slug]"
+              routerLinkActive="active"
+              ariaCurrentWhenActive="page"
+              [appTooltip]="page.title"
+              [appTooltipDisabled]="!sidebar.showTooltips()"
+            >
+              <i class="bi bi-{{ page.icon }}" aria-hidden="true"></i>
+              <span class="sidebar-link__label">{{ page.title }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    }
+  </nav>
+
+  <ng-container sidebarFooter>
+    <a
+      class="sidebar-link"
+      [href]="feedUrl"
+      appTooltip="Assinar o feed RSS"
+      [appTooltipDisabled]="!sidebar.showTooltips()"
+    >
+      <i class="bi bi-rss" aria-hidden="true"></i>
+      <span class="sidebar-link__label">Feed RSS</span>
+    </a>
+    <button
+      type="button"
+      class="sidebar-link"
+      [appTooltip]="themeLabel()"
+      [appTooltipDisabled]="!sidebar.showTooltips()"
+      (click)="theme.toggle()"
+    >
+      <i
+        class="bi"
+        [class.bi-sun]="theme.theme() === 'dark'"
+        [class.bi-moon-stars]="theme.theme() === 'light'"
+        aria-hidden="true"
+      ></i>
+      <span class="sidebar-link__label">{{ themeLabel() }}</span>
+    </button>
+  </ng-container>
+</app-sidebar>

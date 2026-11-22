@@ -8,3 +8,78 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Esqueleto enquanto carrega ---------- */
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.skeleton-card__media {
+  aspect-ratio: 2 / 1;
+  border-radius: 0;
+}
+
+.skeleton-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1.25rem;
+}
+
+.skeleton {
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton--eyebrow {
+  width: 30%;
+  height: 0.7rem;
+}
+
+.skeleton--title {
+  width: 85%;
+  height: 1.3rem;
+}
+
+.skeleton--line {
+  height: 0.85rem;
+}
+
+.skeleton--short {
+  width: 60%;
+}
+
+.skeleton--meta {
+  width: 50%;
+  height: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* ---------- Entrada dos posts depois do esqueleto ---------- */
+.grid--reveal > li {
+  animation: post-reveal 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--reveal-index, 0) * 40ms);
+}
+
+@keyframes post-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .grid--reveal > li {
+    animation: none;
+  }
+}

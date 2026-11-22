@@ -37,3 +37,52 @@ export function restoreHeadingIds(container: HTMLElement): void {
     }
   }
 }
+
+/** Seção do post: um título `##` do Markdown, com o id da âncora gerada pela API. */
+export interface ArticleSection {
+  id: string;
+  title: string;
+}
+
+const HTML_ENTITIES: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#039;': "'",
+  '&#39;': "'",
+  '&nbsp;': ' ',
+};
+
+/**
+ * Lista as seções (`<h2>`) do HTML do post, na ordem do texto, para o sumário.
+ * Trabalha sobre o texto do HTML (e não sobre o DOM) para funcionar também no
+ * SSR. O id vem do link de âncora que a API põe em cada título; títulos sem ele
+ * ficam de fora, pois não teriam para onde levar.
+ */
+export function extractSections(html: string): ArticleSection[] {
+  const sections: ArticleSection[] = [];
+
+  for (const [, inner] of html.matchAll(/<h2\b[^>]*>([\s\S]*?)<\/h2>/gi)) {
+    const href = /<a\b[^>]*class="heading-permalink"[^>]*>/i
+      .exec(inner)?.[0]
+      .match(/href="#([^"]+)"/i)?.[1];
+
+    if (!href) {
+      continue;
+    }
+
+    const title = inner
+      .replace(/<a\b[^>]*class="heading-permalink"[^>]*>[\s\S]*?<\/a>/gi, '')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&(?:amp|lt|gt|quot|nbsp|#0?39);/g, (entity) => HTML_ENTITIES[entity] ?? entity)
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (title) {
+      sections.push({ id: decodeURIComponent(href), title });
+    }
+  }
+
+  return sections;
+}
