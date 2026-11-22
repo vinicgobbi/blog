@@ -95,11 +95,10 @@
         <label for="post-data"
           >Data de publicação <span class="field__optional">(opcional)</span></label
         >
-        <input
-          id="post-data"
-          type="datetime-local"
+        <app-datetime-picker
+          inputId="post-data"
+          describedBy="post-data-ajuda post-data-erro"
           [formField]="postForm.published_at"
-          aria-describedby="post-data-ajuda post-data-erro"
         />
         <p id="post-data-ajuda" class="field__help">
           Vazio publica agora; uma data futura agenda o post.

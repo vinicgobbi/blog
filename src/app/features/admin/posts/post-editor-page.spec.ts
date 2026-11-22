@@ -220,7 +220,11 @@ describe('PostEditorPage', () => {
   it('labels the main action as "Agendar" for a future publication date', async () => {
     const { fixture, element } = render();
 
-    type(element, '#post-data', '2099-01-01T10:00');
+    element.querySelector<HTMLButtonElement>('#post-data')!.click();
+    await fixture.whenStable();
+    [...element.querySelectorAll<HTMLButtonElement>('.datetime-picker__actions button')]
+      .find((button) => button.textContent?.includes('Amanhã'))!
+      .click();
     await fixture.whenStable();
 
     expect(

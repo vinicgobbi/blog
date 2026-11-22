@@ -27,6 +27,7 @@ import { SeoService } from '../../../core/seo/seo.service';
 import { AdminPost, AdminPostInput, Media, PostStatus } from '../../../shared/models/admin';
 import { AdminApi } from '../admin-api';
 import { fromDateTimeLocal, toDateTimeLocal } from '../editor/datetime-local';
+import { DateTimePicker } from '../editor/datetime-picker';
 import { MarkdownEditor } from '../editor/markdown-editor';
 import { MediaLibrary } from '../media/media-library';
 import { STATE_LABELS } from './post-list-page';
@@ -99,7 +100,7 @@ export function toPostInput(model: PostFormModel, status: PostStatus): AdminPost
  */
 @Component({
   selector: 'app-post-editor-page',
-  imports: [FormField, MarkdownEditor, MediaLibrary, RouterLink],
+  imports: [DateTimePicker, FormField, MarkdownEditor, MediaLibrary, RouterLink],
   templateUrl: './post-editor-page.html',
   styleUrl: './post-editor-page.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
