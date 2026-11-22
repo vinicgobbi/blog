@@ -92,6 +92,19 @@ describe('HomePage', () => {
     ).toEqual(['Primeiro', 'Segundo']);
   });
 
+  it('shows skeleton cards while loading and reveals the posts after them', async () => {
+    const { fixture, http, element } = await render();
+
+    expect(element.querySelectorAll('.skeleton-card')).toHaveLength(6);
+    expect(element.querySelector('.skeleton-card')?.closest('[aria-hidden="true"]')).not.toBeNull();
+
+    http.expectOne(`${API}/posts`).flush(response([{ title: 'Primeiro' }]));
+    await fixture.whenStable();
+
+    expect(element.querySelector('.skeleton-card')).toBeNull();
+    expect(element.querySelector('ul.grid')?.classList).toContain('grid--reveal');
+  });
+
   it('requests the page given in the URL and shows pagination', async () => {
     const { fixture, http, element } = await render(2);
 
