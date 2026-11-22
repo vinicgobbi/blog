@@ -1,39 +1,32 @@
-import {
-  Component,
-  DestroyRef,
-  ElementRef,
-  computed,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  IsActiveMatchOptions,
-  NavigationEnd,
-  Router,
-  RouterLink,
-  RouterLinkActive,
-} from '@angular/router';
-import { filter } from 'rxjs';
+import { Component, computed, inject } from '@angular/core';
+import { IsActiveMatchOptions, RouterLink, RouterLinkActive } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { ThemeService } from '../../core/theme/theme.service';
 import { BlogApi } from '../../features/blog/blog-api';
+import { Sidebar } from '../../shared/components/sidebar/sidebar';
+import { SidebarState, provideSidebar } from '../../shared/components/sidebar/sidebar-state';
+import { Tooltip } from '../../shared/components/tooltip/tooltip';
 
 /**
- * Menu lateral do blog: coluna fixa em telas largas e gaveta aberta pela barra do topo no celular.
+ * Menu lateral do blog: links fixos, páginas publicadas (na ordem definida no
+ * admin), feed RSS e troca de tema.
  */
 @Component({
   selector: 'app-site-sidebar',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, Sidebar, Tooltip],
   templateUrl: './site-sidebar.html',
-  styleUrl: './site-sidebar.scss',
-  host: { '(document:keydown.escape)': 'closeMenu(true)' },
+  providers: [provideSidebar('blog')],
+  host: { style: 'display: contents' },
 })
 export class SiteSidebar {
   protected readonly theme = inject(ThemeService);
+  protected readonly sidebar = inject(SidebarState);
   protected readonly siteName = environment.siteName;
   protected readonly feedUrl = environment.feedUrl;
+
+  protected readonly themeLabel = computed(() =>
+    this.theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro',
+  );
 
   /** Início fica ativo também na busca e nas demais páginas da listagem (`/?q=`, `/?page=`). */
   protected readonly homeActiveOptions: IsActiveMatchOptions = {
@@ -43,40 +36,9 @@ export class SiteSidebar {
     fragment: 'ignored',
   };
 
-  /** Gaveta aberta no celular; em telas largas o menu fica sempre visível. */
-  protected readonly menuOpen = signal(false);
-
-  private readonly menuToggle = viewChild<ElementRef<HTMLButtonElement>>('menuToggle');
-
   private readonly pagesResource = inject(BlogApi).pages();
   /** Páginas publicadas (ex.: Sobre); se a API falhar, o menu fica só com os links fixos. */
   protected readonly pages = computed(() =>
     this.pagesResource.hasValue() ? (this.pagesResource.value()?.data ?? []) : [],
   );
-
-  constructor() {
-    inject(Router)
-      .events.pipe(
-        filter((event) => event instanceof NavigationEnd),
-        takeUntilDestroyed(inject(DestroyRef)),
-      )
-      .subscribe(() => this.closeMenu());
-  }
-
-  protected toggleMenu(): void {
-    this.menuOpen.update((open) => !open);
-  }
-
-  /** Fecha a gaveta; com `restoreFocus`, devolve o foco ao botão que a abriu (ex.: ao apertar Esc). */
-  protected closeMenu(restoreFocus = false): void {
-    if (!this.menuOpen()) {
-      return;
-    }
-
-    this.menuOpen.set(false);
-
-    if (restoreFocus) {
-      this.menuToggle()?.nativeElement.focus();
-    }
-  }
 }

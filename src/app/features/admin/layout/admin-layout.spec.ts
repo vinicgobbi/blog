@@ -1,24 +1,30 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { PLATFORM_ID } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
-import { firstValueFrom } from 'rxjs';
-import { API_URL } from '../../../core/api';
-import { AUTH_TOKEN_STORAGE_KEY, AuthService } from '../../../core/auth/auth.service';
-import { AdminLayout } from './admin-layout';
+import { provideHttpClient } from "@angular/common/http";
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from "@angular/common/http/testing";
+import { PLATFORM_ID } from "@angular/core";
+import { TestBed } from "@angular/core/testing";
+import { Router, provideRouter } from "@angular/router";
+import { firstValueFrom } from "rxjs";
+import { API_URL } from "../../../core/api";
+import {
+  AUTH_TOKEN_STORAGE_KEY,
+  AuthService,
+} from "../../../core/auth/auth.service";
+import { AdminLayout } from "./admin-layout";
 
-const API = 'http://api.test/api';
+const API = "http://api.test/api";
 
 async function render(pending = 0) {
-  localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, 'token-1');
+  localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, "token-1");
   TestBed.configureTestingModule({
     providers: [
       provideRouter([]),
       provideHttpClient(),
       provideHttpClientTesting(),
       { provide: API_URL, useValue: API },
-      { provide: PLATFORM_ID, useValue: 'browser' },
+      { provide: PLATFORM_ID, useValue: "browser" },
     ],
   });
   const http = TestBed.inject(HttpTestingController);
@@ -26,11 +32,11 @@ async function render(pending = 0) {
   const loading = firstValueFrom(auth.loadUser());
   http
     .expectOne(`${API}/auth/user`)
-    .flush({ data: { id: 1, name: 'Vinícius', email: 'admin@blog.test' } });
+    .flush({ data: { id: 1, name: "Vinícius", email: "admin@blog.test" } });
   await loading;
 
   const router = TestBed.inject(Router);
-  vi.spyOn(router, 'navigate').mockResolvedValue(true);
+  vi.spyOn(router, "navigate").mockResolvedValue(true);
   const fixture = TestBed.createComponent(AdminLayout);
   fixture.detectChanges();
   http
@@ -38,53 +44,64 @@ async function render(pending = 0) {
     .flush({ data: { pending, approved: 4, rejected: 0, spam: 1 } });
   await fixture.whenStable();
 
-  return { fixture, http, auth, router, element: fixture.nativeElement as HTMLElement };
+  return {
+    fixture,
+    http,
+    auth,
+    router,
+    element: fixture.nativeElement as HTMLElement,
+  };
 }
 
-describe('AdminLayout', () => {
+describe("AdminLayout", () => {
   afterEach(() => {
     TestBed.inject(HttpTestingController).verify();
     localStorage.clear();
   });
 
-  it('shows the logged-in admin and the administration menu', async () => {
+  it("shows the logged-in admin and the administration menu", async () => {
     const { element } = await render();
 
-    expect(element.querySelector('.admin-bar__user')?.textContent).toContain('Vinícius');
-    expect(element.querySelector('nav[aria-label="Administração"] a')?.textContent).toContain(
-      'Dashboard',
+    expect(element.querySelector(".admin-user")?.textContent).toContain(
+      "Vinícius",
     );
+    expect(
+      element.querySelector('nav[aria-label="Administração"] a')?.textContent,
+    ).toContain("Dashboard");
   });
 
-  it('shows the number of pending comments next to the menu item', async () => {
+  it("shows the number of pending comments next to the menu item", async () => {
     const { element } = await render(3);
 
-    const link = [...element.querySelectorAll('.admin-nav__link')].find((a) =>
-      a.textContent?.includes('Comentários'),
-    )!;
-    expect(link.getAttribute('href')).toBe('/admin/comentarios');
-    expect(link.querySelector('.admin-nav__badge')?.textContent?.replace(/\s+/g, ' ').trim()).toBe(
-      '3 pendentes',
-    );
+    const link = [
+      ...element.querySelectorAll('nav[aria-label="Administração"] a'),
+    ].find((a) => a.textContent?.includes("Comentários"))!;
+    expect(link.getAttribute("href")).toBe("/admin/comentarios");
+    expect(
+      link
+        .querySelector(".sidebar-link__badge")
+        ?.textContent?.replace(/\s+/g, " ")
+        .trim(),
+    ).toBe("3 pendentes");
   });
 
-  it('hides the badge when there are no pending comments', async () => {
+  it("hides the badge when there are no pending comments", async () => {
     const { element } = await render(0);
 
-    expect(element.querySelector('.admin-nav__badge')).toBeNull();
+    expect(element.querySelector(".sidebar-link__badge")).toBeNull();
   });
 
-  it('logs out, ending the session, and returns to the login page', async () => {
+  it("logs out, ending the session, and returns to the login page", async () => {
     const { fixture, http, auth, router, element } = await render();
 
-    [...element.querySelectorAll('button')]
-      .find((button) => button.textContent?.includes('Sair'))!
+    [...element.querySelectorAll("button")]
+      .find((button) => button.textContent?.includes("Sair"))!
       .click();
-    http.expectOne(`${API}/auth/logout`).flush({ message: 'ok' });
+    http.expectOne(`${API}/auth/logout`).flush({ message: "ok" });
     await fixture.whenStable();
 
     expect(auth.isAuthenticated()).toBe(false);
     expect(localStorage.getItem(AUTH_TOKEN_STORAGE_KEY)).toBeNull();
-    expect(router.navigate).toHaveBeenCalledWith(['/admin/login']);
+    expect(router.navigate).toHaveBeenCalledWith(["/admin/login"]);
   });
 });

@@ -19,20 +19,6 @@ import { SiteSidebar } from '../site-sidebar/site-sidebar';
       <app-site-footer />
     </div>
   `,
-  styles: `
-    .layout__content {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    @media (min-width: 960px) {
-      :host {
-        flex-direction: row;
-      }
-    }
-  `,
   host: { class: 'layout layout--sidebar' },
 })
 export class PublicLayout {}

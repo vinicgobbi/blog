@@ -1,77 +1,96 @@
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
-<header class="admin-bar">
-  <div class="container container--wide admin-bar__inner">
-    <a class="brand" routerLink="/admin">
-      <span class="brand__mark" aria-hidden="true">VG</span>
-      <span>Admin</span>
-    </a>
+<app-sidebar>
+  <a sidebarBrand class="brand" routerLink="/admin" aria-label="Admin: ir para o dashboard">
+    <span class="brand__mark" aria-hidden="true">VG</span>
+    <span class="brand__name">Admin</span>
+  </a>
 
-    <nav class="admin-bar__nav" aria-label="Administração">
-      <ul class="admin-nav">
-        @for (item of menu; track item.link) {
-          <li>
-            <a
-              class="admin-nav__link"
-              [routerLink]="item.link"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
-              ariaCurrentWhenActive="page"
-            >
-              <i class="bi {{ item.icon }}" aria-hidden="true"></i> {{ item.label }}
-              @if (item.showsPendingComments && commentCounts.pending(); as pending) {
-                <span class="admin-nav__badge"
-                  >{{ pending
-                  }}<span class="visually-hidden">
-                    {{ pending === 1 ? 'pendente' : 'pendentes' }}</span
-                  ></span
-                >
-              }
-            </a>
-          </li>
-        }
-      </ul>
-    </nav>
-
-    <div class="admin-bar__actions">
-      @if (auth.user(); as user) {
-        <span class="admin-bar__user"
-          ><i class="bi bi-person-circle" aria-hidden="true"></i> {{ user.name }}</span
-        >
+  <nav aria-label="Administração">
+    <ul class="sidebar-links">
+      @for (item of menu; track item.link) {
+        <li>
+          <a
+            class="sidebar-link"
+            [routerLink]="item.link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
+            ariaCurrentWhenActive="page"
+            [appTooltip]="tooltip(item)"
+            [appTooltipDisabled]="!sidebar.showTooltips()"
+          >
+            <i class="bi {{ item.icon }}" aria-hidden="true"></i>
+            <span class="sidebar-link__label">{{ item.label }}</span>
+            @if (item.showsPendingComments && commentCounts.pending(); as pending) {
+              <span class="sidebar-link__badge"
+                >{{ pending
+                }}<span class="visually-hidden">
+                  {{ pending === 1 ? 'pendente' : 'pendentes' }}</span
+                ></span
+              >
+            }
+          </a>
+        </li>
       }
-      <a
-        class="btn btn-ghost btn-sm btn-icon"
-        href="/"
-        target="_blank"
-        rel="noopener"
-        aria-label="Ver blog (abre em nova aba)"
-        title="Ver blog"
-      >
-        <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
-      </a>
-      <button
-        type="button"
-        class="btn btn-ghost btn-sm btn-icon"
-        (click)="theme.toggle()"
-        [attr.aria-label]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
-        [title]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
-      >
-        <i
-          class="bi"
-          [class.bi-sun]="theme.theme() === 'dark'"
-          [class.bi-moon-stars]="theme.theme() === 'light'"
-          aria-hidden="true"
-        ></i>
-      </button>
-      <button type="button" class="btn btn-outline btn-sm" (click)="logout()">
-        <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Sair
-      </button>
-    </div>
-  </div>
-</header>
+    </ul>
+  </nav>
 
-<main id="conteudo" class="page" tabindex="-1">
-  <div class="container container--wide">
-    <router-outlet />
-  </div>
-</main>
+  <ng-container sidebarFooter>
+    @if (auth.user(); as user) {
+      <span
+        class="sidebar-link sidebar-link--static admin-user"
+        [appTooltip]="'Conectado como ' + user.name"
+        [appTooltipDisabled]="!sidebar.showTooltips()"
+      >
+        <i class="bi bi-person-circle" aria-hidden="true"></i>
+        <span class="sidebar-link__label">{{ user.name }}</span>
+      </span>
+    }
+    <a
+      class="sidebar-link"
+      href="/"
+      target="_blank"
+      rel="noopener"
+      appTooltip="Ver blog (abre em nova aba)"
+      [appTooltipDisabled]="!sidebar.showTooltips()"
+    >
+      <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+      <span class="sidebar-link__label"
+        >Ver blog<span class="visually-hidden"> (abre em nova aba)</span></span
+      >
+    </a>
+    <button
+      type="button"
+      class="sidebar-link"
+      [appTooltip]="themeLabel()"
+      [appTooltipDisabled]="!sidebar.showTooltips()"
+      (click)="theme.toggle()"
+    >
+      <i
+        class="bi"
+        [class.bi-sun]="theme.theme() === 'dark'"
+        [class.bi-moon-stars]="theme.theme() === 'light'"
+        aria-hidden="true"
+      ></i>
+      <span class="sidebar-link__label">{{ themeLabel() }}</span>
+    </button>
+    <button
+      type="button"
+      class="sidebar-link"
+      appTooltip="Sair"
+      [appTooltipDisabled]="!sidebar.showTooltips()"
+      (click)="logout()"
+    >
+      <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+      <span class="sidebar-link__label">Sair</span>
+    </button>
+  </ng-container>
+</app-sidebar>
+
+<div class="layout__content">
+  <main id="conteudo" class="page" tabindex="-1">
+    <div class="container container--wide">
+      <router-outlet />
+    </div>
+  </main>
+</div>

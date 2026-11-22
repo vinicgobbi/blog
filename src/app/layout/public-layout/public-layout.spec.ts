@@ -23,14 +23,16 @@ describe('PublicLayout', () => {
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
     document.documentElement.setAttribute('data-theme', 'dark');
-    const button = element.querySelector<HTMLButtonElement>('header button[aria-label*="tema"]');
+    const button = [...element.querySelectorAll<HTMLButtonElement>('header button')].find(
+      (candidate) => candidate.textContent?.includes('tema'),
+    );
 
-    expect(button?.getAttribute('aria-label')).toBe('Ativar tema claro');
+    expect(button?.textContent?.trim()).toBe('Ativar tema claro');
     button?.click();
     await fixture.whenStable();
 
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-    expect(button?.getAttribute('aria-label')).toBe('Ativar tema escuro');
+    expect(button?.textContent?.trim()).toBe('Ativar tema escuro');
   });
 
   it('renders site name, main navigation and RSS links', async () => {
