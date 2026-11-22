@@ -1,3 +1,20 @@
+## v0.3.0 (2026-11-22)
+
+### Feat
+
+- **blog**: adiciona sumário das seções nos posts
+- **blog**: adiciona esqueleto de carregamento nas listas de posts
+- **layout**: adiciona espera e deslize às dicas do menu
+- **layout**: adiciona transição animada entre páginas
+- **layout**: adiciona menu lateral recolhível ao blog e ao admin
+- **admin**: permite reordenar as páginas
+- **layout**: substitui a barra superior por menu lateral
+- **blog**: integra a busca na página inicial
+
+### Fix
+
+- **blog**: alinha os comentários ao texto nos posts com sumário
+
 ## v0.2.0 (2026-11-21)
 
 ### Feat
