@@ -1,6 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Meta } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
 import { PaginatedResponse } from '../../../shared/models/api';
@@ -40,7 +41,7 @@ function response(
   };
 }
 
-async function render(page?: number) {
+async function render(page?: number, q?: string) {
   TestBed.configureTestingModule({
     providers: [
       provideRouter([]),
@@ -52,6 +53,9 @@ async function render(page?: number) {
   const fixture = TestBed.createComponent(HomePage);
   if (page !== undefined) {
     fixture.componentRef.setInput('page', page);
+  }
+  if (q !== undefined) {
+    fixture.componentRef.setInput('q', q);
   }
   fixture.detectChanges();
 
@@ -130,5 +134,50 @@ describe('HomePage', () => {
     await fixture.whenStable();
 
     expect(element.querySelector('app-post-card h2')?.textContent?.trim()).toBe('Recuperado');
+  });
+
+  it('shows the search field and indexes the page while not searching', async () => {
+    const { fixture, http, element } = await render();
+
+    http.expectOne(`${API}/posts`).flush(response([{}]));
+    await fixture.whenStable();
+
+    expect(element.querySelector('form[role="search"] #busca-termo')).not.toBeNull();
+    expect(element.querySelector('h1')?.textContent).toContain('Posts recentes');
+    expect(element.querySelector('.search-summary')).toBeNull();
+    expect(TestBed.inject(Meta).getTag('name="robots"')).toBeNull();
+  });
+
+  it('searches the term from the URL and shows the result count', async () => {
+    const { fixture, http, element } = await render(undefined, ' angular ');
+
+    http.expectOne(`${API}/posts?q=angular`).flush(response([{ title: 'Aprendendo Angular' }]));
+    await fixture.whenStable();
+
+    expect(element.querySelector('h1')?.textContent).toContain('Resultados da busca');
+    expect(element.querySelector<HTMLInputElement>('#busca-termo')?.value).toBe('angular');
+    expect(element.querySelector('[role="status"]')?.textContent).toContain('1 resultado');
+    expect(element.querySelector('.search-summary a')?.getAttribute('href')).toBe('/');
+    expect(element.querySelector('app-post-card h2')?.textContent?.trim()).toBe(
+      'Aprendendo Angular',
+    );
+    expect(TestBed.inject(Meta).getTag('name="robots"')?.content).toBe('noindex, follow');
+  });
+
+  it('keeps the term when paginating the search results', async () => {
+    const { fixture, http } = await render(2, 'angular');
+
+    http.expectOne(`${API}/posts?page=2&q=angular`).flush(response([{}], 2, 3));
+    await fixture.whenStable();
+  });
+
+  it('explains when the search finds nothing', async () => {
+    const { fixture, http, element } = await render(undefined, 'xyz');
+
+    http.expectOne(`${API}/posts?q=xyz`).flush(response([]));
+    await fixture.whenStable();
+
+    expect(element.querySelector('[role="status"]')?.textContent).toContain('0 resultados');
+    expect(element.textContent).toContain('Nenhum post encontrado. Tente outros termos.');
   });
 });
