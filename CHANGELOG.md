@@ -1,3 +1,15 @@
+## v0.4.0 (2026-11-22)
+
+### Feat
+
+- **admin**: adiciona seletor de data e hora no visual do site
+- **blog**: exibe as datas no formato dd/mm/aaaa
+
+### Fix
+
+- **blog**: evita que o sumário pare de acompanhar a rolagem
+- impede que .visually-hidden seja sobrescrita por estilos de campos
+
 ## v0.3.0 (2026-11-22)
 
 ### Feat
