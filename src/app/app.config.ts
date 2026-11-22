@@ -3,9 +3,15 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import localePt from '@angular/common/locales/pt';
 import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
+import {
+  provideRouter,
+  withComponentInputBinding,
+  withInMemoryScrolling,
+  withViewTransitions,
+} from '@angular/router';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/auth/auth.interceptor';
+import { onViewTransitionCreated } from './core/navigation/view-transitions';
 
 registerLocaleData(localePt, 'pt-BR');
 
@@ -16,6 +22,8 @@ export const appConfig: ApplicationConfig = {
       routes,
       withComponentInputBinding(),
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+      // Transição entre páginas; a primeira carga não anima (ver styles/_view-transitions.scss).
+      withViewTransitions({ skipInitialTransition: true, onViewTransitionCreated }),
     ),
     provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
     // As respostas buscadas no SSR são reaproveitadas na hidratação. A API marca os GET públicos
