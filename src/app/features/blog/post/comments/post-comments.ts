@@ -13,10 +13,9 @@ import {
   submit,
 } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
+import { ToastService } from '../../../../shared/components/toast/toast.service';
 import { CommentInput } from '../../../../shared/models/blog';
 import { BlogApi } from '../../blog-api';
-
-type SendStatus = 'idle' | 'sent' | 'rate-limited' | 'failed';
 
 const EMPTY_COMMENT: CommentInput = { author_name: '', author_email: '', body: '', website: '' };
 
@@ -37,6 +36,7 @@ export class PostComments {
   readonly slug = input.required<string>();
 
   private readonly api = inject(BlogApi);
+  private readonly toast = inject(ToastService);
 
   protected readonly comments = this.api.comments(() => this.slug());
   protected readonly list = computed(() =>
@@ -56,12 +56,9 @@ export class PostComments {
     minLength(path.body, 2, { message: 'O comentário deve ter pelo menos 2 caracteres.' });
     maxLength(path.body, 5000, { message: 'O comentário pode ter no máximo 5000 caracteres.' });
   });
-  protected readonly status = signal<SendStatus>('idle');
 
   protected async send(event: Event): Promise<void> {
     event.preventDefault();
-    this.status.set('idle');
-
     await submit(this.commentForm, (field) => this.post(field));
   }
 
@@ -76,7 +73,7 @@ export class PostComments {
       return this.handleError(error, field);
     }
 
-    this.status.set('sent');
+    this.toast.success('Comentário enviado! Ele será publicado após a moderação.');
     this.model.set({ ...EMPTY_COMMENT });
     this.commentForm().reset();
 
@@ -95,9 +92,13 @@ export class PostComments {
       }));
     }
 
-    this.status.set(
-      error instanceof HttpErrorResponse && error.status === 429 ? 'rate-limited' : 'failed',
-    );
+    if (error instanceof HttpErrorResponse && error.status === 429) {
+      this.toast.warning(
+        'Você enviou muitos comentários seguidos. Aguarde um minuto e tente novamente.',
+      );
+    } else {
+      this.toast.error('Não foi possível enviar o comentário. Tente novamente.');
+    }
 
     return undefined;
   }

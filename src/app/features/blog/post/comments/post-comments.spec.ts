@@ -7,6 +7,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { API_URL } from '../../../../core/api';
 import { PaginatedResponse } from '../../../../shared/models/api';
 import { PostComment } from '../../../../shared/models/blog';
+import { shownToasts } from '../../../../../testing/toasts';
 import { PostComments } from './post-comments';
 
 registerLocaleData(localePt, 'pt-BR');
@@ -147,12 +148,12 @@ describe('PostComments', () => {
     });
     request.flush({ message: 'ok' }, { status: 202, statusText: 'Accepted' });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('[role="status"]')?.textContent).toContain(
-        'será publicado após a moderação',
-      );
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([
+        { kind: 'success', message: expect.stringContaining('será publicado após a moderação') },
+      ]),
+    );
+    await fixture.whenStable();
     expect(element.querySelector<HTMLInputElement>('#comentario-nome')?.value).toBe('');
     expect(element.querySelector('#comentario-nome-erro')?.textContent?.trim()).toBe('');
   });
@@ -176,7 +177,7 @@ describe('PostComments', () => {
         'Informe um e-mail válido',
       );
     });
-    expect(element.querySelector('[role="status"]')).toBeNull();
+    expect(shownToasts()).toEqual([]);
   });
 
   it('asks to wait when the API rate limits the comments', async () => {
@@ -189,10 +190,28 @@ describe('PostComments', () => {
       .expectOne({ method: 'POST', url: COMMENTS_URL })
       .flush(null, { status: 429, statusText: 'Too Many Requests' });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('[role="alert"]')?.textContent).toContain('Aguarde um minuto');
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([
+        { kind: 'warning', message: expect.stringContaining('Aguarde um minuto') },
+      ]),
+    );
+  });
+
+  it('shows an error toast when the comment cannot be sent', async () => {
+    const { fixture, http, element } = await render();
+    http.expectOne(COMMENTS_URL).flush(page([]));
+    await fillValidForm(fixture, element);
+
+    await submitForm(fixture, element);
+    http
+      .expectOne({ method: 'POST', url: COMMENTS_URL })
+      .flush(null, { status: 500, statusText: 'Server Error' });
+
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([
+        { kind: 'error', message: 'Não foi possível enviar o comentário. Tente novamente.' },
+      ]),
+    );
   });
 
   it('keeps the honeypot out of the tab order and hidden from assistive technology', async () => {
