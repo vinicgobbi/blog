@@ -74,6 +74,16 @@ describe('TableOfContents', () => {
     expect(element.querySelector('nav')?.getAttribute('aria-labelledby')).toBe('sumario-titulo');
   });
 
+  it('indents subsections according to their heading level', async () => {
+    const { element } = await render();
+
+    const links = [...element.querySelectorAll<HTMLAnchorElement>('.toc__link')];
+    expect(links.map((link) => link.classList.contains('toc__link--sub'))).toEqual([
+      false,
+      true,
+      false,
+    ]);
+  });
 
   it('highlights no section before the first heading is reached', async () => {
     const { element } = await render();

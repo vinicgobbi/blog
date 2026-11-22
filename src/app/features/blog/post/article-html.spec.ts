@@ -70,6 +70,14 @@ describe('extractSections', () => {
     ]);
   });
 
+  it('leaves headings deeper than h4 out of the list', () => {
+    const html =
+      '<h2>Topo<a href="#secao-topo" class="heading-permalink">#</a></h2>' +
+      '<h5>Fundo<a href="#secao-fundo" class="heading-permalink">#</a></h5>' +
+      '<h6>Mais fundo<a href="#secao-mais-fundo" class="heading-permalink">#</a></h6>';
+
+    expect(extractSections(html)).toEqual([{ id: 'secao-topo', title: 'Topo', level: 2 }]);
+  });
 
   it('keeps only the text of headings with inline markup and decodes entities', () => {
     const html =
