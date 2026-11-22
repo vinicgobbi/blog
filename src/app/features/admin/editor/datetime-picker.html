@@ -1,0 +1,151 @@
+@if (native()) {
+  <input
+    type="datetime-local"
+    class="datetime-picker__native"
+    [id]="inputId()"
+    [value]="value()"
+    [disabled]="disabled()"
+    [attr.aria-invalid]="touched() && invalid()"
+    [attr.aria-describedby]="describedBy()"
+    (input)="onNativeInput($event)"
+    (blur)="touch.emit()"
+  />
+} @else {
+  <button
+    #toggleButton
+    type="button"
+    class="datetime-picker__toggle"
+    [id]="inputId()"
+    [disabled]="disabled()"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="open()"
+    [attr.aria-controls]="panelId"
+    [attr.aria-invalid]="touched() && invalid()"
+    [attr.aria-describedby]="describedBy()"
+    (click)="toggle()"
+  >
+    <i class="bi bi-calendar3 datetime-picker__icon" aria-hidden="true"></i>
+    @if (display(); as text) {
+      <span class="datetime-picker__value">
+        {{ text }}
+        <span class="datetime-picker__relative">{{ relative() }}</span>
+      </span>
+    } @else {
+      <span class="datetime-picker__value datetime-picker__value--empty">Escolher data e hora</span>
+    }
+    <i class="bi bi-chevron-down datetime-picker__chevron" aria-hidden="true"></i>
+  </button>
+
+  @if (open()) {
+    <div
+      class="datetime-picker__panel"
+      animate.enter="datetime-picker__panel--enter"
+      animate.leave="datetime-picker__panel--leave"
+      role="dialog"
+      [id]="panelId"
+      aria-label="Escolher data e hora"
+    >
+      <div class="datetime-picker__header">
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm btn-icon"
+          aria-label="Mês anterior"
+          title="Mês anterior"
+          (click)="changeMonth(-1)"
+        >
+          <i class="bi bi-chevron-left" aria-hidden="true"></i>
+        </button>
+        <h2 class="datetime-picker__month" [id]="titleId" aria-live="polite">
+          {{ monthTitle() }}
+        </h2>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm btn-icon"
+          aria-label="Próximo mês"
+          title="Próximo mês"
+          (click)="changeMonth(1)"
+        >
+          <i class="bi bi-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <table class="datetime-picker__calendar" [attr.aria-labelledby]="titleId">
+        <thead>
+          <tr>
+            @for (weekday of weekdays; track weekday.long) {
+              <th scope="col">
+                <abbr [title]="weekday.long">{{ weekday.short }}</abbr>
+              </th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (week of weeks(); track week[0].day) {
+            <tr>
+              @for (cell of week; track cell.day) {
+                <td>
+                  <button
+                    type="button"
+                    class="datetime-picker__day"
+                    [class.datetime-picker__day--outside]="!cell.inMonth"
+                    [class.datetime-picker__day--today]="cell.day === today()"
+                    [attr.data-day]="cell.day"
+                    [attr.tabindex]="cell.day === focusedDay() ? 0 : -1"
+                    [attr.aria-pressed]="cell.day === parts()?.day"
+                    [attr.aria-current]="cell.day === today() ? 'date' : null"
+                    [attr.aria-label]="dayLabel(cell.day)"
+                    (click)="selectDay(cell.day)"
+                    (keydown)="onDayKeydown($event, cell.day)"
+                  >
+                    {{ cell.label }}
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+
+      <div class="datetime-picker__time">
+        <i class="bi bi-clock" aria-hidden="true"></i>
+        <span class="datetime-picker__time-label" aria-hidden="true">Hora</span>
+        <input
+          type="text"
+          inputmode="numeric"
+          maxlength="2"
+          class="datetime-picker__time-input"
+          aria-label="Hora (0 a 23)"
+          [value]="hour()"
+          (change)="setTime('hour', $event)"
+          (keydown)="stepTime('hour', $event)"
+        />
+        <span aria-hidden="true">:</span>
+        <input
+          type="text"
+          inputmode="numeric"
+          maxlength="2"
+          class="datetime-picker__time-input"
+          aria-label="Minutos (0 a 59)"
+          [value]="minute()"
+          (change)="setTime('minute', $event)"
+          (keydown)="stepTime('minute', $event)"
+        />
+      </div>
+
+      <div class="datetime-picker__actions">
+        <button type="button" class="btn btn-outline btn-sm" (click)="setNow()">Agora</button>
+        <button type="button" class="btn btn-outline btn-sm" (click)="setTomorrowMorning()">
+          Amanhã às 9h
+        </button>
+        <button type="button" class="btn btn-ghost btn-sm" (click)="clear()">Limpar</button>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm datetime-picker__done"
+          (click)="close(true)"
+        >
+          Concluir
+        </button>
+      </div>
+    </div>
+  }
+}

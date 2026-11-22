@@ -1,0 +1,240 @@
+:host {
+  position: relative;
+  display: block;
+}
+
+/* ---------- Campo ---------- */
+.datetime-picker__toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible,
+  &[aria-expanded='true'] {
+    border-color: var(--accent);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: var(--danger);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.datetime-picker__icon,
+.datetime-picker__chevron {
+  color: var(--text-subtle);
+}
+
+.datetime-picker__chevron {
+  transition: transform 0.15s ease;
+
+  [aria-expanded='true'] > & {
+    transform: rotate(180deg);
+  }
+}
+
+.datetime-picker__value {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 0.9rem;
+  line-height: 1.3;
+}
+
+.datetime-picker__value--empty {
+  color: var(--text-subtle);
+}
+
+.datetime-picker__relative {
+  color: var(--text-subtle);
+  font-size: 0.78rem;
+}
+
+.datetime-picker__native {
+  width: 100%;
+}
+
+/* ---------- Painel ---------- */
+.datetime-picker__panel {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: max(100%, 19rem);
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-hover);
+  /* Abre e fecha a partir do canto de onde surge (alinhado à direita do campo). */
+  transform-origin: top right;
+}
+
+/* Classes aplicadas pelo Angular (animate.enter / animate.leave no template). */
+.datetime-picker__panel--enter {
+  animation: datetime-picker-in 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* A saída é mais curta que a entrada, para o painel não "atrasar" quem já decidiu. */
+.datetime-picker__panel--leave {
+  animation: datetime-picker-out 0.12s ease-in forwards;
+}
+
+@keyframes datetime-picker-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+}
+
+@keyframes datetime-picker-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}
+
+.datetime-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.datetime-picker__month {
+  font: 600 0.95rem var(--font-sans);
+
+  /* "Novembro de 2026": maiúscula só na primeira letra (capitalize afetaria o "de"). */
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.datetime-picker__calendar {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  th {
+    padding-bottom: 0.35rem;
+    color: var(--text-subtle);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  abbr {
+    text-decoration: none;
+  }
+
+  td {
+    padding: 1px;
+    text-align: center;
+  }
+}
+
+.datetime-picker__day {
+  width: 100%;
+  aspect-ratio: 1;
+  max-height: 2.4rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text);
+  font: 500 0.85rem var(--font-sans);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+
+  &:hover {
+    background: var(--surface-2);
+  }
+
+  &:focus-visible {
+    outline-offset: 0;
+  }
+}
+
+.datetime-picker__day--outside {
+  color: var(--text-subtle);
+  opacity: 0.6;
+}
+
+.datetime-picker__day--today {
+  box-shadow: inset 0 0 0 1px var(--accent);
+  color: var(--accent-text);
+}
+
+.datetime-picker__day[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  opacity: 1;
+}
+
+.datetime-picker__time {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.datetime-picker__time-label {
+  margin-right: auto;
+}
+
+/* Prefixo para vencer o estilo global de .field input (styles.scss). */
+.datetime-picker__time .datetime-picker__time-input {
+  width: 3rem;
+  padding: 0.35rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font: 600 0.95rem var(--font-mono);
+  text-align: center;
+
+  &:focus-visible {
+    border-color: var(--accent);
+  }
+}
+
+.datetime-picker__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.datetime-picker__done {
+  margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .datetime-picker__chevron,
+  .datetime-picker__day {
+    transition: none;
+  }
+
+  .datetime-picker__panel--enter,
+  .datetime-picker__panel--leave {
+    animation: none;
+  }
+}
