@@ -25,6 +25,8 @@ import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
 import { AdminPost, AdminPostInput, Media, PostStatus } from '../../../shared/models/admin';
+import { ToastOutlet } from '../../../shared/components/toast/toast-outlet';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AdminApi } from '../admin-api';
 import { fromDateTimeLocal, toDateTimeLocal } from '../editor/datetime-local';
 import { DateTimePicker } from '../editor/datetime-picker';
@@ -42,11 +44,6 @@ export interface PostFormModel {
   tags: string;
   cover_image_path: string;
   published_at: string;
-}
-
-interface Feedback {
-  kind: 'success' | 'error';
-  message: string;
 }
 
 const EMPTY_POST: PostFormModel = {
@@ -100,7 +97,7 @@ export function toPostInput(model: PostFormModel, status: PostStatus): AdminPost
  */
 @Component({
   selector: 'app-post-editor-page',
-  imports: [DateTimePicker, FormField, MarkdownEditor, MediaLibrary, RouterLink],
+  imports: [DateTimePicker, FormField, MarkdownEditor, MediaLibrary, RouterLink, ToastOutlet],
   templateUrl: './post-editor-page.html',
   styleUrl: './post-editor-page.scss',
   host: { '(window:beforeunload)': 'onBeforeUnload($event)' },
@@ -113,6 +110,7 @@ export class PostEditorPage {
 
   private readonly api = inject(AdminApi);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   protected readonly post = this.api.post(() => this.id());
   protected readonly categories = this.api.categories();
@@ -135,10 +133,6 @@ export class PostEditorPage {
     required(path.body_markdown, { message: 'Escreva o conteúdo do post.' });
   });
 
-  /** Mensagem vinda da navegação após criar um post (o componente é recriado na nova URL). */
-  protected readonly feedback = signal<Feedback | null>(
-    (this.router.currentNavigation()?.extras.state?.['feedback'] as Feedback | undefined) ?? null,
-  );
   /** Uma data futura agenda o post em vez de publicá-lo agora. */
   protected readonly isFutureDate = computed(() => {
     const date = fromDateTimeLocal(this.model().published_at);
@@ -169,8 +163,6 @@ export class PostEditorPage {
 
   protected async save(event: Event, status: PostStatus): Promise<void> {
     event.preventDefault();
-    this.feedback.set(null);
-
     await submit(this.postForm, (field) => this.persist(field, status));
   }
 
@@ -196,14 +188,12 @@ export class PostEditorPage {
       return this.handleError(error, field);
     }
 
-    const feedback: Feedback = { kind: 'success', message: this.successMessage(saved) };
     this.fill(saved);
-    this.feedback.set(feedback);
+    this.toast.success(this.successMessage(saved));
 
     if (!this.id()) {
       await this.router.navigate(['/admin/posts', saved.id], {
         replaceUrl: true,
-        state: { feedback },
       });
     }
 
@@ -266,15 +256,12 @@ export class PostEditorPage {
         });
       }
 
-      this.feedback.set({ kind: 'error', message: 'Corrija os campos destacados.' });
+      this.toast.warning('Corrija os campos destacados.');
 
       return fieldErrors;
     }
 
-    this.feedback.set({
-      kind: 'error',
-      message: 'Não foi possível salvar o post. Tente novamente.',
-    });
+    this.toast.error('Não foi possível salvar o post. Tente novamente.');
 
     return undefined;
   }

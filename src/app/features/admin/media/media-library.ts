@@ -8,6 +8,7 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { Media } from '../../../shared/models/admin';
 import { AdminApi } from '../admin-api';
 import { ACCEPTED_IMAGE_TYPES, altFromFileName, formatBytes, validateImage } from './image-upload';
@@ -16,11 +17,6 @@ interface Upload {
   id: number;
   name: string;
   percent: number;
-}
-
-interface Message {
-  kind: 'success' | 'error';
-  text: string;
 }
 
 /**
@@ -39,6 +35,7 @@ export class MediaLibrary {
   readonly picked = output<Media>();
 
   private readonly api = inject(AdminApi);
+  private readonly toast = inject(ToastService);
   private nextUploadId = 0;
 
   protected readonly accept = ACCEPTED_IMAGE_TYPES.join(',');
@@ -48,17 +45,14 @@ export class MediaLibrary {
     this.media.hasValue() ? this.media.value() : undefined,
   );
   protected readonly uploads = signal<Upload[]>([]);
-  protected readonly message = signal<Message | null>(null);
   protected readonly dragging = signal(false);
   protected readonly formatBytes = formatBytes;
 
   upload(files: Iterable<File>): void {
-    this.message.set(null);
-
     for (const file of files) {
       const error = validateImage(file);
       if (error) {
-        this.message.set({ kind: 'error', text: error });
+        this.toast.error(error);
         continue;
       }
 
@@ -80,7 +74,7 @@ export class MediaLibrary {
           this.finishUpload(upload.id);
           this.page.set(1);
           this.media.reload();
-          this.message.set({ kind: 'success', text: `"${file.name}" enviada.` });
+          this.toast.success(`"${file.name}" enviada.`);
 
           if (this.selectable()) {
             this.picked.emit(event.media);
@@ -88,7 +82,7 @@ export class MediaLibrary {
         },
         error: (error: unknown) => {
           this.finishUpload(upload.id);
-          this.message.set({ kind: 'error', text: this.uploadErrorMessage(file.name, error) });
+          this.toast.error(this.uploadErrorMessage(file.name, error));
         },
       });
     }
@@ -114,12 +108,9 @@ export class MediaLibrary {
   protected async copy(media: Media): Promise<void> {
     try {
       await navigator.clipboard.writeText(media.markdown);
-      this.message.set({ kind: 'success', text: 'Markdown copiado. Cole no conteúdo do post.' });
+      this.toast.success('Markdown copiado. Cole no conteúdo do post.');
     } catch {
-      this.message.set({
-        kind: 'error',
-        text: 'Não foi possível copiar. Selecione o texto manualmente.',
-      });
+      this.toast.error('Não foi possível copiar. Selecione o texto manualmente.');
     }
   }
 
@@ -127,10 +118,9 @@ export class MediaLibrary {
     this.api.updateMediaAlt(media.id, alt.trim() || null).subscribe({
       next: () => {
         this.media.reload();
-        this.message.set({ kind: 'success', text: 'Texto alternativo atualizado.' });
+        this.toast.success('Texto alternativo atualizado.');
       },
-      error: () =>
-        this.message.set({ kind: 'error', text: 'Não foi possível salvar o texto alternativo.' }),
+      error: () => this.toast.error('Não foi possível salvar o texto alternativo.'),
     });
   }
 
@@ -142,16 +132,14 @@ export class MediaLibrary {
     this.api.deleteMedia(media.id).subscribe({
       next: () => {
         this.media.reload();
-        this.message.set({ kind: 'success', text: `"${media.original_name}" excluída.` });
+        this.toast.success(`"${media.original_name}" excluída.`);
       },
       error: (error: unknown) =>
-        this.message.set({
-          kind: 'error',
-          text:
-            error instanceof HttpErrorResponse && error.status === 409
-              ? `"${media.original_name}" está em uso como capa ou no conteúdo de um post ou página e não pode ser excluída.`
-              : `Não foi possível excluir "${media.original_name}".`,
-        }),
+        error instanceof HttpErrorResponse && error.status === 409
+          ? this.toast.warning(
+              `"${media.original_name}" está em uso como capa ou no conteúdo de um post ou página e não pode ser excluída.`,
+            )
+          : this.toast.error(`Não foi possível excluir "${media.original_name}".`),
     });
   }
 

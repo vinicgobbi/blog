@@ -8,12 +8,6 @@
   </a>
 </header>
 
-@if (deleteError(); as message) {
-  <p class="alert alert--error" role="alert">{{ message }}</p>
-}
-@if (orderError(); as message) {
-  <p class="alert alert--error" role="alert">{{ message }}</p>
-}
 <p class="visually-hidden" role="status">{{ orderStatus() }}</p>
 
 <div aria-live="polite" [attr.aria-busy]="pages.isLoading()">

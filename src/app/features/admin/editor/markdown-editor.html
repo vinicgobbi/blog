@@ -85,8 +85,5 @@
       {{ uploading() === 1 ? '1 imagem' : uploading() + ' imagens' }}…</span
     >
   }
-  @if (uploadError(); as error) {
-    <span class="editor__error" role="alert">{{ error }}</span>
-  }
 </p>
 <p class="editor__help">Dica: arraste ou cole imagens no texto para enviá-las.</p>

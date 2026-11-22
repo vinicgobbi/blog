@@ -27,15 +27,6 @@
   <p class="state">Carregando post…</p>
 } @else {
   <form class="post-form" novalidate (submit)="save($event, 'published')">
-    @if (feedback(); as feedback) {
-      <p
-        class="alert alert--{{ feedback.kind }}"
-        [attr.role]="feedback.kind === 'error' ? 'alert' : 'status'"
-      >
-        {{ feedback.message }}
-      </p>
-    }
-
     <div class="post-form__main">
       <div class="field">
         <label for="post-titulo">Título</label>
@@ -235,5 +226,7 @@
   </div>
   @if (coverPickerOpen()) {
     <app-media-library selectable (picked)="setCover($event)" />
+    <!-- Os toasts da raiz ficariam atrás do modal; enquanto ele está aberto, aparecem aqui. -->
+    <app-toast-outlet />
   }
 </dialog>

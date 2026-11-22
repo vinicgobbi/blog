@@ -14,6 +14,7 @@ import {
 } from '@angular/core';
 import { FormValueControl } from '@angular/forms/signals';
 import { prepareArticleHtml } from '../../blog/post/article-html';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AdminApi } from '../admin-api';
 import { ACCEPTED_IMAGE_TYPES, altFromFileName, validateImage } from '../media/image-upload';
 import {
@@ -57,13 +58,13 @@ export class MarkdownEditor implements FormValueControl<string> {
 
   private readonly injector = inject(Injector);
   private readonly api = inject(AdminApi);
+  private readonly toast = inject(ToastService);
   private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('textarea');
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
   private nextUploadId = 1;
 
   protected readonly accept = ACCEPTED_IMAGE_TYPES.join(',');
   protected readonly uploading = signal(0);
-  protected readonly uploadError = signal<string | null>(null);
 
   /** Abas no celular; no desktop os dois painéis ficam lado a lado. */
   protected readonly mode = signal<'write' | 'preview'>('write');
@@ -119,12 +120,10 @@ export class MarkdownEditor implements FormValueControl<string> {
    * imagem quando o envio termina (ou removido em caso de erro).
    */
   uploadImages(files: Iterable<File>): void {
-    this.uploadError.set(null);
-
     for (const file of files) {
       const error = validateImage(file);
       if (error) {
-        this.uploadError.set(error);
+        this.toast.error(error);
         continue;
       }
 
@@ -145,7 +144,7 @@ export class MarkdownEditor implements FormValueControl<string> {
         },
         error: () => {
           this.value.update((value) => replaceFirst(value, placeholder, ''));
-          this.uploadError.set(`Não foi possível enviar "${file.name}".`);
+          this.toast.error(`Não foi possível enviar "${file.name}".`);
           this.uploading.update((count) => count - 1);
         },
         complete: () => this.uploading.update((count) => count - 1),

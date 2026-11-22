@@ -29,15 +29,6 @@
   <p class="state">Carregando página…</p>
 } @else {
   <form class="post-form" novalidate (submit)="save($event)">
-    @if (feedback(); as feedback) {
-      <p
-        class="alert alert--{{ feedback.kind }}"
-        [attr.role]="feedback.kind === 'error' ? 'alert' : 'status'"
-      >
-        {{ feedback.message }}
-      </p>
-    }
-
     <div class="post-form__main">
       <div class="field">
         <label for="pagina-titulo">Título</label>

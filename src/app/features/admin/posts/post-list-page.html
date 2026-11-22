@@ -37,10 +37,6 @@
   </form>
 </div>
 
-@if (deleteError(); as message) {
-  <p class="alert alert--error" role="alert">{{ message }}</p>
-}
-
 <div aria-live="polite" [attr.aria-busy]="posts.isLoading()">
   @if (posts.error()) {
     <div class="state" role="alert">

@@ -6,6 +6,7 @@ import { FormValueControl } from '@angular/forms/signals';
 import { Router, provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
 import { AdminPage } from '../../../shared/models/admin';
+import { shownToasts } from '../../../../testing/toasts';
 import { IconPicker } from '../editor/icon-picker';
 import { MarkdownEditor } from '../editor/markdown-editor';
 import { PageEditorPage, toPageFormModel, toPageInput } from './page-editor-page';
@@ -146,11 +147,9 @@ describe('PageEditorPage', () => {
     );
 
     await vi.waitFor(() =>
-      expect(router.navigate).toHaveBeenCalledWith(['/admin/paginas', 9], {
-        replaceUrl: true,
-        state: { feedback: { kind: 'success', message: 'Página publicada.' } },
-      }),
+      expect(router.navigate).toHaveBeenCalledWith(['/admin/paginas', 9], { replaceUrl: true }),
     );
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Página publicada.' }]);
   });
 
   it('does not save without title, icon and content', async () => {
@@ -189,10 +188,9 @@ describe('PageEditorPage', () => {
     expect(request.request.body).toMatchObject({ title: 'Sobre mim', is_published: false });
     request.flush({ data: { ...PAGE, title: 'Sobre mim' } });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('[role="status"]')?.textContent).toContain('Rascunho salvo.');
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([{ kind: 'success', message: 'Rascunho salvo.' }]),
+    );
     expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
   });
 

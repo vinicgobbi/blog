@@ -6,6 +6,7 @@ import { FormValueControl } from '@angular/forms/signals';
 import { Router, provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
 import { AdminPost } from '../../../shared/models/admin';
+import { shownToasts } from '../../../../testing/toasts';
 import { MarkdownEditor } from '../editor/markdown-editor';
 import { PostEditorPage, toFormModel, toPostInput } from './post-editor-page';
 
@@ -167,11 +168,9 @@ describe('PostEditorPage', () => {
     );
 
     await vi.waitFor(() =>
-      expect(router.navigate).toHaveBeenCalledWith(['/admin/posts', 9], {
-        replaceUrl: true,
-        state: { feedback: { kind: 'success', message: 'Post publicado.' } },
-      }),
+      expect(router.navigate).toHaveBeenCalledWith(['/admin/posts', 9], { replaceUrl: true }),
     );
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Post publicado.' }]);
   });
 
   it('does not save without title and content', async () => {
@@ -210,11 +209,28 @@ describe('PostEditorPage', () => {
     });
     request.flush({ data: { ...POST, title: 'Título editado' } });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('[role="status"]')?.textContent).toContain('Rascunho salvo.');
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([{ kind: 'success', message: 'Rascunho salvo.' }]),
+    );
     expect(fixture.componentInstance.hasUnsavedChanges()).toBe(false);
+  });
+
+  it('shows an error toast when the API fails to save', async () => {
+    const { fixture, http, element } = render();
+    type(element, '#post-titulo', 'Título');
+    type(element, '#post-conteudo', 'Conteúdo');
+    await fixture.whenStable();
+
+    await click(fixture, element, 'Publicar');
+    http
+      .expectOne({ method: 'POST', url: `${API}/admin/posts` })
+      .flush(null, { status: 500, statusText: 'Server Error' });
+
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([
+        { kind: 'error', message: 'Não foi possível salvar o post. Tente novamente.' },
+      ]),
+    );
   });
 
   it('labels the main action as "Agendar" for a future publication date', async () => {
@@ -260,9 +276,7 @@ describe('PostEditorPage', () => {
     expect(element.querySelector('#post-tags-erro')?.textContent).toContain(
       'no máximo 50 caracteres',
     );
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain(
-      'Corrija os campos destacados.',
-    );
+    expect(shownToasts()).toEqual([{ kind: 'warning', message: 'Corrija os campos destacados.' }]);
   });
 
   it('sets the cover from the media library and sends its path', async () => {

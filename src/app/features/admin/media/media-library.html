@@ -29,15 +29,6 @@
   </div>
 }
 
-@if (message(); as message) {
-  <p
-    class="alert alert--{{ message.kind }} message"
-    [attr.role]="message.kind === 'error' ? 'alert' : 'status'"
-  >
-    {{ message.text }}
-  </p>
-}
-
 <div aria-live="polite" [attr.aria-busy]="media.isLoading()">
   @if (media.error()) {
     <div class="state" role="alert">

@@ -3,6 +3,7 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { API_URL } from '../../../core/api';
 import { Category, Tag } from '../../../shared/models/blog';
+import { shownToasts } from '../../../../testing/toasts';
 import { TaxonomyKind } from '../admin-api';
 import { TaxonomyPage, toTaxonomyInput } from './taxonomy-page';
 
@@ -102,7 +103,7 @@ describe('TaxonomyPage', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(element.querySelector('[role="status"]')?.textContent).toContain('Categoria criada.');
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Categoria criada.' }]);
     expect(element.querySelector<HTMLInputElement>('#taxonomia-nome')?.value).toBe('');
   });
 
@@ -131,9 +132,7 @@ describe('TaxonomyPage', () => {
     (await vi.waitFor(() => http.expectOne(`${API}/admin/categories`))).flush({ data: [] });
     await fixture.whenStable();
     fixture.detectChanges();
-    expect(element.querySelector('[role="status"]')?.textContent).toContain(
-      'Categoria atualizada.',
-    );
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Categoria atualizada.' }]);
   });
 
   it('does not submit without a name', async () => {
@@ -182,6 +181,7 @@ describe('TaxonomyPage', () => {
       .flush(null, { status: 204, statusText: 'No Content' });
     (await vi.waitFor(() => http.expectOne(`${API}/admin/categories`))).flush({ data: [] });
     await fixture.whenStable();
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Categoria excluída.' }]);
   });
 
   it('warns that a tag is removed from its posts', async () => {
@@ -203,11 +203,10 @@ describe('TaxonomyPage', () => {
       .expectOne({ method: 'DELETE', url: `${API}/admin/categories/2` })
       .flush(null, { status: 500, statusText: 'Server Error' });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('.alert')?.textContent).toContain(
-        'Não foi possível excluir "Vazia".',
-      );
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([
+        { kind: 'error', message: 'Não foi possível excluir "Vazia". Tente novamente.' },
+      ]),
+    );
   });
 });

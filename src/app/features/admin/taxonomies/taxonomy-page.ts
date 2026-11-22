@@ -20,6 +20,7 @@ import {
 } from '@angular/forms/signals';
 import { firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { TaxonomyInput } from '../../../shared/models/admin';
 import { Category, Tag } from '../../../shared/models/blog';
 import { AdminApi, TaxonomyKind } from '../admin-api';
@@ -28,11 +29,6 @@ export interface TaxonomyFormModel {
   name: string;
   slug: string;
   description: string;
-}
-
-interface Feedback {
-  kind: 'success' | 'error';
-  message: string;
 }
 
 interface TaxonomyConfig {
@@ -46,6 +42,7 @@ interface TaxonomyConfig {
   hasDescription: boolean;
   created: string;
   updated: string;
+  deleted: string;
   /** Aviso exibido na confirmação de exclusão, conforme o número de posts. */
   deleteWarning: (postsCount: number) => string;
 }
@@ -62,6 +59,7 @@ export const TAXONOMY_CONFIG: Record<TaxonomyKind, TaxonomyConfig> = {
     hasDescription: true,
     created: 'Categoria criada.',
     updated: 'Categoria atualizada.',
+    deleted: 'Categoria excluída.',
     deleteWarning: (count) =>
       count
         ? `${count} ${plural(count, 'post ficará', 'posts ficarão')} sem categoria.`
@@ -76,6 +74,7 @@ export const TAXONOMY_CONFIG: Record<TaxonomyKind, TaxonomyConfig> = {
     hasDescription: false,
     created: 'Tag criada.',
     updated: 'Tag atualizada.',
+    deleted: 'Tag excluída.',
     deleteWarning: (count) =>
       count
         ? `Ela será removida de ${count} ${plural(count, 'post', 'posts')}.`
@@ -112,6 +111,7 @@ export class TaxonomyPage {
   readonly kind = input.required<TaxonomyKind>();
 
   private readonly api = inject(AdminApi);
+  private readonly toast = inject(ToastService);
 
   protected readonly config = computed(() => TAXONOMY_CONFIG[this.kind()]);
   protected readonly items = this.api.taxonomies(() => this.kind());
@@ -119,8 +119,6 @@ export class TaxonomyPage {
 
   /** Item em edição; nulo quando o formulário cria um novo. */
   protected readonly editing = signal<Category | Tag | null>(null);
-  protected readonly feedback = signal<Feedback | null>(null);
-  protected readonly deleteError = signal<string | null>(null);
   private readonly nameInput = viewChild<ElementRef<HTMLInputElement>>('nameInput');
 
   protected readonly model = signal<TaxonomyFormModel>({ ...EMPTY });
@@ -144,7 +142,6 @@ export class TaxonomyPage {
 
   protected edit(item: Category | Tag): void {
     this.editing.set(item);
-    this.feedback.set(null);
     this.model.set({
       name: item.name,
       slug: item.slug,
@@ -156,13 +153,10 @@ export class TaxonomyPage {
 
   protected cancelEdit(): void {
     this.clearForm();
-    this.feedback.set(null);
   }
 
   protected async save(event: Event): Promise<void> {
     event.preventDefault();
-    this.feedback.set(null);
-
     await submit(this.taxonomyForm, (field) => this.persist(field));
   }
 
@@ -173,16 +167,15 @@ export class TaxonomyPage {
       return;
     }
 
-    this.deleteError.set(null);
-
     try {
       await firstValueFrom(this.api.deleteTaxonomy(this.kind(), item.id));
       if (this.editing()?.id === item.id) {
         this.clearForm();
       }
       this.items.reload();
+      this.toast.success(this.config().deleted);
     } catch {
-      this.deleteError.set(`Não foi possível excluir "${item.name}". Tente novamente.`);
+      this.toast.error(`Não foi possível excluir "${item.name}". Tente novamente.`);
     }
   }
 
@@ -202,10 +195,7 @@ export class TaxonomyPage {
     }
 
     this.clearForm();
-    this.feedback.set({
-      kind: 'success',
-      message: editing ? this.config().updated : this.config().created,
-    });
+    this.toast.success(editing ? this.config().updated : this.config().created);
     this.items.reload();
 
     return undefined;
@@ -220,7 +210,7 @@ export class TaxonomyPage {
   private handleError(error: unknown, field: FieldTree<TaxonomyFormModel>): TreeValidationResult {
     if (error instanceof HttpErrorResponse && error.status === 422) {
       const errors = (error.error?.errors ?? {}) as Partial<Record<string, string[]>>;
-      this.feedback.set({ kind: 'error', message: 'Corrija os campos destacados.' });
+      this.toast.warning('Corrija os campos destacados.');
 
       return SERVER_FIELDS.filter((name) => errors[name]?.length).map((name) => ({
         kind: 'server',
@@ -229,7 +219,7 @@ export class TaxonomyPage {
       }));
     }
 
-    this.feedback.set({ kind: 'error', message: 'Não foi possível salvar. Tente novamente.' });
+    this.toast.error('Não foi possível salvar. Tente novamente.');
 
     return undefined;
   }
