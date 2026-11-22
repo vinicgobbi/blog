@@ -349,7 +349,7 @@ $sidebar-narrow-max: $sidebar-wide - 0.02px;
   }
 }
 
-/* ---------- Dica (diretiva appTooltip) ---------- */
+/* ---------- Dica (diretiva appTooltip, ver tooltip-layer.ts) ---------- */
 .tooltip {
   position: fixed;
   z-index: 200;
@@ -361,9 +361,13 @@ $sidebar-narrow-max: $sidebar-wide - 0.02px;
   box-shadow: var(--shadow-hover);
   color: var(--text);
   font: 500 0.82rem/1.3 var(--font-sans);
+  white-space: nowrap;
   pointer-events: none;
   transform: translateY(-50%);
-  animation: tooltip-in 0.12s ease-out;
+  /* Entre itens vizinhos a mesma dica desliza até o novo item. */
+  transition:
+    top 0.15s ease,
+    left 0.15s ease;
 
   /* Seta apontando para o item. */
   &::before {
@@ -380,6 +384,15 @@ $sidebar-narrow-max: $sidebar-wide - 0.02px;
   }
 }
 
+.tooltip--enter {
+  animation: tooltip-in 0.14s ease-out;
+}
+
+/* Sai na hora, sem animação. */
+.tooltip--hidden {
+  opacity: 0;
+}
+
 @keyframes tooltip-in {
   from {
     opacity: 0;
@@ -389,6 +402,10 @@ $sidebar-narrow-max: $sidebar-wide - 0.02px;
 
 @media (prefers-reduced-motion: reduce) {
   .tooltip {
+    transition: none;
+  }
+
+  .tooltip--enter {
     animation: none;
   }
 }

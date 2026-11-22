@@ -157,7 +157,7 @@ describe('SiteSidebar', () => {
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
   });
 
-  it('collapses to icons and shows the label as a tooltip on hover', async () => {
+  it('collapses to icons and shows the label as a tooltip on focus', async () => {
     const restoreScreen = stubWideScreen();
     const { fixture, http, element } = render();
     http.expectOne(`${API}/pages`).flush({ data: [] });
@@ -165,7 +165,7 @@ describe('SiteSidebar', () => {
     const collapse = element.querySelector<HTMLButtonElement>('.sidebar__collapse')!;
     const categories = element.querySelector<HTMLElement>('a[href="/categorias"]')!;
 
-    categories.dispatchEvent(new MouseEvent('mouseenter'));
+    categories.dispatchEvent(new FocusEvent('focusin'));
     expect(document.querySelector('.tooltip')).toBeNull();
 
     collapse.click();
@@ -176,9 +176,9 @@ describe('SiteSidebar', () => {
     expect(document.documentElement.getAttribute('data-sidebar-blog')).toBe('collapsed');
     expect(localStorage.getItem('sidebar.blog')).toBe('collapsed');
 
-    categories.dispatchEvent(new MouseEvent('mouseenter'));
+    categories.dispatchEvent(new FocusEvent('focusin'));
     expect(document.querySelector('.tooltip')?.textContent).toBe('Categorias');
-    categories.dispatchEvent(new MouseEvent('mouseleave'));
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
     collapse.click();
     await fixture.whenStable();

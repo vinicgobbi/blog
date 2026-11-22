@@ -42,7 +42,7 @@ async function render(pending = 0) {
   return { fixture, http, auth, router, element: fixture.nativeElement as HTMLElement };
 }
 
-/** Recolhe o menu e passa o mouse no item; retorna a dica exibida. */
+/** Recolhe o menu e foca o item (a dica aparece na hora); retorna a dica exibida. */
 async function hoverCollapsed(
   fixture: ComponentFixture<AdminLayout>,
   link: HTMLElement,
@@ -51,7 +51,7 @@ async function hoverCollapsed(
     .querySelector<HTMLButtonElement>('.sidebar__collapse')!
     .click();
   await fixture.whenStable();
-  link.dispatchEvent(new MouseEvent('mouseenter'));
+  link.dispatchEvent(new FocusEvent('focusin'));
 
   return document.querySelector<HTMLElement>('.tooltip');
 }
@@ -91,7 +91,7 @@ describe('AdminLayout', () => {
     const link = element.querySelector<HTMLElement>('a[href="/admin/comentarios"]')!;
     const tooltip = await hoverCollapsed(fixture, link);
     restoreScreen();
-    link.dispatchEvent(new MouseEvent('mouseleave'));
+    link.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
 
     expect(tooltip?.textContent).toBe('Comentários (1 pendente)');
   });

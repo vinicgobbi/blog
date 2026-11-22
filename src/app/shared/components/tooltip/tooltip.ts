@@ -1,12 +1,10 @@
-import { DOCUMENT, DestroyRef, Directive, ElementRef, effect, inject, input } from '@angular/core';
-
-/** Distância entre o elemento e a dica, em pixels. */
-const TOOLTIP_GAP = 10;
+import { DestroyRef, Directive, ElementRef, effect, inject, input } from '@angular/core';
+import { TooltipLayer } from './tooltip-layer';
 
 /**
- * Dica no tema do site, à direita do elemento, ao passar o mouse ou focar com o
- * teclado. Fica no <body> com posição fixa, para não ser cortada por áreas com
- * rolagem (ex.: a lista do menu lateral), e fecha com Esc.
+ * Dica no tema do site, à direita do elemento, ao passar o mouse (com uma
+ * pequena espera) ou focar com o teclado (na hora). Fecha com Esc. Ver
+ * TooltipLayer para o comportamento entre itens vizinhos.
  *
  * É só visual (aria-hidden): o elemento precisa ter o próprio nome acessível,
  * como um rótulo escondido visualmente.
@@ -14,12 +12,12 @@ const TOOLTIP_GAP = 10;
 @Directive({
   selector: '[appTooltip]',
   host: {
-    '(mouseenter)': 'show()',
+    '(mouseenter)': 'show(false)',
     '(mouseleave)': 'hide()',
-    '(focusin)': 'show()',
+    '(focusin)': 'show(true)',
     '(focusout)': 'hide()',
-    '(click)': 'hide()',
-    '(document:keydown.escape)': 'hide()',
+    '(click)': 'dismiss()',
+    '(document:keydown.escape)': 'dismiss()',
   },
 })
 export class Tooltip {
@@ -28,40 +26,32 @@ export class Tooltip {
   readonly disabled = input(false, { alias: 'appTooltipDisabled' });
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private readonly document = inject(DOCUMENT);
-  private tooltip: HTMLElement | null = null;
+  private readonly layer = inject(TooltipLayer);
 
   constructor() {
     effect(() => {
       if (this.disabled()) {
-        this.hide();
+        this.dismiss();
       }
     });
-    inject(DestroyRef).onDestroy(() => this.hide());
+    inject(DestroyRef).onDestroy(() => this.dismiss());
   }
 
-  protected show(): void {
+  protected show(immediate: boolean): void {
     const text = this.text();
 
     if (this.disabled() || !text) {
       return;
     }
 
-    const tooltip = this.tooltip ?? this.document.createElement('div');
-    tooltip.className = 'tooltip';
-    tooltip.setAttribute('aria-hidden', 'true');
-    tooltip.textContent = text;
-
-    const { top, height, right } = this.host.nativeElement.getBoundingClientRect();
-    tooltip.style.top = `${top + height / 2}px`;
-    tooltip.style.left = `${right + TOOLTIP_GAP}px`;
-
-    this.document.body.appendChild(tooltip);
-    this.tooltip = tooltip;
+    this.layer.show({ owner: this, text, anchor: this.host.nativeElement, immediate });
   }
 
   protected hide(): void {
-    this.tooltip?.remove();
-    this.tooltip = null;
+    this.layer.hide(this);
+  }
+
+  protected dismiss(): void {
+    this.layer.dismiss(this);
   }
 }
