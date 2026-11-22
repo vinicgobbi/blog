@@ -1,3 +1,9 @@
+## v0.7.0 (2026-11-22)
+
+### Feat
+
+- **seo**: completa as meta tags de preview de links
+
 ## v0.6.0 (2026-11-22)
 
 ### Feat
