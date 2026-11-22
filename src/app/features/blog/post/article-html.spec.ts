@@ -1,4 +1,4 @@
-import { prepareArticleHtml, restoreHeadingIds } from './article-html';
+import { extractSections, prepareArticleHtml, restoreHeadingIds } from './article-html';
 
 describe('prepareArticleHtml', () => {
   it('replaces GFM task list checkboxes with accessible symbols', () => {
@@ -51,5 +51,34 @@ describe('restoreHeadingIds', () => {
 
     expect(element.querySelector('h2')?.id).toBe('ja-existe');
     expect(element.querySelector('p')?.id).toBe('');
+  });
+});
+
+describe('extractSections', () => {
+  it('lists the h2 headings with the id of their permalink, in order', () => {
+    const html =
+      '<h2 id="secao-intro">Introdução<a href="#secao-intro" class="heading-permalink" aria-hidden="true">#</a></h2>' +
+      '<p>texto</p><h3 id="secao-sub">Sub<a href="#secao-sub" class="heading-permalink">#</a></h3>' +
+      '<h2 id="secao-uso">Uso<a href="#secao-uso" class="heading-permalink">#</a></h2>';
+
+    expect(extractSections(html)).toEqual([
+      { id: 'secao-intro', title: 'Introdução' },
+      { id: 'secao-uso', title: 'Uso' },
+    ]);
+  });
+
+  it('keeps only the text of headings with inline markup and decodes entities', () => {
+    const html =
+      '<h2>Usando <code>&lt;router-outlet&gt;</code> &amp; <em>rotas</em>' +
+      '<a href="#secao-usando-router-outlet-rotas" class="heading-permalink">#</a></h2>';
+
+    expect(extractSections(html)).toEqual([
+      { id: 'secao-usando-router-outlet-rotas', title: 'Usando <router-outlet> & rotas' },
+    ]);
+  });
+
+  it('ignores headings without a permalink and posts without sections', () => {
+    expect(extractSections('<h2>Sem âncora</h2><p>texto</p>')).toEqual([]);
+    expect(extractSections('<p>Só um parágrafo</p>')).toEqual([]);
   });
 });

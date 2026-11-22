@@ -42,8 +42,9 @@ async function flushPost(
   http: HttpTestingController,
   fixture: { whenStable(): Promise<unknown>; detectChanges(): void },
   slug = 'meu-post',
+  post: PostDetail = POST,
 ) {
-  http.expectOne(`${API}/posts/${slug}`).flush({ data: POST });
+  http.expectOne(`${API}/posts/${slug}`).flush({ data: post });
   fixture.detectChanges();
   await vi
     .waitFor(() => http.expectOne(`${API}/posts/${slug}/comments`))
@@ -98,6 +99,30 @@ describe('PostPage', () => {
 
     expect(element.querySelector('.prose h2')?.id).toBe('secao-secao');
     expect(element.querySelector('.prose .task-box')?.textContent).toBe('☑');
+  });
+
+  it('shows the table of contents only when the post has two or more sections', async () => {
+    const { fixture, http, element } = await render();
+
+    await flushPost(http, fixture);
+
+    expect(element.querySelector('app-table-of-contents')).toBeNull();
+  });
+
+  it('lists the ## sections of the post in the table of contents', async () => {
+    const { fixture, http, element } = await render();
+    const body =
+      '<h2>Instalação<a class="heading-permalink" href="#secao-instalacao">#</a></h2><p>a</p>' +
+      '<h3>Detalhe<a class="heading-permalink" href="#secao-detalhe">#</a></h3>' +
+      '<h2>Uso<a class="heading-permalink" href="#secao-uso">#</a></h2><p>b</p>';
+
+    await flushPost(http, fixture, 'meu-post', { ...POST, body_html: body });
+
+    const links = [...element.querySelectorAll<HTMLAnchorElement>('app-table-of-contents a')];
+    expect(links.map((link) => [link.textContent?.trim(), link.getAttribute('href')])).toEqual([
+      ['Instalação', '#secao-instalacao'],
+      ['Uso', '#secao-uso'],
+    ]);
   });
 
   it('sets title, description and Open Graph article tags', async () => {
