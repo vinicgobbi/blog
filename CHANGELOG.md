@@ -1,3 +1,13 @@
+## v0.5.0 (2026-11-22)
+
+### Feat
+
+- **media**: aceita imagens SVG no upload
+- **blog**: notifica o envio de comentários com toast
+- **admin**: avisa falhas de login com toast
+- **admin**: notifica as ações do painel com toasts
+- **toast**: adiciona notificações em toast no canto superior direito
+
 ## v0.4.0 (2026-11-22)
 
 ### Feat
