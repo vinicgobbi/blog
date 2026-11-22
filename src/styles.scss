@@ -26,6 +26,7 @@
   --container: 1120px;
   --reading: 46rem;
   --nav-height: 68px;
+  --sidebar-width: 260px;
 
   color-scheme: light;
   --bg: #f8fafc;
@@ -79,6 +80,13 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--nav-height) + 12px);
   -webkit-text-size-adjust: 100%;
+}
+
+/* No blog público em telas largas o menu é lateral: não há barra fixa no topo para compensar. */
+@media (min-width: 960px) {
+  :root:has(.layout--sidebar) {
+    --nav-height: 0px;
+  }
 }
 
 body {

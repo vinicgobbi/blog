@@ -1,0 +1,112 @@
+<header class="sidebar">
+  <div class="sidebar__head">
+    <a class="brand" routerLink="/" aria-label="Ir para o início">
+      <span class="brand__mark" aria-hidden="true">VG</span>
+      <span class="brand__name">{{ siteName }}</span>
+    </a>
+
+    <button
+      #menuToggle
+      type="button"
+      class="btn btn-ghost btn-sm btn-icon sidebar__toggle"
+      aria-controls="menu-lateral"
+      [attr.aria-expanded]="menuOpen()"
+      [attr.aria-label]="menuOpen() ? 'Fechar menu' : 'Abrir menu'"
+      [title]="menuOpen() ? 'Fechar menu' : 'Abrir menu'"
+      (click)="toggleMenu()"
+    >
+      <i
+        class="bi"
+        [class.bi-list]="!menuOpen()"
+        [class.bi-x-lg]="menuOpen()"
+        aria-hidden="true"
+      ></i>
+    </button>
+  </div>
+
+  <div id="menu-lateral" class="sidebar__panel" [class.sidebar__panel--open]="menuOpen()">
+    <nav class="sidebar__nav" aria-label="Principal">
+      <ul class="nav-links">
+        <li>
+          <a
+            class="nav-link"
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="homeActiveOptions"
+            ariaCurrentWhenActive="page"
+          >
+            <i class="bi bi-house" aria-hidden="true"></i>
+            <span class="nav-link__label">Início</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="nav-link"
+            routerLink="/categorias"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+          >
+            <i class="bi bi-folder2" aria-hidden="true"></i>
+            <span class="nav-link__label">Categorias</span>
+          </a>
+        </li>
+        <li>
+          <a
+            class="nav-link"
+            routerLink="/tags"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+          >
+            <i class="bi bi-tags" aria-hidden="true"></i>
+            <span class="nav-link__label">Tags</span>
+          </a>
+        </li>
+      </ul>
+
+      @if (pages().length) {
+        <h2 class="nav-section" id="menu-paginas">Páginas</h2>
+        <ul class="nav-links" aria-labelledby="menu-paginas">
+          @for (page of pages(); track page.id) {
+            <li>
+              <a
+                class="nav-link"
+                [routerLink]="['/', page.slug]"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page"
+                [title]="page.title"
+              >
+                <i class="bi bi-{{ page.icon }}" aria-hidden="true"></i>
+                <span class="nav-link__label">{{ page.title }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </nav>
+
+    <div class="sidebar__footer">
+      <a class="nav-link" [href]="feedUrl" title="Assinar o feed RSS">
+        <i class="bi bi-rss" aria-hidden="true"></i>
+        <span class="nav-link__label">Feed RSS</span>
+      </a>
+      <button
+        type="button"
+        class="btn btn-ghost btn-sm btn-icon"
+        (click)="theme.toggle()"
+        [attr.aria-label]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
+        [title]="theme.theme() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
+      >
+        <i
+          class="bi"
+          [class.bi-sun]="theme.theme() === 'dark'"
+          [class.bi-moon-stars]="theme.theme() === 'light'"
+          aria-hidden="true"
+        ></i>
+      </button>
+    </div>
+  </div>
+
+  @if (menuOpen()) {
+    <div class="sidebar__backdrop" aria-hidden="true" (click)="closeMenu()"></div>
+  }
+</header>

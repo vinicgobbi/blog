@@ -1,0 +1,214 @@
+/* Abaixo deste ponto o menu vira gaveta (mesmo valor em public-layout.ts e styles.scss). */
+$drawer-breakpoint: 959.98px;
+
+/* O <header> vira item direto do layout, para o sticky valer na página toda. */
+:host {
+  display: contents;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  height: 100dvh;
+  border-right: 1px solid var(--border);
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.sidebar__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem 1rem;
+}
+
+.sidebar__toggle {
+  display: none;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  font: 700 1rem var(--font-display);
+}
+
+.brand__mark {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.brand__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Com muitas páginas, só a lista rola; marca e rodapé do menu ficam no lugar. */
+.sidebar__nav {
+  flex: 1;
+  min-height: 0;
+  padding: 0.25rem 0.75rem 1rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  list-style: none;
+}
+
+.nav-section {
+  margin: 1.25rem 0.75rem 0.4rem;
+  color: var(--text-subtle);
+  font: 600 0.72rem var(--font-sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover {
+    color: var(--text);
+    background: var(--surface-2);
+  }
+
+  &.active {
+    color: var(--accent-text);
+    background: var(--accent-soft);
+  }
+
+  .bi {
+    flex-shrink: 0;
+  }
+}
+
+.nav-link__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--border);
+
+  .nav-link {
+    flex: 1;
+  }
+}
+
+.sidebar__backdrop {
+  display: none;
+}
+
+/* Celular e tablet: barra no topo e o menu abre como gaveta pela esquerda. */
+@media (max-width: $drawer-breakpoint) {
+  .sidebar {
+    width: auto;
+    height: auto;
+    border-right: 0;
+    /* Sem filtro aqui: ele faria a gaveta (position: fixed) se posicionar dentro da barra. */
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .sidebar__head {
+    height: var(--nav-height);
+    padding-block: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--nav-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .sidebar__toggle {
+    display: inline-flex;
+  }
+
+  .sidebar__panel {
+    position: fixed;
+    top: var(--nav-height);
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    width: min(300px, 85vw);
+    border-right: 1px solid var(--border);
+    background: var(--surface);
+    box-shadow: var(--shadow-hover);
+    transform: translateX(-100%);
+    visibility: hidden;
+    transition:
+      transform 0.2s ease,
+      visibility 0.2s;
+  }
+
+  .sidebar__panel--open {
+    transform: none;
+    visibility: visible;
+  }
+
+  .sidebar__nav {
+    padding-top: 1rem;
+  }
+
+  .sidebar__backdrop {
+    display: block;
+    position: fixed;
+    inset: var(--nav-height) 0 0;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar__panel {
+    transition: none;
+  }
+}
