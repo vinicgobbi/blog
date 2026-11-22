@@ -8,6 +8,7 @@ import { Router, provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
 import { PaginatedResponse } from '../../../shared/models/api';
 import { AdminPost } from '../../../shared/models/admin';
+import { shownToasts } from '../../../../testing/toasts';
 import { PostListPage } from './post-list-page';
 
 registerLocaleData(localePt, 'pt-BR');
@@ -132,6 +133,9 @@ describe('PostListPage', () => {
     await vi
       .waitFor(() => http.expectOne(`${API}/admin/posts`))
       .then((request) => request.flush(page([])));
+    expect(shownToasts()).toEqual([
+      { kind: 'success', message: '"Apagável" movido para a lixeira.' },
+    ]);
   });
 
   it('does nothing when the deletion is not confirmed', async () => {

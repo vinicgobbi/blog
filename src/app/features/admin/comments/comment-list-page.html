@@ -20,17 +20,6 @@
   }
 </div>
 
-<p class="visually-hidden" aria-live="polite">
-  @if (message()?.kind === 'success') {
-    {{ message()!.text }}
-  }
-</p>
-@if (message(); as message) {
-  @if (message.kind === 'error') {
-    <p class="alert alert--error" role="alert">{{ message.text }}</p>
-  }
-}
-
 <div aria-live="polite" [attr.aria-busy]="comments.isLoading()">
   @if (comments.error()) {
     <div class="state" role="alert">

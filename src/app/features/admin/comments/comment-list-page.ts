@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { Observable, firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
 import { Pagination } from '../../../shared/components/pagination/pagination';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AdminComment, CommentStatus } from '../../../shared/models/admin';
 import { toPageNumber } from '../../blog/home/home-page';
 import { AdminApi } from '../admin-api';
@@ -67,6 +68,7 @@ export class CommentListPage {
 
   private readonly api = inject(AdminApi);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
   protected readonly counts = inject(CommentCounts);
 
   protected readonly filters = COMMENT_FILTERS;
@@ -81,7 +83,6 @@ export class CommentListPage {
   );
   /** Comentários com uma ação em andamento (botões desabilitados). */
   protected readonly busy = signal<ReadonlySet<number>>(new Set());
-  protected readonly message = signal<{ kind: 'success' | 'error'; text: string } | null>(null);
 
   constructor() {
     inject(SeoService).update({
@@ -142,19 +143,17 @@ export class CommentListPage {
     done: string,
     request: () => Observable<unknown>,
   ): Promise<void> {
-    this.message.set(null);
     this.setBusy(comment.id, true);
 
     try {
       await firstValueFrom(request());
-      this.message.set({ kind: 'success', text: done });
+      this.toast.success(done);
       this.comments.reload();
       this.counts.reload();
     } catch {
-      this.message.set({
-        kind: 'error',
-        text: `Não foi possível atualizar o comentário de "${comment.author_name}". Tente novamente.`,
-      });
+      this.toast.error(
+        `Não foi possível atualizar o comentário de "${comment.author_name}". Tente novamente.`,
+      );
     } finally {
       this.setBusy(comment.id, false);
     }

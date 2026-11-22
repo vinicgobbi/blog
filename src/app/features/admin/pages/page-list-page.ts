@@ -3,6 +3,7 @@ import { Component, DOCUMENT, Injector, afterNextRender, inject, signal } from '
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AdminPage } from '../../../shared/models/admin';
 import { AdminApi } from '../admin-api';
 
@@ -71,10 +72,9 @@ export class PageListPage {
   private readonly api = inject(AdminApi);
   private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);
+  private readonly toast = inject(ToastService);
 
   protected readonly pages = this.api.pages();
-  protected readonly deleteError = signal<string | null>(null);
-  protected readonly orderError = signal<string | null>(null);
   /** Anúncio para leitores de tela depois de mover uma página. */
   protected readonly orderStatus = signal('');
 
@@ -169,7 +169,6 @@ export class PageListPage {
 
     this.savedOrder ??= current;
     this.pages.set(reordered);
-    this.orderError.set(null);
     this.orderStatus.set(
       `${moved.title} movida para a posição ${reordered.indexOf(moved) + 1} de ${reordered.length}.`,
     );
@@ -195,7 +194,7 @@ export class PageListPage {
         this.pages.set(this.savedOrder ?? previous);
         this.savedOrder = null;
         this.orderStatus.set('');
-        this.orderError.set('Não foi possível salvar a nova ordem. Tente novamente.');
+        this.toast.error('Não foi possível salvar a nova ordem. Tente novamente.');
       }
     }
   }
@@ -207,13 +206,12 @@ export class PageListPage {
       return;
     }
 
-    this.deleteError.set(null);
-
     try {
       await firstValueFrom(this.api.deletePage(page.id));
       this.pages.reload();
+      this.toast.success(`Página "${page.title}" excluída.`);
     } catch {
-      this.deleteError.set(`Não foi possível excluir "${page.title}". Tente novamente.`);
+      this.toast.error(`Não foi possível excluir "${page.title}". Tente novamente.`);
     }
   }
 

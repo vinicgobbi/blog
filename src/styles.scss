@@ -49,6 +49,8 @@
   --nav-bg: rgba(248, 250, 252, 0.8);
   --danger: #dc2626;
   --danger-soft: rgba(220, 38, 38, 0.08);
+  --warning: #b45309;
+  --info: #2563eb;
 }
 
 :root[data-theme='dark'] {
@@ -70,6 +72,8 @@
   --nav-bg: rgba(11, 15, 20, 0.75);
   --danger: #f87171;
   --danger-soft: rgba(248, 113, 113, 0.12);
+  --warning: #fbbf24;
+  --info: #60a5fa;
 }
 
 /* ---------- Base ---------- */
@@ -403,7 +407,7 @@ a.chip:hover {
   font-size: 0.8rem;
 }
 
-/* Avisos (sucesso, erro ou neutro) em formulários e listagens */
+/* Avisos (erro ou neutro) em formulários e listagens */
 .alert {
   display: flex;
   flex-wrap: wrap;
@@ -414,11 +418,6 @@ a.chip:hover {
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   font-size: 0.9rem;
-}
-
-.alert--success {
-  border-color: var(--accent);
-  background: var(--accent-soft);
 }
 
 .alert--error {

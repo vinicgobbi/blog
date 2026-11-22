@@ -17,7 +17,7 @@
       (change)="onFileInput($event)"
     />
   </label>
-  <p class="dropzone__hint">JPG, PNG, WebP ou GIF, até 5 MB.</p>
+  <p class="dropzone__hint">JPG, PNG, WebP, GIF ou SVG, até 5 MB.</p>
 </div>
 
 @for (upload of uploads(); track upload.id) {
@@ -27,15 +27,6 @@
       {{ upload.percent }}%
     </progress>
   </div>
-}
-
-@if (message(); as message) {
-  <p
-    class="alert alert--{{ message.kind }} message"
-    [attr.role]="message.kind === 'error' ? 'alert' : 'status'"
-  >
-    {{ message.text }}
-  </p>
 }
 
 <div aria-live="polite" [attr.aria-busy]="media.isLoading()">

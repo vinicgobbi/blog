@@ -9,10 +9,6 @@
   <section class="taxonomy__list" aria-labelledby="taxonomia-lista-titulo">
     <h2 id="taxonomia-lista-titulo" class="visually-hidden">Lista de {{ config().title }}</h2>
 
-    @if (deleteError(); as message) {
-      <p class="alert alert--error" role="alert">{{ message }}</p>
-    }
-
     <div aria-live="polite" [attr.aria-busy]="items.isLoading()">
       @if (items.error()) {
         <div class="state" role="alert">
@@ -93,15 +89,6 @@
     <h2 id="taxonomia-form-titulo" class="taxonomy__form-title">
       {{ editing() ? 'Editar "' + editing()!.name + '"' : 'Adicionar' }}
     </h2>
-
-    @if (feedback(); as feedback) {
-      <p
-        class="alert alert--{{ feedback.kind }}"
-        [attr.role]="feedback.kind === 'error' ? 'alert' : 'status'"
-      >
-        {{ feedback.message }}
-      </p>
-    }
 
     <div class="field">
       <label for="taxonomia-nome">Nome</label>

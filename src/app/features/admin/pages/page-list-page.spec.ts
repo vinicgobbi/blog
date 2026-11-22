@@ -7,6 +7,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
 import { AdminPage } from '../../../shared/models/admin';
+import { shownToasts } from '../../../../testing/toasts';
 import { PageListPage, movePage, movePageTo } from './page-list-page';
 
 registerLocaleData(localePt, 'pt-BR');
@@ -158,6 +159,8 @@ describe('PageListPage', () => {
       .flush(null, { status: 204, statusText: 'No Content' });
     (await vi.waitFor(() => http.expectOne(`${API}/admin/pages`))).flush({ data: [PAGES[1]] });
     await fixture.whenStable();
+
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Página "Sobre" excluída.' }]);
   });
 
   it('does nothing when the deletion is not confirmed', async () => {
@@ -199,7 +202,7 @@ describe('PageListPage', () => {
     await fixture.whenStable();
 
     expect(titles(element)).toEqual(['Contato', 'Sobre', 'Projetos']);
-    expect(element.querySelector('[role="alert"]')).toBeNull();
+    expect(shownToasts()).toEqual([]);
   });
 
   it('restores the saved order when saving fails', async () => {
@@ -215,9 +218,9 @@ describe('PageListPage', () => {
       fixture.detectChanges();
       expect(titles(element)).toEqual(['Sobre', 'Contato', 'Projetos']);
     });
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain(
-      'Não foi possível salvar a nova ordem.',
-    );
+    expect(shownToasts()).toEqual([
+      { kind: 'error', message: 'Não foi possível salvar a nova ordem. Tente novamente.' },
+    ]);
   });
 
   it('keeps only the latest order when moving again before the first save ends', async () => {

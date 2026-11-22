@@ -4,6 +4,7 @@ import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormField, form, required } from '@angular/forms/signals';
 import { API_URL } from '../../../core/api';
+import { shownToasts } from '../../../../testing/toasts';
 import { MarkdownEditor, PREVIEW_DEBOUNCE_MS } from './markdown-editor';
 
 const API = 'http://api.test/api';
@@ -170,7 +171,7 @@ describe('MarkdownEditor', () => {
     await settle(fixture);
 
     http.expectNone({ method: 'POST', url: `${API}/admin/media` });
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain('doc.pdf');
+    expect(shownToasts()).toEqual([{ kind: 'error', message: expect.stringContaining('doc.pdf') }]);
     expect(fixture.componentInstance.model().body).toBe('um texto');
   });
 

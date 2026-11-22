@@ -44,21 +44,6 @@
       Seu e-mail não será publicado. Os comentários aparecem depois de aprovados.
     </p>
 
-    @if (status() === 'sent') {
-      <p class="alert alert--success" role="status">
-        <i class="bi bi-check-circle" aria-hidden="true"></i>
-        Comentário enviado! Ele será publicado após a moderação.
-      </p>
-    } @else if (status() === 'rate-limited') {
-      <p class="alert alert--error" role="alert">
-        Você enviou muitos comentários seguidos. Aguarde um minuto e tente novamente.
-      </p>
-    } @else if (status() === 'failed') {
-      <p class="alert alert--error" role="alert">
-        Não foi possível enviar o comentário. Tente novamente.
-      </p>
-    }
-
     <div class="comment-form__row">
       <div class="field">
         <label for="comentario-nome">Nome</label>

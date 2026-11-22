@@ -15,14 +15,15 @@ function file(name: string, type: string, size = 1000): File {
 }
 
 describe('validateImage', () => {
-  it('accepts JPG, PNG, WebP and GIF up to 5 MB', () => {
+  it('accepts JPG, PNG, WebP, GIF and SVG up to 5 MB', () => {
     expect(validateImage(file('a.jpg', 'image/jpeg'))).toBeNull();
+    expect(validateImage(file('logo.svg', 'image/svg+xml'))).toBeNull();
     expect(validateImage(file('a.gif', 'image/gif', 5 * 1024 * 1024))).toBeNull();
   });
 
-  it('rejects other types such as SVG and PDF', () => {
-    expect(validateImage(file('logo.svg', 'image/svg+xml'))).toContain(
-      'não é uma imagem JPG, PNG, WebP ou GIF',
+  it('rejects other types such as PDF', () => {
+    expect(validateImage(file('doc.pdf', 'application/pdf'))).toContain(
+      'não é uma imagem JPG, PNG, WebP, GIF ou SVG',
     );
     expect(validateImage(file('doc.pdf', 'application/pdf'))).toContain('doc.pdf');
   });

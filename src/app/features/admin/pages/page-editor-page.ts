@@ -13,6 +13,7 @@ import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
 import { AdminPage, AdminPageInput } from '../../../shared/models/admin';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AdminApi } from '../admin-api';
 import { IconPicker } from '../editor/icon-picker';
 import { MarkdownEditor } from '../editor/markdown-editor';
@@ -23,11 +24,6 @@ export interface PageFormModel {
   icon: string;
   body_markdown: string;
   is_published: boolean;
-}
-
-interface Feedback {
-  kind: 'success' | 'error';
-  message: string;
 }
 
 const EMPTY_PAGE: PageFormModel = {
@@ -80,6 +76,7 @@ export class PageEditorPage {
 
   private readonly api = inject(AdminApi);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   protected readonly page = this.api.page(() => this.id());
   protected readonly saved = computed(() => (this.page.hasValue() ? this.page.value() : undefined));
@@ -92,11 +89,6 @@ export class PageEditorPage {
     required(path.icon, { message: 'Escolha um ícone para o menu do blog.' });
     required(path.body_markdown, { message: 'Escreva o conteúdo da página.' });
   });
-
-  /** Mensagem vinda da navegação após criar uma página (o componente é recriado na nova URL). */
-  protected readonly feedback = signal<Feedback | null>(
-    (this.router.currentNavigation()?.extras.state?.['feedback'] as Feedback | undefined) ?? null,
-  );
 
   constructor() {
     const seo = inject(SeoService);
@@ -121,8 +113,6 @@ export class PageEditorPage {
 
   protected async save(event: Event): Promise<void> {
     event.preventDefault();
-    this.feedback.set(null);
-
     await submit(this.pageForm, (field) => this.persist(field));
   }
 
@@ -143,17 +133,12 @@ export class PageEditorPage {
       return this.handleError(error, field);
     }
 
-    const feedback: Feedback = {
-      kind: 'success',
-      message: saved.is_published ? 'Página publicada.' : 'Rascunho salvo.',
-    };
     this.fill(saved);
-    this.feedback.set(feedback);
+    this.toast.success(saved.is_published ? 'Página publicada.' : 'Rascunho salvo.');
 
     if (!this.id()) {
       await this.router.navigate(['/admin/paginas', saved.id], {
         replaceUrl: true,
-        state: { feedback },
       });
     }
 
@@ -168,7 +153,7 @@ export class PageEditorPage {
   private handleError(error: unknown, field: FieldTree<PageFormModel>): TreeValidationResult {
     if (error instanceof HttpErrorResponse && error.status === 422) {
       const errors = (error.error?.errors ?? {}) as Partial<Record<string, string[]>>;
-      this.feedback.set({ kind: 'error', message: 'Corrija os campos destacados.' });
+      this.toast.warning('Corrija os campos destacados.');
 
       return SERVER_FIELDS.filter((name) => errors[name]?.length).map((name) => ({
         kind: 'server',
@@ -177,10 +162,7 @@ export class PageEditorPage {
       }));
     }
 
-    this.feedback.set({
-      kind: 'error',
-      message: 'Não foi possível salvar a página. Tente novamente.',
-    });
+    this.toast.error('Não foi possível salvar a página. Tente novamente.');
 
     return undefined;
   }

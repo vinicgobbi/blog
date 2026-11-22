@@ -15,6 +15,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../core/auth/auth.service';
 import { safeAdminRedirect } from '../../../core/auth/safe-redirect';
 import { SeoService } from '../../../core/seo/seo.service';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { LoginCredentials } from '../../../shared/models/auth';
 
 /**
@@ -33,6 +34,7 @@ export class LoginPage {
 
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   protected readonly siteName = environment.siteName;
   protected readonly model = signal<LoginCredentials>({ email: '', password: '' });
@@ -41,7 +43,6 @@ export class LoginPage {
     email(path.email, { message: 'Informe um e-mail válido.' });
     required(path.password, { message: 'Informe sua senha.' });
   });
-  protected readonly failure = signal<string | null>(null);
 
   constructor() {
     inject(SeoService).update({ title: 'Entrar', path: '/admin/login', noindex: true });
@@ -49,8 +50,6 @@ export class LoginPage {
 
   protected async login(event: Event): Promise<void> {
     event.preventDefault();
-    this.failure.set(null);
-
     await submit(this.loginForm, (field) => this.authenticate(field));
   }
 
@@ -79,13 +78,13 @@ export class LoginPage {
         .map((name) => ({ kind: 'server', message: errors[name]![0], fieldTree: field[name] }));
     }
 
-    this.failure.set(
-      status === 401
-        ? 'E-mail ou senha incorretos.'
-        : status === 429
-          ? 'Muitas tentativas de login. Aguarde um minuto e tente novamente.'
-          : 'Não foi possível entrar agora. Tente novamente.',
-    );
+    if (status === 401) {
+      this.toast.error('E-mail ou senha incorretos.');
+    } else if (status === 429) {
+      this.toast.warning('Muitas tentativas de login. Aguarde um minuto e tente novamente.');
+    } else {
+      this.toast.error('Não foi possível entrar agora. Tente novamente.');
+    }
 
     return undefined;
   }

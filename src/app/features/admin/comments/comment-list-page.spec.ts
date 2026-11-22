@@ -8,6 +8,7 @@ import { Router, provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
 import { PaginatedResponse } from '../../../shared/models/api';
 import { AdminComment } from '../../../shared/models/admin';
+import { shownToasts } from '../../../../testing/toasts';
 import { CommentCounts } from './comment-counts';
 import { CommentListPage } from './comment-list-page';
 
@@ -163,9 +164,7 @@ describe('CommentListPage', () => {
     fixture.detectChanges();
 
     expect(counts.pending()).toBe(1);
-    expect(element.querySelector('[aria-live="polite"]')?.textContent).toContain(
-      'Comentário aprovado.',
-    );
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Comentário aprovado.' }]);
   });
 
   it('deletes a comment only after confirmation', async () => {
@@ -203,12 +202,15 @@ describe('CommentListPage', () => {
       .expectOne({ method: 'PUT', url: `${API}/admin/comments/1` })
       .flush(null, { status: 500, statusText: 'Server Error' });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('.alert')?.textContent).toContain(
-        'Não foi possível atualizar o comentário de "Leitor 1".',
-      );
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([
+        {
+          kind: 'error',
+          message: 'Não foi possível atualizar o comentário de "Leitor 1". Tente novamente.',
+        },
+      ]),
+    );
+    await fixture.whenStable();
     expect(button(element, 'Rejeitar').disabled).toBe(false);
   });
 });

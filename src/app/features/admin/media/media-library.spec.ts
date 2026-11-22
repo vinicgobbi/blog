@@ -4,6 +4,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { API_URL } from '../../../core/api';
 import { PaginatedResponse } from '../../../shared/models/api';
 import { Media } from '../../../shared/models/admin';
+import { shownToasts } from '../../../../testing/toasts';
 import { MediaLibrary } from './media-library';
 
 const API = 'http://api.test/api';
@@ -79,13 +80,6 @@ async function flushReload(
   request.flush(page(items));
 }
 
-async function settle(fixture: ComponentFixture<MediaLibrary>, check: () => void): Promise<void> {
-  await vi.waitFor(() => {
-    fixture.detectChanges();
-    check();
-  });
-}
-
 describe('MediaLibrary', () => {
   afterEach(() => {
     TestBed.inject(HttpTestingController).verify();
@@ -115,23 +109,20 @@ describe('MediaLibrary', () => {
     );
 
     await flushReload(fixture, http, [media({ id: 2, original_name: 'pôr-do-sol.png' }), media()]);
-    await settle(fixture, () =>
-      expect(element.querySelector('[role="status"]')?.textContent).toContain('enviada'),
-    );
+    expect(shownToasts()).toEqual([{ kind: 'success', message: '"pôr-do-sol.png" enviada.' }]);
   });
 
   it('rejects invalid files before sending them', async () => {
-    const { fixture, http, element } = await render();
+    const { http, element } = await render();
 
-    chooseFiles(element, [new File(['<svg/>'], 'logo.svg', { type: 'image/svg+xml' })]);
-    fixture.detectChanges();
+    chooseFiles(element, [new File(['%PDF'], 'doc.pdf', { type: 'application/pdf' })]);
 
     http.expectNone({ method: 'POST', url: MEDIA_URL });
-    expect(element.querySelector('[role="alert"]')?.textContent).toContain('logo.svg');
+    expect(shownToasts()).toEqual([{ kind: 'error', message: expect.stringContaining('doc.pdf') }]);
   });
 
   it('explains that an image in use cannot be deleted (409)', async () => {
-    const { fixture, http, element } = await render();
+    const { http, element } = await render();
     vi.spyOn(window, 'confirm').mockReturnValue(true);
 
     element.querySelector<HTMLButtonElement>('button[aria-label="Excluir foto.png"]')!.click();
@@ -139,9 +130,9 @@ describe('MediaLibrary', () => {
       .expectOne({ method: 'DELETE', url: `${MEDIA_URL}/1` })
       .flush({ message: 'em uso' }, { status: 409, statusText: 'Conflict' });
 
-    await settle(fixture, () =>
-      expect(element.querySelector('[role="alert"]')?.textContent).toContain('está em uso'),
-    );
+    expect(shownToasts()).toEqual([
+      { kind: 'warning', message: expect.stringContaining('está em uso') },
+    ]);
   });
 
   it('saves the alt text', async () => {
@@ -155,9 +146,7 @@ describe('MediaLibrary', () => {
     request.flush({ data: media({ alt: 'Nova descrição' }) });
     await flushReload(fixture, http, [media({ alt: 'Nova descrição' })]);
 
-    await settle(fixture, () =>
-      expect(element.querySelector('[role="status"]')?.textContent).toContain('atualizado'),
-    );
+    expect(shownToasts()).toEqual([{ kind: 'success', message: 'Texto alternativo atualizado.' }]);
   });
 
   it('emits the chosen image in selectable mode', async () => {

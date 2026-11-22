@@ -5,6 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Meta } from '@angular/platform-browser';
 import { Router, provideRouter } from '@angular/router';
 import { API_URL } from '../../../core/api';
+import { shownToasts } from '../../../../testing/toasts';
 import { LoginPage } from './login-page';
 
 const API = 'http://api.test/api';
@@ -115,12 +116,9 @@ describe('LoginPage', () => {
       .expectOne(`${API}/auth/login`)
       .flush({ message: 'Credenciais inválidas.' }, { status: 401, statusText: 'Unauthorized' });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('[role="alert"]')?.textContent).toContain(
-        'E-mail ou senha incorretos.',
-      );
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([{ kind: 'error', message: 'E-mail ou senha incorretos.' }]),
+    );
     expect(router.navigateByUrl).not.toHaveBeenCalled();
   });
 
@@ -132,9 +130,10 @@ describe('LoginPage', () => {
       .expectOne(`${API}/auth/login`)
       .flush(null, { status: 429, statusText: 'Too Many Requests' });
 
-    await vi.waitFor(() => {
-      fixture.detectChanges();
-      expect(element.querySelector('[role="alert"]')?.textContent).toContain('Aguarde um minuto');
-    });
+    await vi.waitFor(() =>
+      expect(shownToasts()).toEqual([
+        { kind: 'warning', message: expect.stringContaining('Aguarde um minuto') },
+      ]),
+    );
   });
 });

@@ -4,7 +4,13 @@ import { ResourceResponse } from '../../../shared/models/api';
 import { Media } from '../../../shared/models/admin';
 
 /** Mesmos limites da API (StoreMediaRequest). */
-export const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+export const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml',
+];
 export const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 export type UploadEvent = { kind: 'progress'; percent: number } | { kind: 'done'; media: Media };
@@ -12,7 +18,7 @@ export type UploadEvent = { kind: 'progress'; percent: number } | { kind: 'done'
 /** Valida a imagem antes de enviar; retorna a mensagem de erro ou null. */
 export function validateImage(file: File): string | null {
   if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-    return `"${file.name}" não é uma imagem JPG, PNG, WebP ou GIF.`;
+    return `"${file.name}" não é uma imagem JPG, PNG, WebP, GIF ou SVG.`;
   }
 
   if (file.size > MAX_IMAGE_BYTES) {

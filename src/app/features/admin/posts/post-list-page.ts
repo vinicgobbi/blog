@@ -1,9 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { SeoService } from '../../../core/seo/seo.service';
 import { Pagination } from '../../../shared/components/pagination/pagination';
+import { ToastService } from '../../../shared/components/toast/toast.service';
 import { AdminPost, PostState } from '../../../shared/models/admin';
 import { toPageNumber } from '../../blog/home/home-page';
 import { AdminApi } from '../admin-api';
@@ -36,6 +37,7 @@ export class PostListPage {
 
   private readonly api = inject(AdminApi);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   protected readonly states = STATES;
   protected readonly labels = STATE_LABELS;
@@ -47,7 +49,6 @@ export class PostListPage {
   protected readonly response = computed(() =>
     this.posts.hasValue() ? this.posts.value() : undefined,
   );
-  protected readonly deleteError = signal<string | null>(null);
 
   constructor() {
     inject(SeoService).update({ title: 'Posts', path: '/admin/posts', noindex: true });
@@ -70,13 +71,12 @@ export class PostListPage {
       return;
     }
 
-    this.deleteError.set(null);
-
     try {
       await firstValueFrom(this.api.deletePost(post.id));
       this.posts.reload();
+      this.toast.success(`"${post.title}" movido para a lixeira.`);
     } catch {
-      this.deleteError.set(`Não foi possível excluir "${post.title}". Tente novamente.`);
+      this.toast.error(`Não foi possível excluir "${post.title}". Tente novamente.`);
     }
   }
 }
