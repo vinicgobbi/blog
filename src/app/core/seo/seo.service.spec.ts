@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { TestBed } from '@angular/core/testing';
 import { Meta, Title } from '@angular/platform-browser';
 import { environment } from '../../../environments/environment';
-import { SeoService } from './seo.service';
+import { DEFAULT_SHARE_IMAGE, SeoService } from './seo.service';
 
 describe('SeoService', () => {
   let seo: SeoService;
@@ -53,9 +53,10 @@ describe('SeoService', () => {
 
     seo.update({ title: 'Página sem capa' });
 
-    expect(meta.getTag('property="og:image"')).toBeNull();
-    expect(meta.getTag('name="description"')).toBeNull();
-    expect(meta.getTag('name="twitter:card"')?.content).toBe('summary');
+    expect(meta.getTag('property="og:image"')?.content).toBe(DEFAULT_SHARE_IMAGE.url);
+    expect(meta.getTag('property="og:description"')?.content).toBe(
+      environment.siteDescription.trim(),
+    );
   });
 
   it('keeps a single canonical link across updates', () => {
