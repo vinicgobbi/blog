@@ -40,9 +40,18 @@ async function render(
   return { fixture, element: fixture.nativeElement as HTMLElement };
 }
 
+/**
+ * Rola a página. O requestAnimationFrame vira um setTimeout: no jsdom ele só
+ * funciona em algumas configurações (no CI nunca disparava e o teste estourava
+ * o tempo), e precisa continuar assíncrono, porque o Angular também o usa para
+ * agendar a detecção de mudanças.
+ */
 async function scroll(fixture: { whenStable(): Promise<unknown> }): Promise<void> {
-  window.dispatchEvent(new Event('scroll'));
-  await new Promise((resolve) => requestAnimationFrame(resolve));
+  vi.spyOn(document.defaultView!, 'requestAnimationFrame').mockImplementation(
+    (callback) => setTimeout(() => callback(performance.now())) as unknown as number,
+  );
+  document.defaultView!.dispatchEvent(new Event('scroll'));
+  await new Promise((resolve) => setTimeout(resolve));
   await fixture.whenStable();
 }
 
@@ -83,6 +92,18 @@ describe('TableOfContents', () => {
 
     expect(activeLink(element)).toBe('Uso');
     expect(element.querySelectorAll('.toc__link.active')).toHaveLength(1);
+  });
+
+  it('keeps following the reading on later scrolls', async () => {
+    const { fixture, element } = await render();
+
+    headingTops = { 'secao-intro': 50, 'secao-uso': 600, 'secao-fim': 1100 };
+    await scroll(fixture);
+    expect(activeLink(element)).toBe('Introdução');
+
+    headingTops = { 'secao-intro': -900, 'secao-uso': -400, 'secao-fim': 80 };
+    await scroll(fixture);
+    expect(activeLink(element)).toBe('Conclusão');
   });
 
   it('opens and closes the list on small screens', async () => {
