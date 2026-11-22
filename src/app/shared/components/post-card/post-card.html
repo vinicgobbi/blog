@@ -36,7 +36,7 @@
       <span>
         <i class="bi bi-calendar3" aria-hidden="true"></i>
         <time [attr.datetime]="post().published_at">{{
-          post().published_at | date: 'mediumDate'
+          post().published_at | date: 'dd/MM/yyyy'
         }}</time>
       </span>
       <span>
