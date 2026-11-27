@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Halloween, Natal } from '@vinicgobbi/ui/seasonal';
+import { Seasonal } from '@vinicgobbi/ui/seasonal';
 import { SiteFooter } from '../site-footer/site-footer';
 import { SiteSidebar } from '../site-sidebar/site-sidebar';
 
 /**
- * Casca das páginas públicas do blog: menu lateral, conteúdo, rodapé e as decorações de Natal
- * (dezembro) e Halloween (31/10). O admin fica sem decoração.
+ * Casca das páginas públicas do blog: menu lateral, conteúdo, rodapé e as decorações das datas
+ * comemorativas (Ano Novo, Carnaval, Páscoa, aniversário, Halloween e Natal). O admin fica sem
+ * decoração. A saudação da data não flutua na tela: ela vai para a caixa de busca (SearchForm).
  */
 @Component({
   selector: 'app-public-layout',
-  imports: [RouterOutlet, SiteSidebar, SiteFooter, Natal, Halloween],
+  imports: [RouterOutlet, SiteSidebar, SiteFooter, Seasonal],
   template: `
     <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
     <app-site-sidebar />
@@ -20,8 +21,10 @@ import { SiteSidebar } from '../site-sidebar/site-sidebar';
       </main>
       <app-site-footer />
     </div>
-    <vg-natal />
-    <vg-halloween />
+    <!-- Carregadas à parte quando o navegador fica ocioso: só aparecem nas datas. -->
+    @defer (on idle) {
+      <vg-seasonal greeting="none" />
+    }
   `,
   host: { class: 'layout layout--sidebar' },
 })

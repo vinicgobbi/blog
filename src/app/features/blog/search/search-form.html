@@ -5,12 +5,17 @@
     <input
       id="busca-termo"
       type="search"
-      placeholder="Buscar posts por título ou resumo…"
+      [placeholder]="placeholder()"
       autocomplete="off"
       [formField]="searchForm.q"
       aria-describedby="busca-erro"
     />
-    <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+    <button type="submit" class="btn btn-primary btn-sm">
+      @if (seasonal.text(); as text) {
+        <span class="search__seasonal" aria-hidden="true">{{ text.icon }}</span>
+      }
+      Buscar
+    </button>
   </div>
   <div id="busca-erro" class="search__error">
     @if (searchForm.q().touched()) {

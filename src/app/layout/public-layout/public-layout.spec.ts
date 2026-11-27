@@ -24,15 +24,15 @@ describe('PublicLayout', () => {
     const element = fixture.nativeElement as HTMLElement;
     document.documentElement.setAttribute('data-theme', 'dark');
     const button = [...element.querySelectorAll<HTMLButtonElement>('header button')].find(
-      (candidate) => candidate.textContent?.includes('tema'),
+      (candidate) => candidate.getAttribute('aria-label')?.includes('tema'),
     );
 
-    expect(button?.textContent?.trim()).toBe('Ativar tema claro');
+    expect(button?.getAttribute('aria-label')).toBe('Ativar tema claro');
     button?.click();
     await fixture.whenStable();
 
     expect(document.documentElement.getAttribute('data-theme')).toBe('light');
-    expect(button?.textContent?.trim()).toBe('Ativar tema escuro');
+    expect(button?.getAttribute('aria-label')).toBe('Ativar tema escuro');
   });
 
   it('renders site name, main navigation and RSS links', async () => {
@@ -48,12 +48,11 @@ describe('PublicLayout', () => {
     expect(rssLinks.length).toBe(2);
   });
 
-  it('inclui as decorações de Natal e Halloween, que só aparecem nas datas', async () => {
+  it('inclui as decorações das datas comemorativas, que só aparecem nas datas', async () => {
     const fixture = TestBed.createComponent(PublicLayout);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('vg-natal')).not.toBeNull();
-    expect(element.querySelector('vg-halloween')).not.toBeNull();
+    expect(element.querySelector('vg-seasonal')).not.toBeNull();
   });
 });
