@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { SeasonalGreeting } from '@vinicgobbi/ui/seasonal';
 import { SearchForm } from './search-form';
 
 async function render(q?: string) {
@@ -62,5 +63,53 @@ describe('SearchForm', () => {
 
     expect(router.navigate).not.toHaveBeenCalled();
     expect(element.querySelector('#busca-erro')?.textContent).toContain('no máximo 100 caracteres');
+  });
+
+  describe('nas datas comemorativas', () => {
+    function startHalloween(): ReturnType<typeof vi.fn> {
+      const release = vi.fn();
+      TestBed.inject(SeasonalGreeting).register('halloween', release);
+
+      return release;
+    }
+
+    it('fora delas, mantém o placeholder e o botão de sempre', async () => {
+      const { element } = await render();
+
+      expect(element.querySelector('#busca-termo')?.getAttribute('placeholder')).toBe(
+        'Buscar posts por título ou resumo…',
+      );
+      expect(element.querySelector('.search__seasonal')).toBeNull();
+    });
+
+    it('leva a saudação para o placeholder e o emoji da data para o botão', async () => {
+      const { fixture, element } = await render();
+      startHalloween();
+      await fixture.whenStable();
+
+      expect(element.querySelector('#busca-termo')?.getAttribute('placeholder')).toBe(
+        'Feliz Halloween! Busque posts por título ou resumo…',
+      );
+      const button = element.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      expect(button.querySelector('.search__seasonal')?.textContent?.trim()).toBe('🎃');
+      expect(button.textContent?.trim()).toContain('Buscar');
+    });
+
+    it('solta a revoada a partir do botão ao buscar', async () => {
+      const { fixture, router, element } = await render();
+      const release = startHalloween();
+      await fixture.whenStable();
+      const button = element.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+      vi.spyOn(button, 'getBoundingClientRect').mockReturnValue(
+        DOMRect.fromRect({ x: 100, y: 40, width: 80, height: 30 }),
+      );
+      typeTerm(element, 'angular');
+      await fixture.whenStable();
+
+      button.click();
+
+      expect(release).toHaveBeenCalledWith({ x: 140, y: 55 });
+      expect(router.navigate).toHaveBeenCalledWith(['/'], { queryParams: { q: 'angular' } });
+    });
   });
 });
