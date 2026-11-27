@@ -4,6 +4,31 @@
     <span class="brand__name">{{ siteName }}</span>
   </a>
 
+  <a
+    sidebarActions
+    class="sidebar-action"
+    [href]="feedUrl"
+    aria-label="Assinar o feed RSS"
+    vgTooltip="Assinar o feed RSS"
+  >
+    <i class="bi bi-rss" aria-hidden="true"></i>
+  </a>
+  <button
+    sidebarActions
+    type="button"
+    class="sidebar-action"
+    [attr.aria-label]="themeLabel()"
+    [vgTooltip]="themeLabel()"
+    (click)="theme.toggle()"
+  >
+    <i
+      class="bi"
+      [class.bi-sun]="theme.theme() === 'dark'"
+      [class.bi-moon-stars]="theme.theme() === 'light'"
+      aria-hidden="true"
+    ></i>
+  </button>
+
   <nav aria-label="Principal">
     <ul class="sidebar-links">
       <li>
@@ -20,32 +45,51 @@
           <span class="sidebar-link__label">Início</span>
         </a>
       </li>
-      <li>
-        <a
-          class="sidebar-link"
-          routerLink="/categorias"
-          routerLinkActive="active"
-          ariaCurrentWhenActive="page"
-          vgTooltip="Categorias"
-          [vgTooltipDisabled]="!sidebar.showTooltips()"
-        >
-          <i class="bi bi-folder2" aria-hidden="true"></i>
-          <span class="sidebar-link__label">Categorias</span>
-        </a>
-      </li>
-      <li>
-        <a
-          class="sidebar-link"
-          routerLink="/tags"
-          routerLinkActive="active"
-          ariaCurrentWhenActive="page"
-          vgTooltip="Tags"
-          [vgTooltipDisabled]="!sidebar.showTooltips()"
-        >
-          <i class="bi bi-tags" aria-hidden="true"></i>
-          <span class="sidebar-link__label">Tags</span>
-        </a>
-      </li>
+      @for (group of groups; track group.path) {
+        <li>
+          <vg-sidebar-group
+            [label]="group.label"
+            [icon]="group.icon"
+            [active]="activeGroup() === group.path"
+          >
+            <ul class="sidebar-sublinks">
+              @for (item of group.items(); track item.id) {
+                <li>
+                  <a
+                    class="sidebar-link sidebar-link--sub"
+                    [routerLink]="['/', group.path, item.slug]"
+                    routerLinkActive="active"
+                    ariaCurrentWhenActive="page"
+                  >
+                    <i class="bi bi-{{ group.itemIcon }}" aria-hidden="true"></i>
+                    <span class="sidebar-link__label">{{ item.name }}</span>
+                    @if (item.posts_count) {
+                      <span class="sidebar-link__count"
+                        >{{ item.posts_count
+                        }}<span class="visually-hidden">
+                          {{ item.posts_count === 1 ? 'post' : 'posts' }}</span
+                        ></span
+                      >
+                    }
+                  </a>
+                </li>
+              }
+              <li>
+                <a
+                  class="sidebar-link sidebar-link--sub"
+                  [routerLink]="['/', group.path]"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  ariaCurrentWhenActive="page"
+                >
+                  <i class="bi bi-grid" aria-hidden="true"></i>
+                  <span class="sidebar-link__label">{{ group.allLabel }}</span>
+                </a>
+              </li>
+            </ul>
+          </vg-sidebar-group>
+        </li>
+      }
     </ul>
 
     @if (pages().length) {
@@ -69,31 +113,4 @@
       </ul>
     }
   </nav>
-
-  <ng-container sidebarFooter>
-    <a
-      class="sidebar-link"
-      [href]="feedUrl"
-      vgTooltip="Assinar o feed RSS"
-      [vgTooltipDisabled]="!sidebar.showTooltips()"
-    >
-      <i class="bi bi-rss" aria-hidden="true"></i>
-      <span class="sidebar-link__label">Feed RSS</span>
-    </a>
-    <button
-      type="button"
-      class="sidebar-link"
-      [vgTooltip]="themeLabel()"
-      [vgTooltipDisabled]="!sidebar.showTooltips()"
-      (click)="theme.toggle()"
-    >
-      <i
-        class="bi"
-        [class.bi-sun]="theme.theme() === 'dark'"
-        [class.bi-moon-stars]="theme.theme() === 'light'"
-        aria-hidden="true"
-      ></i>
-      <span class="sidebar-link__label">{{ themeLabel() }}</span>
-    </button>
-  </ng-container>
 </vg-sidebar>
