@@ -1,6 +1,6 @@
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
 
-<app-sidebar>
+<vg-sidebar>
   <a sidebarBrand class="brand" routerLink="/admin" aria-label="Admin: ir para o dashboard">
     <span class="brand__mark" aria-hidden="true">VG</span>
     <span class="brand__name">Admin</span>
@@ -16,8 +16,8 @@
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: item.exact ?? false }"
             ariaCurrentWhenActive="page"
-            [appTooltip]="tooltip(item)"
-            [appTooltipDisabled]="!sidebar.showTooltips()"
+            [vgTooltip]="tooltip(item)"
+            [vgTooltipDisabled]="!sidebar.showTooltips()"
           >
             <i class="bi {{ item.icon }}" aria-hidden="true"></i>
             <span class="sidebar-link__label">{{ item.label }}</span>
@@ -39,8 +39,8 @@
     @if (auth.user(); as user) {
       <span
         class="sidebar-link sidebar-link--static admin-user"
-        [appTooltip]="'Conectado como ' + user.name"
-        [appTooltipDisabled]="!sidebar.showTooltips()"
+        [vgTooltip]="'Conectado como ' + user.name"
+        [vgTooltipDisabled]="!sidebar.showTooltips()"
       >
         <i class="bi bi-person-circle" aria-hidden="true"></i>
         <span class="sidebar-link__label">{{ user.name }}</span>
@@ -51,8 +51,8 @@
       href="/"
       target="_blank"
       rel="noopener"
-      appTooltip="Ver blog (abre em nova aba)"
-      [appTooltipDisabled]="!sidebar.showTooltips()"
+      vgTooltip="Ver blog (abre em nova aba)"
+      [vgTooltipDisabled]="!sidebar.showTooltips()"
     >
       <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
       <span class="sidebar-link__label"
@@ -62,8 +62,8 @@
     <button
       type="button"
       class="sidebar-link"
-      [appTooltip]="themeLabel()"
-      [appTooltipDisabled]="!sidebar.showTooltips()"
+      [vgTooltip]="themeLabel()"
+      [vgTooltipDisabled]="!sidebar.showTooltips()"
       (click)="theme.toggle()"
     >
       <i
@@ -77,15 +77,15 @@
     <button
       type="button"
       class="sidebar-link"
-      appTooltip="Sair"
-      [appTooltipDisabled]="!sidebar.showTooltips()"
+      vgTooltip="Sair"
+      [vgTooltipDisabled]="!sidebar.showTooltips()"
       (click)="logout()"
     >
       <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
       <span class="sidebar-link__label">Sair</span>
     </button>
   </ng-container>
-</app-sidebar>
+</vg-sidebar>
 
 <div class="layout__content">
   <main id="conteudo" class="page" tabindex="-1">

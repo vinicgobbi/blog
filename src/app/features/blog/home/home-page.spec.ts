@@ -120,7 +120,9 @@ describe('HomePage', () => {
     http.expectOne(`${API}/posts`).flush(response([]));
     await fixture.whenStable();
 
-    expect(element.textContent).toContain('Nenhum post publicado ainda.');
+    expect(element.textContent).toContain(
+      'Coisas boas virão em sua direção. Aguarde até um próximo momento.',
+    );
   });
 
   it('shows a not-found message for a page beyond the last one', async () => {

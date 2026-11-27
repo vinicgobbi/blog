@@ -1,192 +1,43 @@
 /*
- * Identidade visual compartilhada com o portfólio (vinicgobbi.dev.br) e a
- * página de links: mesmos tokens de cor, tipografia e componentes base.
- * O tema é definido em <html data-theme> (ver index.html e ThemeService).
+ * Tokens, fontes, ícones, base, componentes e o menu lateral vêm de @vinicgobbi/ui, a mesma
+ * identidade visual do portfólio (vinicgobbi.dev.br) e da página de links. O tema é definido
+ * em <html data-theme> (ver index.html e ThemeService). Aqui fica só o que é do blog.
  */
-
-/* Fontes self-hosted (sem chamada externa ao Google Fonts) */
-@use '@fontsource/inter/400.css' as *;
-@use '@fontsource/inter/500.css' as *;
-@use '@fontsource/inter/600.css' as *;
-@use '@fontsource/manrope/600.css' as *;
-@use '@fontsource/manrope/700.css' as *;
-@use '@fontsource/manrope/800.css' as *;
-@use 'bootstrap-icons/font/bootstrap-icons.css';
 @use './styles/prose';
-@use './styles/sidebar';
 @use './styles/view-transitions';
 
-/* ---------- Tokens ---------- */
+/*
+ * @import (e não @use): com a extensão .css, o Sass mantém o @import como CSS puro e quem o
+ * resolve é o bundler, a partir do pacote. Com @use, os @import internos da biblioteca
+ * deixariam de resolver.
+ */
+@import '@vinicgobbi/ui/styles/index.css';
+@import '@vinicgobbi/ui/styles/sidebar.css';
+
+/* Brilho do acento no topo da página. */
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-display: 'Manrope', var(--font-sans);
-  --font-mono: ui-monospace, 'DejaVu Sans Mono', Menlo, Consolas, monospace;
-
-  --radius-sm: 8px;
-  --radius: 14px;
-  --radius-lg: 20px;
-  --container: 1120px;
-  --reading: 46rem;
-  --nav-height: 68px;
-  --sidebar-width: 260px;
-  --sidebar-collapsed-width: 72px;
-
-  color-scheme: light;
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-2: #f1f5f9;
-  --text: #0f172a;
-  --text-muted: #475569;
-  --text-subtle: #64748b;
-  --border: rgba(15, 23, 42, 0.1);
-  --accent: #0f766e;
-  --accent-hover: #115e59;
-  --accent-contrast: #ffffff;
-  --accent-soft: rgba(13, 148, 136, 0.1);
-  --accent-text: #0f766e;
-  --shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
-  --shadow-hover: 0 2px 4px rgba(15, 23, 42, 0.06), 0 16px 40px rgba(15, 23, 42, 0.1);
-  --nav-bg: rgba(248, 250, 252, 0.8);
-  --danger: #dc2626;
-  --danger-soft: rgba(220, 38, 38, 0.08);
-  --warning: #b45309;
-  --info: #2563eb;
+  --page-glow: var(--glow-accent);
 }
 
-:root[data-theme='dark'] {
-  color-scheme: dark;
-  --bg: #0b0f14;
-  --surface: #121821;
-  --surface-2: #1a212b;
-  --text: #e2e8f0;
-  --text-muted: #a3b0c2;
-  --text-subtle: #8090a6;
-  --border: rgba(255, 255, 255, 0.09);
-  --accent: #14b8a6;
-  --accent-hover: #2dd4bf;
-  --accent-contrast: #04201d;
-  --accent-soft: rgba(20, 184, 166, 0.14);
-  --accent-text: #5eead4;
-  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.4);
-  --nav-bg: rgba(11, 15, 20, 0.75);
-  --danger: #f87171;
-  --danger-soft: rgba(248, 113, 113, 0.12);
-  --warning: #fbbf24;
-  --info: #60a5fa;
-}
-
-/* ---------- Base ---------- */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--nav-height) + 12px);
-  -webkit-text-size-adjust: 100%;
-}
-
+/* ---------- Layout ---------- */
 body {
-  margin: 0;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(ellipse 80% 40% at 50% 0%, var(--accent-soft), transparent 70%) no-repeat,
-    var(--bg);
-  color: var(--text);
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+}
+
+/*
+ * Coluna, exceto nos layouts com menu lateral: .layout--sidebar (da biblioteca) já é coluna e
+ * vira linha em telas largas; aplicar flex-direction a ele aqui desfaria isso.
+ */
+app-root,
+.layout:not(.layout--sidebar) {
+  display: flex;
+  flex-direction: column;
 }
 
 app-root,
 .layout {
-  display: flex;
   flex: 1;
-  flex-direction: column;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.2;
-  margin: 0;
-  color: var(--text);
-}
-
-p {
-  margin: 0;
-}
-
-ul {
-  margin: 0;
-  padding: 0;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
-
-a {
-  color: var(--accent-text);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-  border-radius: 4px;
-}
-
-/* !important: precisa vencer estilos mais específicos (ex.: .field input, que define width e padding). */
-.visually-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
-
-.skip-link {
-  position: absolute;
-  left: 1rem;
-  top: -100px;
-  z-index: 100;
-  padding: 0.6rem 1rem;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  text-decoration: none;
-
-  &:focus {
-    top: 1rem;
-  }
-}
-
-/* ---------- Layout ---------- */
-.container {
-  width: 100%;
-  max-width: var(--container);
-  margin-inline: auto;
-  padding-inline: 1.25rem;
 }
 
 /* Área admin: mais largura para o menu e as tabelas. */
@@ -207,33 +58,6 @@ a {
   }
 }
 
-.section-header {
-  margin-bottom: 2.5rem;
-  max-width: 640px;
-}
-
-.eyebrow {
-  display: inline-block;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-text);
-  margin-bottom: 0.5rem;
-}
-
-.section-title {
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.section-subtitle {
-  margin-top: 0.75rem;
-  color: var(--text-muted);
-  font-size: 1.05rem;
-}
-
 /* Página estática: mesma largura de leitura dos posts. */
 .static-page {
   max-width: var(--reading);
@@ -249,283 +73,34 @@ a {
   margin-top: 1.25rem;
 }
 
-/* ---------- Componentes reutilizáveis ---------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0.6rem 1.15rem;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  font: 600 0.95rem/1.2 var(--font-sans);
-  text-decoration: none;
-  cursor: pointer;
-  white-space: nowrap;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease;
+/* ---------- Datas comemorativas (<vg-natal>, <vg-halloween>) ---------- */
+/*
+ * Com o menu lateral fixo, saudação, revoada, enfeites e aranha começam depois dele. A saudação
+ * fica abaixo do menu (50), para não cobrir a gaveta aberta no celular.
+ */
+:root {
+  --seasonal-greeting-z: 45;
+}
 
-  &:active {
-    transform: translateY(1px);
+@media (min-width: 960px) {
+  :root {
+    --seasonal-start: var(--sidebar-width);
   }
 
-  &:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    pointer-events: none;
+  :root:has(.sidebar[data-collapsed]) {
+    --seasonal-start: var(--sidebar-collapsed-width);
   }
 }
 
-.btn-primary {
-  background: var(--accent);
-  color: var(--accent-contrast);
-
-  &:hover {
-    background: var(--accent-hover);
+/* Descontado o menu, só sobra margem para enfeites e aranha ao lado do container em telas bem largas. */
+@media (max-width: 1599px) {
+  :root {
+    --seasonal-hanging-display: none;
   }
 }
 
-.btn-outline {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--text);
-
-  &:hover {
-    border-color: var(--accent);
-    color: var(--accent-text);
-  }
-}
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-muted);
-
-  &:hover {
-    color: var(--text);
-    background: var(--surface-2);
-  }
-}
-
-.btn-sm {
-  min-height: 36px;
-  padding: 0.4rem 0.85rem;
-  font-size: 0.875rem;
-}
-
-.btn-icon {
-  width: 44px;
-  padding: 0;
-}
-
-.btn-sm.btn-icon {
-  width: 36px;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-}
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  list-style: none;
-}
-
-.chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent-text);
-  font-size: 0.8rem;
-  font-weight: 500;
-  line-height: 1.6;
-  text-decoration: none;
-}
-
-a.chip:hover {
-  background: var(--accent);
-  color: var(--accent-contrast);
-}
-
-/* Campos de formulário (comentários, login, admin) */
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-
-  label,
-  .field__label {
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-
-  input:not([type='checkbox'], [type='radio']),
-  textarea,
-  select {
-    width: 100%;
-    padding: 0.6rem 0.8rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--bg);
-    color: var(--text);
-    font: inherit;
-    resize: vertical;
-
-    &:focus-visible {
-      border-color: var(--accent);
-    }
-
-    &[aria-invalid='true'] {
-      border-color: var(--danger);
-    }
-  }
-}
-
-.field__errors p {
-  color: var(--danger);
-  font-size: 0.85rem;
-}
-
-.field__optional {
-  color: var(--text-subtle);
-  font-weight: 400;
-}
-
-.field__help {
-  color: var(--text-subtle);
-  font-size: 0.8rem;
-}
-
-/* Avisos (erro ou neutro) em formulários e listagens */
-.alert {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.7rem 0.9rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface-2);
-  font-size: 0.9rem;
-}
-
-.alert--error {
-  border-color: var(--danger);
-  background: var(--danger-soft);
-}
-
-/* Link discreto de "voltar" acima do título */
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-
-  &:hover {
-    color: var(--accent-text);
-  }
-}
-
-/* Grupo de botões de filtro em formato de pílula (aria-pressed marca o ativo) */
-.segmented {
-  display: inline-flex;
-  gap: 0.25rem;
-  max-width: 100%;
-  padding: 0.3rem;
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--surface);
-  scrollbar-width: none;
-
-  button {
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.35rem 0.9rem;
-    border: 0;
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text-muted);
-    font: 500 0.88rem var(--font-sans);
-    white-space: nowrap;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--text);
-      background: var(--surface-2);
-    }
-
-    &[aria-pressed='true'] {
-      background: var(--accent);
-      color: var(--accent-contrast);
-    }
-  }
-}
-
-.segmented__count {
-  min-width: 1.4rem;
-  padding: 0 0.4rem;
-  border-radius: 999px;
-  background: var(--surface-2);
-  color: var(--text);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-/* Cabeçalho das telas do admin: título à esquerda, ação principal à direita */
-.page-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-
-  .back {
-    margin-bottom: 0.75rem;
-  }
-
-  .section-subtitle {
-    max-width: 640px;
-  }
-}
-
-.page-header__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-}
-
-/* Situação de posts e comentários no admin */
-.badge {
-  display: inline-block;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
+/* ---------- Situação de posts e comentários no admin ---------- */
+/* Apelidos das variantes de .badge da biblioteca para os estados da API. */
 .badge--published,
 .badge--approved {
   background: var(--accent-soft);
@@ -534,12 +109,8 @@ a.chip:hover {
 
 .badge--scheduled,
 .badge--pending {
-  background: rgba(234, 179, 8, 0.15);
-  color: #a16207;
-}
-
-:root[data-theme='dark'] :is(.badge--scheduled, .badge--pending) {
-  color: #facc15;
+  background: var(--warning-soft);
+  color: var(--warning-text);
 }
 
 .badge--draft,
@@ -551,33 +122,4 @@ a.chip:hover {
 .badge--spam {
   background: var(--danger-soft);
   color: var(--danger);
-}
-
-/* Mensagens de estado (carregando, vazio, erro) */
-.state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  padding: 4rem 1.5rem;
-  text-align: center;
-  color: var(--text-muted);
-
-  > i {
-    font-size: 2rem;
-    color: var(--text-subtle);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    transition: none !important;
-    animation: none !important;
-  }
 }

@@ -29,6 +29,9 @@ export class HomePage {
   readonly page = input(1, { transform: toPageNumber });
 
   protected readonly siteDescription = environment.siteDescription;
+  /** Sem nenhum post publicado (fora de uma busca). */
+  protected readonly emptyHomeMessage =
+    'Coisas boas virão em sua direção. Aguarde até um próximo momento.';
   protected readonly posts = inject(BlogApi).posts(() => ({
     q: this.q() || undefined,
     page: this.page(),
