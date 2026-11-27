@@ -1,3 +1,13 @@
+## v0.9.0 (2026-11-27)
+
+### Feat
+
+- **home**: centraliza o cabeçalho e o resumo da busca
+- **blog**: leva a saudação das datas comemorativas para a busca
+- **admin**: move a troca de tema para a linha de ícones do menu
+- **layout**: mostra categorias e tags como pastas no menu lateral
+- **seasonal**: adiciona Ano Novo, Carnaval, Páscoa e aniversário
+
 ## v0.8.0 (2026-11-27)
 
 ### Feat
