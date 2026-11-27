@@ -14,17 +14,34 @@
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
-    <!-- Aplica o menu lateral recolhido antes da renderização (ver SidebarState) -->
+    <!-- Aplica o menu lateral recolhido antes da renderização (SIDEBAR_INIT_SCRIPT de @vinicgobbi/ui) -->
     <script>
       (function () {
-        ['blog', 'admin'].forEach(function (name) {
+        function mark(sidebar) {
           var state;
           try {
-            state = localStorage.getItem('sidebar.' + name);
+            state = localStorage.getItem('sidebar.' + sidebar.getAttribute('data-sidebar'));
           } catch (e) {}
           if (state === 'collapsed') {
-            document.documentElement.setAttribute('data-sidebar-' + name, 'collapsed');
+            sidebar.setAttribute('data-collapsed', '');
           }
+        }
+        var observer = new MutationObserver(function (records) {
+          records.forEach(function (record) {
+            record.addedNodes.forEach(function (node) {
+              if (node.nodeType !== 1) {
+                return;
+              }
+              if (node.matches('.sidebar[data-sidebar]')) {
+                mark(node);
+              }
+              node.querySelectorAll('.sidebar[data-sidebar]').forEach(mark);
+            });
+          });
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+        document.addEventListener('DOMContentLoaded', function () {
+          observer.disconnect();
         });
       })();
     </script>

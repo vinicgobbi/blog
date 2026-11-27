@@ -7,6 +7,7 @@ Front-end do blog em Angular, com renderização no servidor (SSR). Consome a [b
 - **Angular** 22, com SSR via `@angular/ssr` e servidor Express
 - **pnpm** como gerenciador de pacotes
 - **Vitest** para testes unitários
+- **[@vinicgobbi/ui](https://github.com/vinicgobbi/vinicgobbi-ui)**: minha identidade visual (tokens, tema claro/escuro, fontes, menu lateral e dicas), compartilhada com o portfólio e a página de links
 
 ## Renderização
 
@@ -25,6 +26,18 @@ As URLs da API ficam em `src/environments/`:
 - `environment.ts`: usado no build de produção. Ajuste para o domínio real da API.
 
 ## Desenvolvimento
+
+O `@vinicgobbi/ui` vem do GitHub Packages, que exige token até para pacotes públicos. O pnpm 12 não lê credenciais do `.npmrc` do repositório, então o token fica na configuração do usuário. Uma vez só, no `~/.npmrc`:
+
+```ini
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+```
+
+E, antes do `pnpm install`, um token com o escopo `read:packages` (o do `gh` serve, depois de `gh auth refresh -s read:packages`):
+
+```sh
+export NODE_AUTH_TOKEN=$(gh auth token)
+```
 
 ```sh
 pnpm install

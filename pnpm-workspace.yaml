@@ -6,3 +6,6 @@ allowBuilds:
   esbuild: false
   lmdb: false
   msgpackr-extract: false
+
+minimumReleaseAgeExclude:
+  - '@vinicgobbi/ui@0.2.0'

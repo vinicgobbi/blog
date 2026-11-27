@@ -23,8 +23,6 @@
   <app-post-list
     [posts]="posts"
     [page]="page()"
-    [emptyMessage]="
-      q() ? 'Nenhum post encontrado. Tente outros termos.' : 'Nenhum post publicado ainda.'
-    "
+    [emptyMessage]="q() ? 'Nenhum post encontrado. Tente outros termos.' : emptyHomeMessage"
   />
 </div>
