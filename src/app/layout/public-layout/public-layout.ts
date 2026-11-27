@@ -7,7 +7,7 @@ import { SiteSidebar } from '../site-sidebar/site-sidebar';
 /**
  * Casca das páginas públicas do blog: menu lateral, conteúdo, rodapé e as decorações das datas
  * comemorativas (Ano Novo, Carnaval, Páscoa, aniversário, Halloween e Natal). O admin fica sem
- * decoração.
+ * decoração. A saudação da data não flutua na tela: ela vai para a caixa de busca (SearchForm).
  */
 @Component({
   selector: 'app-public-layout',
@@ -23,7 +23,7 @@ import { SiteSidebar } from '../site-sidebar/site-sidebar';
     </div>
     <!-- Carregadas à parte quando o navegador fica ocioso: só aparecem nas datas. -->
     @defer (on idle) {
-      <vg-seasonal />
+      <vg-seasonal greeting="none" />
     }
   `,
   host: { class: 'layout layout--sidebar' },

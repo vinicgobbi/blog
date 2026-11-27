@@ -5,6 +5,7 @@
 
 .search {
   max-width: 640px;
+  margin-inline: auto;
 }
 
 .search__box {
@@ -41,6 +42,10 @@
       outline: none;
     }
   }
+}
+
+.search__seasonal {
+  margin-right: 0.3rem;
 }
 
 .search__error p {
