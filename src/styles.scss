@@ -65,6 +65,32 @@ app-root,
   margin-top: 1.25rem;
 }
 
+/* ---------- Datas comemorativas (<vg-natal>, <vg-halloween>) ---------- */
+/*
+ * Com o menu lateral fixo, saudação, revoada, enfeites e aranha começam depois dele. A saudação
+ * fica abaixo do menu (50), para não cobrir a gaveta aberta no celular.
+ */
+:root {
+  --seasonal-greeting-z: 45;
+}
+
+@media (min-width: 960px) {
+  :root {
+    --seasonal-start: var(--sidebar-width);
+  }
+
+  :root:has(.sidebar[data-collapsed]) {
+    --seasonal-start: var(--sidebar-collapsed-width);
+  }
+}
+
+/* Descontado o menu, só sobra margem para enfeites e aranha ao lado do container em telas bem largas. */
+@media (max-width: 1599px) {
+  :root {
+    --seasonal-hanging-display: none;
+  }
+}
+
 /* ---------- Situação de posts e comentários no admin ---------- */
 /* Apelidos das variantes de .badge da biblioteca para os estados da API. */
 .badge--published,

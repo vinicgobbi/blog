@@ -47,4 +47,13 @@ describe('PublicLayout', () => {
     );
     expect(rssLinks.length).toBe(2);
   });
+
+  it('inclui as decorações de Natal e Halloween, que só aparecem nas datas', async () => {
+    const fixture = TestBed.createComponent(PublicLayout);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+
+    expect(element.querySelector('vg-natal')).not.toBeNull();
+    expect(element.querySelector('vg-halloween')).not.toBeNull();
+  });
 });
