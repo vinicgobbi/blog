@@ -1,3 +1,18 @@
+## v0.8.0 (2026-11-27)
+
+### Feat
+
+- **blog**: muda a mensagem da home sem posts
+- **blog**: adiciona as decorações de Natal e Halloween
+
+### Fix
+
+- **layout**: mantém o conteúdo ao lado do menu lateral
+
+### Refactor
+
+- usa tema, menu lateral e dicas de @vinicgobbi/ui
+
 ## v0.7.0 (2026-11-22)
 
 ### Feat
