@@ -6,6 +6,22 @@
     <span class="brand__name">Admin</span>
   </a>
 
+  <button
+    sidebarActions
+    type="button"
+    class="sidebar-action"
+    [attr.aria-label]="themeLabel()"
+    [vgTooltip]="themeLabel()"
+    (click)="theme.toggle()"
+  >
+    <i
+      class="bi"
+      [class.bi-sun]="theme.theme() === 'dark'"
+      [class.bi-moon-stars]="theme.theme() === 'light'"
+      aria-hidden="true"
+    ></i>
+  </button>
+
   <nav aria-label="Administração">
     <ul class="sidebar-links">
       @for (item of menu; track item.link) {
@@ -59,21 +75,6 @@
         >Ver blog<span class="visually-hidden"> (abre em nova aba)</span></span
       >
     </a>
-    <button
-      type="button"
-      class="sidebar-link"
-      [vgTooltip]="themeLabel()"
-      [vgTooltipDisabled]="!sidebar.showTooltips()"
-      (click)="theme.toggle()"
-    >
-      <i
-        class="bi"
-        [class.bi-sun]="theme.theme() === 'dark'"
-        [class.bi-moon-stars]="theme.theme() === 'light'"
-        aria-hidden="true"
-      ></i>
-      <span class="sidebar-link__label">{{ themeLabel() }}</span>
-    </button>
     <button
       type="button"
       class="sidebar-link"
