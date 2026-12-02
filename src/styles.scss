@@ -25,11 +25,19 @@ body {
   flex-direction: column;
 }
 
+/*
+ * Coluna, exceto nos layouts com menu lateral: .layout--sidebar (da biblioteca) já é coluna e
+ * vira linha em telas largas; aplicar flex-direction a ele aqui desfaria isso.
+ */
+app-root,
+.layout:not(.layout--sidebar) {
+  display: flex;
+  flex-direction: column;
+}
+
 app-root,
 .layout {
-  display: flex;
   flex: 1;
-  flex-direction: column;
 }
 
 /* Área admin: mais largura para o menu e as tabelas. */
